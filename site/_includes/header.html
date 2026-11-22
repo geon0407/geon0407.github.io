@@ -76,6 +76,11 @@
         </nav>
 
         <div class="site-tools">
+          <select class="theme-select" aria-label="Color theme" hidden>
+            <option value="system" data-ko="자동">Auto</option>
+            <option value="light" data-ko="라이트">Light</option>
+            <option value="dark" data-ko="다크">Dark</option>
+          </select>
           {% bookshop_include social-link %}
           <div class="language-switch" data-language-switch role="group" aria-label="Language" hidden>
             <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="true">EN</button>

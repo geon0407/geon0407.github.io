@@ -273,3 +273,71 @@
 .about-verse blockquote { margin: 0; padding: 0; border: 0; font: inherit; }
 .about-verse blockquote p { font-size: 1rem; }
 .about-verse figcaption { margin-top: 6px; color: #525a71; font-size: .8125rem; }
+
+/* Korean copy wraps at word boundaries, with an overflow fallback. */
+[lang="ko"][data-ko] {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  /* Give the brand and controls their own rows instead of squeezing them. */
+  .c-header__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    padding-block: 16px;
+    min-height: 0;
+  }
+  .c-header__inner > .logo { grid-column: 1; grid-row: 1; min-width: 0; }
+  .c-header__inner .logo__link {
+    font-size: 1.125rem;
+    line-height: 1.4;
+    letter-spacing: -.04em;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .c-header__inner > .nav-button {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+  }
+  .c-header__inner > .site-tools {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-end;
+    gap: 12px;
+    margin: 0;
+  }
+  .site-tools .social__item { margin: 0; }
+  .site-tools .social__link { width: 44px; height: 44px; padding: 0; font-size: 20px; }
+  .language-switch { margin: 0; }
+  .language-switch button { min-width: 44px; min-height: 44px; font-size: .875rem; }
+
+  .about-profile { padding-block: 24px 36px; gap: 16px; }
+  .about-profile__intro { min-width: 0; }
+  .about-profile h1 {
+    margin-bottom: 24px;
+    font-size: clamp(1.75rem, 7vw, 2.25rem);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .about-profile__bio > p {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+  .about-verse { margin-top: 24px; padding-inline-start: 14px; }
+  .about-verse blockquote p { font-size: .9375rem; line-height: 1.75; }
+  .about-verse figcaption { font-size: .8125rem; line-height: 1.6; }
+  .about-timeline { margin-bottom: 48px; }
+  .about-timeline > h2 { margin-bottom: 24px; font-size: 1.5rem; }
+  .about-timeline__period { font-size: .875rem; line-height: 1.5; }
+  .about-timeline__body { padding-top: 6px; }
+  .about-timeline__body h3 { font-size: 1rem; line-height: 1.55; }
+  .about-timeline__body p { font-size: .875rem; line-height: 1.7; }
+  .about-timeline__item { padding-bottom: 28px; }
+}

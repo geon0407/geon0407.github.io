@@ -15,17 +15,20 @@ timeline:
     title_ko: "GIST 창의융합 AX-챌린지"
     detail_ko: "탁구로봇 제작 · 로봇 AX 경진 부문 수상"
   - period: "2026.03–Present"
+    group: background
     title: Teaching Assistant in Mathematics, GIST
     detail: "Led recitations for Calculus (Spring 2026) and Multivariable Calculus (Fall 2026)"
     period_ko: "2026.03–현재"
     title_ko: "광주과학기술원 수학과 수업 조교"
     detail_ko: "2026학년도 봄학기 미적분학, 2026학년도 가을학기 다변수해석학 Recitation 진행"
   - period: "2024.03–2025.09"
+    group: background
     title: Military Service, Republic of Korea Army
     detail: 3rd Airborne Special Forces Brigade, Special Warfare Command
     title_ko: "대한민국 육군 군 복무"
     detail_ko: "특수전사령부 제3공수특전여단"
   - period: "2022.02"
+    group: background
     title: Entered Gwangju Institute of Science and Technology
     url: https://www.gist.ac.kr/en/
     title_ko: "광주과학기술원 입학"
@@ -54,6 +57,7 @@ timeline:
     title_ko: "한국정보올림피아드"
     detail_ko: "충청남도(2015)·충청북도(2018) 대표로 전국대회 입상"
   - period: "2003.04.07"
+    group: background
     title: Born in Daejeon, South Korea
     url: https://ko.wikipedia.org/wiki/대전광역시
     title_ko: "대한민국 대전광역시 출생"
@@ -81,10 +85,18 @@ timeline:
     {% endif %}
   </div>
 
-  <section class="about-timeline" aria-labelledby="timeline-title">
-    <h2 id="timeline-title" data-ko="연혁">Timeline</h2>
+  {% assign groups = 'background,research' | split: ',' %}
+  {% for group in groups %}
+  <section class="about-timeline" aria-labelledby="timeline-{{ group }}">
+    {% if group == 'background' %}
+    <h2 id="timeline-{{ group }}" data-ko="이력">Background &amp; Experience</h2>
+    {% else %}
+    <h2 id="timeline-{{ group }}" data-ko="연구 및 수상">Research &amp; Awards</h2>
+    {% endif %}
     <ol class="about-timeline__list">
       {% for entry in page.timeline %}
+        {% assign entry_group = entry.group | default: 'research' %}
+        {% unless entry_group == group %}{% continue %}{% endunless %}
         <li class="about-timeline__item">
           <span class="about-timeline__period"{% if entry.period_ko %} data-ko="{{ entry.period_ko | escape }}"{% endif %}>{{ entry.period | escape }}</span>
           <div class="about-timeline__body">
@@ -98,4 +110,5 @@ timeline:
       {% endfor %}
     </ol>
   </section>
+  {% endfor %}
 </main>
