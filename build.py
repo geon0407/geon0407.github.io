@@ -20,7 +20,6 @@ def build(drafts=False):
     out.mkdir()
     shutil.copytree(ROOT/'assets', out/'assets')
     url = lambda path: base + '/' + path.lstrip('/')
-    shutil.copytree(ROOT/'admin', out/'admin')
     def md(text, toc=False):
         engine = markdown.Markdown(extensions=['fenced_code', 'tables', 'toc', 'codehilite'], extension_configs={'codehilite': {'guess_lang': False}})
         text = text.replace('{{base}}',base)
