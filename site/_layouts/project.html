@@ -2,12 +2,13 @@
 layout: default
 ---
 
+{% bookshop page-heading title=page.title description=page.subtitle %}
+{% if page.image and page.image != "" %}
+  {% assign page_image = page.image | relative_url %}
+  {% bookshop page-image image=page_image image_alt=page.image_alt %}
+{% endif %}
+
 <div class="container">
-
-  {% bookshop page-heading title=page.title description=page.subtitle %}
-  {% assign page_image = site.baseurl | append: page.image %}
-  {% bookshop page-image image=page_image %}
-
   <div class="page animate">
     {{ content }}
   </div>
@@ -16,7 +17,7 @@ layout: default
   <div class="project__navigation animate">
     <a class="project__prev" href="{{page.previous.url}}">
       <div class="project__box">
-        <span class="project__nav__info">{% include localized.html key="next_project" %}</span>
+        <span class="project__nav__info">Next project</span>
         <h2 class="project__nav__title">{{page.previous.title}}<ion-icon name="arrow-right"></ion-icon></h2>
       </div>
     </a>
@@ -24,10 +25,3 @@ layout: default
   {% endif %}
 
 </div>
-
-{% bookshop
-  newsletter newsletter_title=site.data.newsletter.newsletter_title
-  newsletter_description=site.data.newsletter.newsletter_description
-  newsletter_identifier=site.data.newsletter.newsletter_identifier
-  newsletter_button=site.data.newsletter.newsletter_button
-%}

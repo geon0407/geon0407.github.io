@@ -8,12 +8,14 @@
           <div class="section__info">
             <div class="section__head">
               <h2 class="section__title">{{ include.title }}</h2>
-              <a class="section__link" href="{{ include.link_url | relative_url }}">{% include localized.html key="see_all" %} <ion-icon name="arrow-forward"></ion-icon></a>
+              <a class="section__link" href="{{ include.link_url | relative_url }}">See all <ion-icon name="arrow-forward"></ion-icon></a>
             </div>
             <div class="section__description">{{ include.description_html }} </div>
           </div>
 
-          {% if include.show_posts %}
+          {% if include.show_posts and site.posts.size == 0 and include.empty_message %}
+          <p>{{ include.empty_message | escape }}</p>
+          {% elsif include.show_posts %}
           <div class="row">
             {% if site.posts.size > 0 %}
               {% for post in site.posts offset:0 limit:3 %}

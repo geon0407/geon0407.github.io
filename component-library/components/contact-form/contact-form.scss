@@ -60,7 +60,7 @@
 
 		&::placeholder {
 			font-weight: 500;
-			color: var(--surface-border);
+			color: rgba($text-color, 0.3);
 		}
 
 		&:focus {

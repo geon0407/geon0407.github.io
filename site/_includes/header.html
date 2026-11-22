@@ -21,7 +21,7 @@
               <ion-icon class="nav-icon-close" name="close"></ion-icon>
             </div>
 
-            <div class="nav__title">{% include localized.html key="menu" %}</div>
+            <div class="nav__title">Menu</div>
 
               <ul class="nav__list list-reset">
 
@@ -38,7 +38,7 @@
 
                 {% else %}
                 <li class="nav__item">
-                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url %} active-link{% endif %}">{% include localized.html key=item.key %}</a>
+                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url %} active-link{% endif %}">{{ item.title | escape }}</a>
                 </li>
                 {% endif %}
               {% endfor %}
@@ -50,14 +50,6 @@
 
         <div class="site-tools">
           {% bookshop_include social-link %}
-          <div class="site-preferences" hidden>
-            <button type="button" id="site-theme">
-              <ion-icon name="desktop-outline" aria-hidden="true"></ion-icon>
-            </button>
-            <button type="button" id="site-language">
-              <span aria-hidden="true">EN</span>
-            </button>
-          </div>
         </div>
 
         <div class="nav-button">

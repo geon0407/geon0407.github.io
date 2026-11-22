@@ -1,12 +1,11 @@
 ---
 title: Projects
-interface_title: projects
 ---
-{% capture heading %}{% include localized.html key="projects" %}{% endcapture %}
+{% capture heading %}Projects{% endcapture %}
 {% if site.projects.size > 0 %}
   {% bookshop page-heading title=heading %}
   {% bookshop projects-list show_projects=true %}
 {% else %}
-  {% capture empty_message %}{% include localized.html key="no_projects" %}{% endcapture %}
+  {% capture empty_message %}No projects published yet.{% endcapture %}
   {% bookshop page-heading title=heading description=empty_message %}
 {% endif %}

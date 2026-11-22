@@ -1,7 +1,7 @@
 logo_image:
 menu__settings:
   menu__items:
-    - {key: home, url: /}
-    - {key: about, url: /about/}
-    - {key: projects, url: /projects/}
-    - {key: blog, url: /blog/}
+    - {title: Home, url: /}
+    - {title: About, url: /about/}
+    - {title: Projects, url: /projects/}
+    - {title: Blog, url: /blog/}

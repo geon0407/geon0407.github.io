@@ -1,17 +1,30 @@
 ---
 title: Home
-interface_title: home
 permalink: /
+hero_image:
+hero_image_alt:
 ---
-{% capture hero_title %}{% include localized.html key="greeting" %}{% endcapture %}
-{% capture hero_description %}<p>{% include localized.html key="bio" %}</p>{% endcapture %}
-{% capture projects_link %}{% include localized.html key="projects" %}{% endcapture %}
-{% capture blog_link %}{% include localized.html key="blog" %}{% endcapture %}
-{% bookshop hero title=hero_title description_html=hero_description image=page.hero_image hero_image_alt=page.hero_image_alt cta_button=projects_link cta_button_link="/projects/" works_button=blog_link works_button_link="/blog/" %}
+{% bookshop hero
+  title="Hi, I’m GeonHyoung Kim."
+  description_html="<p>I study electrical engineering and computer science at GIST. This is where I write about research, development, and everyday life.</p>"
+  image=page.hero_image
+  hero_image_alt=page.hero_image_alt
+  cta_button="Projects"
+  cta_button_link="/projects/"
+  works_button="Blog"
+  works_button_link="/blog/"
+%}
 
-{% if site.projects.size > 0 %}
-  {% bookshop projects-section title=projects_link link_url="/projects/" show_projects=true %}
-{% endif %}
-{% if site.posts.size > 0 %}
-  {% bookshop blog-section title=blog_link link_url="/blog/" show_posts=true %}
-{% endif %}
+{% bookshop projects-section
+  title="Latest Works"
+  link_url="/projects/"
+  show_projects=true
+  empty_message="No projects published yet."
+%}
+
+{% bookshop blog-section
+  title="Recent Posts"
+  link_url="/blog/"
+  show_posts=true
+  empty_message="No posts published yet."
+%}

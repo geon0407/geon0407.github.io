@@ -8,12 +8,14 @@
           <div class="section__info">
             <div class="section__head">
               <h2 class="section__title">{{ include.title }}</h2>
-              <a class="section__link" href="{{ include.link_url }}">{% include localized.html key="see_all" %} <ion-icon name="arrow-forward"></ion-icon></a>
+              <a class="section__link" href="{{ include.link_url }}">See all <ion-icon name="arrow-forward"></ion-icon></a>
             </div>
             <div class="section__description">{{ include.description_html }}</div>
           </div>
 
-          {% if include.show_projects %}
+          {% if include.show_projects and site.projects.size == 0 and include.empty_message %}
+          <p>{{ include.empty_message | escape }}</p>
+          {% elsif include.show_projects %}
           <div class="row">
             {% for project in site.projects %}
               {% if forloop.index <= 6 %}

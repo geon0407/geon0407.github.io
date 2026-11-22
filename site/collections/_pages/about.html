@@ -1,11 +1,10 @@
 ---
 title: About
-interface_title: about
 ---
-{% capture heading %}{% include localized.html key="about" %}{% endcapture %}
+{% capture heading %}About{% endcapture %}
 {% bookshop page-heading title=heading %}
 {% capture introduction %}
-  <p>{% include localized.html key="bio" %}</p>
-  <p>{% include localized.html key="interest" %}</p>
+  <p>I study electrical engineering and computer science at GIST. This is where I write about research, development, and everyday life.</p>
+  <p>I’m interested in efficient language models and quantization.</p>
 {% endcapture %}
 {% bookshop content content_html=introduction %}

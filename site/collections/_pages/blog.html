@@ -1,12 +1,11 @@
 ---
 title: Blog
-interface_title: blog
 ---
-{% capture heading %}{% include localized.html key="blog" %}{% endcapture %}
+{% capture heading %}Blog{% endcapture %}
 {% if site.posts.size > 0 %}
   {% bookshop page-heading title=heading %}
   {% bookshop posts-list show_posts=true %}
 {% else %}
-  {% capture empty_message %}{% include localized.html key="no_posts" %}{% endcapture %}
+  {% capture empty_message %}No posts published yet.{% endcapture %}
   {% bookshop page-heading title=heading description=empty_message %}
 {% endif %}

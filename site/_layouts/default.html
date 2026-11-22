@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: 'ko' }}" data-interface-language="ko"{% unless page.interface_title %} data-content-language="{{ page.lang | default: 'ko' | escape }}"{% endunless %}>
+<html lang="{{ page.lang | default: 'en' | escape }}">
 
 {% include head.html %}
 
@@ -25,6 +25,5 @@
 
     <script src="/js/scripts.js"></script>
     <script src="/js/common.js"></script>
-    <script src="{{ '/js/preferences-controls.js' | relative_url }}"></script>
 </body>
 </html>
