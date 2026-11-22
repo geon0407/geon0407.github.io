@@ -21,7 +21,7 @@
               <ion-icon class="nav-icon-close" name="close"></ion-icon>
             </div>
 
-            <div class="nav__title">Menu</div>
+            <div class="nav__title">{% include localized.html key="menu" %}</div>
 
               <ul class="nav__list list-reset">
 
@@ -38,7 +38,7 @@
 
                 {% else %}
                 <li class="nav__item">
-                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url %} active-link{% endif %}">{{ item.title }}</a>
+                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url %} active-link{% endif %}">{% include localized.html key=item.key %}</a>
                 </li>
                 {% endif %}
               {% endfor %}
@@ -46,8 +46,17 @@
             </ul>
           </div>
 
-          {% bookshop_include social-link %}
         </nav>
+
+        <div class="site-tools">
+          {% bookshop_include social-link %}
+          <select id="site-theme" aria-label="화면 테마 / Color theme">
+            <option value="system">자동 / Auto</option><option value="light">라이트 / Light</option><option value="dark">다크 / Dark</option>
+          </select>
+          <select id="site-language" aria-label="언어 / Language">
+            <option value="ko">한국어</option><option value="en">English</option>
+          </select>
+        </div>
 
         <div class="nav-button">
           <ion-icon class="nav__icon-menu" name="menu-outline"></ion-icon>
