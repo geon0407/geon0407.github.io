@@ -1,0 +1,52 @@
+name: Deploy Vonge
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_PATH: ${{ github.workspace }}/vendor/bundle
+      BUNDLE_DISABLE_SHARED_GEMS: 'true'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.7'
+          bundler: '2.3.27'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18.20.4'
+      - run: npm ci
+      - run: bundle install --jobs 1
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/site/Gemfile
+      - run: npm run build
+      - run: test -s _site/index.html
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
