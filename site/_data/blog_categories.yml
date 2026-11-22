@@ -2,7 +2,7 @@
   title_ko: 일상
   topics:
     - { slug: diary, title: Diary, title_ko: 일기 }
-    - { slug: thoughts, title: Thoughts, title_ko: 생각 }
+    - { slug: thoughts, title: Thoughts, title_ko: 잡담 }
 - title: Academic
   title_ko: 학술
   topics:

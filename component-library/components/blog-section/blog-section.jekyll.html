@@ -7,14 +7,14 @@
 
           <div class="section__info">
             <div class="section__head">
-              <h2 class="section__title">{{ include.title }}</h2>
-              <a class="section__link" href="{{ include.link_url | relative_url }}">See all <ion-icon name="arrow-forward"></ion-icon></a>
+              <h2 class="section__title"{% if include.title_ko %} data-ko="{{ include.title_ko | escape }}"{% endif %}>{{ include.title }}</h2>
+              <a class="section__link" href="{{ include.link_url | relative_url }}"><span data-ko="모두 보기">See all</span> <ion-icon name="arrow-forward"></ion-icon></a>
             </div>
             <div class="section__description">{{ include.description_html }} </div>
           </div>
 
           {% if include.show_posts and site.posts.size == 0 and include.empty_message %}
-          <p>{{ include.empty_message | escape }}</p>
+          <p{% if include.empty_message_ko %} data-ko="{{ include.empty_message_ko | escape }}"{% endif %}>{{ include.empty_message | escape }}</p>
           {% elsif include.show_posts %}
           <div class="row">
             {% if site.posts.size > 0 %}

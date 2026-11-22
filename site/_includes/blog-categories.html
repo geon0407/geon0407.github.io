@@ -1,5 +1,5 @@
 <section class="container blog-categories" aria-labelledby="blog-categories-title">
-  <h2 id="blog-categories-title">Categories</h2>
+  <h2 id="blog-categories-title" data-ko="카테고리">Categories</h2>
   {% for group in site.data.blog_categories %}
     {% assign group_count = 0 %}
     {% for topic in group.topics %}
@@ -7,12 +7,12 @@
       {% assign group_count = group_count | plus: count %}
     {% endfor %}
     <details class="blog-category" open>
-      <summary>{{ group.title | escape }} <span>{{ group_count }} {% if group_count == 1 %}post{% else %}posts{% endif %}</span></summary>
+      <summary><span data-ko="{{ group.title_ko | escape }}">{{ group.title | escape }}</span> <span class="blog-category__count" data-ko="글 {{ group_count }}개">{{ group_count }} {% if group_count == 1 %}post{% else %}posts{% endif %}</span></summary>
       <ul class="list-reset">
         {% for topic in group.topics %}
           {% assign topic_url = '/blog/category/' | append: topic.slug | append: '/' %}
           {% assign count = site.categories[topic.slug] | size %}
-          <li><a href="{{ topic_url | relative_url }}">{{ topic.title | escape }}</a> <span>{{ count }} {% if count == 1 %}post{% else %}posts{% endif %}</span></li>
+          <li><a href="{{ topic_url | relative_url }}" data-ko="{{ topic.title_ko | escape }}">{{ topic.title | escape }}</a> <span class="blog-category__count" data-ko="글 {{ count }}개">{{ count }} {% if count == 1 %}post{% else %}posts{% endif %}</span></li>
         {% endfor %}
       </ul>
     </details>

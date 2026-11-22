@@ -6,25 +6,32 @@ hero_image_alt:
 ---
 {% bookshop hero
   title="Hi, I’m GeonHyoung Kim."
-  description_html="<p>I study electrical engineering and computer science at GIST. This is where I write about research, development, and everyday life.</p>"
+  title_ko="안녕하세요, 김건형입니다"
+  description_html="<p data-ko='저는 광주과학기술원 전기전자컴퓨터공학과에서 공부하고 있습니다. 연구와 개발, 일상에 관한 글을 씁니다.'>I study electrical engineering and computer science at GIST. This is where I write about research, development, and everyday life.</p>"
   image=page.hero_image
   hero_image_alt=page.hero_image_alt
   cta_button="Projects"
+  cta_button_ko="프로젝트"
   cta_button_link="/projects/"
   works_button="Blog"
+  works_button_ko="블로그"
   works_button_link="/blog/"
 %}
 
 {% bookshop projects-section
   title="Latest Works"
+  title_ko="최근 프로젝트"
   link_url="/projects/"
   show_projects=true
   empty_message="No projects published yet."
+  empty_message_ko="아직 등록된 프로젝트가 없습니다"
 %}
 
 {% bookshop blog-section
   title="Recent Posts"
+  title_ko="최근 글"
   link_url="/blog/"
   show_posts=true
   empty_message="No posts published yet."
+  empty_message_ko="아직 게시된 글이 없습니다"
 %}

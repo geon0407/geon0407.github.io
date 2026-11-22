@@ -1,12 +1,13 @@
 ---
 title: Blog
+title_ko: 블로그
 ---
-{% bookshop page-heading title=page.title %}
+{% bookshop page-heading title=page.title title_ko="블로그" %}
 {% include blog-categories.html %}
 
 {% if site.posts.size > 0 %}
   <section aria-labelledby="all-posts-title">
-    <div class="container"><h2 id="all-posts-title">All Posts</h2></div>
+    <div class="container"><h2 id="all-posts-title" data-ko="전체 글">All Posts</h2></div>
     {% bookshop posts-list show_posts=true %}
   </section>
 {% endif %}

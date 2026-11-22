@@ -4,16 +4,16 @@
     <div class="pagination__inner">
 
       <div class="pagination__list">
-        {% capture prev_text %}<ion-icon name="arrow-back"></ion-icon> Prev{% endcapture %}
+        {% capture prev_text %}<ion-icon name="arrow-back"></ion-icon> <span data-ko="이전">Prev</span>{% endcapture %}
         {% if jekyll.environment != "development" and env_bookshop_live != true %}<a data-pagebreak-control="prev" href="." class="pagination__prev">{{prev_text}}</a> {% endif %}
         <span data-pagebreak-control="!prev" class="pagination__prev disabled">{{prev_text}}</span>
 
         <div class="pagination__count">
-          Page <span data-pagebreak-label="current">1</span>
-          of <span data-pagebreak-label="total">1</span>
+          <span data-ko="페이지">Page</span> <span data-pagebreak-label="current">1</span>
+          <span data-ko="/">of</span> <span data-pagebreak-label="total">1</span>
         </div>
 
-        {% capture next_text %}Next <ion-icon name="arrow-forward"></ion-icon>{% endcapture %}
+        {% capture next_text %}<span data-ko="다음">Next</span> <ion-icon name="arrow-forward"></ion-icon>{% endcapture %}
         {% if jekyll.environment != "development" and env_bookshop_live != true %}<a data-pagebreak-control="next" href="." class="pagination__next">{{next_text}}</a>{% endif %}
         <span data-pagebreak-control="!next" class="pagination__next disabled">{{next_text}}</span>
       </div>

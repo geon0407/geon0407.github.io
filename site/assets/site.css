@@ -49,7 +49,7 @@
 .blog-category li a:hover {
   text-decoration: underline;
 }
-.blog-category span {
+.blog-category__count {
   float: right;
   color: #525a71;
   font-size: .875rem;
@@ -218,7 +218,7 @@
 .about-timeline__item:last-child .about-timeline__body { padding-bottom: 0; }
 .about-timeline__body h3 { margin: 0; font-size: 1.125rem; line-height: 1.4; }
 .about-timeline__body h3 a { text-decoration: underline; text-underline-offset: .2em; }
-.about-timeline__body p { margin: 4px 0 0; color: #525a71; }
+.about-timeline__body p { margin: 4px 0 0; font-size: .9375rem; color: #525a71; }
 
 @media (max-width: 700px) {
   .about-profile { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -271,4 +271,5 @@
   border-inline-start: 2px solid #1495a7;
 }
 .about-verse blockquote { margin: 0; padding: 0; border: 0; font: inherit; }
-.about-verse figcaption { margin-top: 6px; color: #525a71; font-size: .875rem; }
+.about-verse blockquote p { font-size: 1rem; }
+.about-verse figcaption { margin-top: 6px; color: #525a71; font-size: .8125rem; }
