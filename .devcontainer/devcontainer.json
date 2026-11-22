@@ -1,0 +1,8 @@
+{
+  "name": "Blog writer",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "forwardPorts": [8787],
+  "portsAttributes": {"8787": {"label": "Blog writer", "onAutoForward": "notify"}},
+  "postCreateCommand": "python -m pip install -r writer/requirements.txt",
+  "postStartCommand": "nohup python writer/server.py >/tmp/geon-blog-writer.log 2>&1 </dev/null &"
+}
