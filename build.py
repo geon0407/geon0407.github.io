@@ -20,6 +20,7 @@ def build(drafts=False):
     out.mkdir()
     shutil.copytree(ROOT/'assets', out/'assets')
     url = lambda path: base + '/' + path.lstrip('/')
+    shutil.copytree(ROOT/'admin', out/'admin')
     def md(text, toc=False):
         engine = markdown.Markdown(extensions=['fenced_code', 'tables', 'toc', 'codehilite'], extension_configs={'codehilite': {'guess_lang': False}})
         text = text.replace('{{base}}',base)
@@ -32,7 +33,7 @@ def build(drafts=False):
         for file in sorted((ROOT/'content'/category).glob('*.md')):
             if not re.fullmatch(r'[a-z0-9-]+', file.stem): raise ValueError(f'Use ASCII slugs: {file.name}')
             text=file.read_text()
-            parts=text.split('---',2)
+            parts=re.split(r'(?m)^---[ \t]*\n', text, maxsplit=2)
             if len(parts)!=3 or parts[0].strip(): raise ValueError(f'Missing frontmatter: {file}')
             meta=yaml.safe_load(parts[1])
             if not isinstance(meta.get('title'),str): raise ValueError(f'Missing title: {file}')
@@ -61,7 +62,11 @@ def build(drafts=False):
         target.parent.mkdir(parents=True,exist_ok=True);target.write_text(html)
     projects=sorted([x for x in entries if x['category']=='projects'],key=lambda x:x.get('order',100))
     posts=sorted([x for x in entries if x['category']!='projects'],key=lambda x:str(x['date']),reverse=True)
-    intro=f'<h1 class="name">{e(cfg["name"])}<span>{e(cfg["english_name"])}</span></h1>'+md((ROOT/'content/about.md').read_text())
+    about=(ROOT/'content/about.md').read_text()
+    if about.startswith('---\n'):
+        parts=re.split(r'(?m)^---[ \t]*\n', about, maxsplit=2)
+        if len(parts)==3: about=parts[2]
+    intro=f'<h1 class="name">{e(cfg["name"])}<span>{e(cfg["english_name"])}</span></h1>'+md(about)
     page('', '소개', intro+'<h2 class="section">프로젝트</h2>'+rows(projects[:2])+'<h2 class="section">최근 기록</h2>'+rows(posts[:4]),'about')
     for cat,label in CATEGORIES.items():
         items=projects if cat=='projects' else [x for x in posts if x['category']==cat]
