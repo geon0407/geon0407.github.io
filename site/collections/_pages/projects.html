@@ -1,15 +1,12 @@
 ---
 title: Projects
+interface_title: projects
 ---
-<main class="container personal-page">
-  <h1>{% include localized.html key="projects" %}</h1>
-  {% if site.projects.size > 0 %}
-    <div class="row">
-      {% for project in site.projects %}
-        {% bookshop project-card project=project %}
-      {% endfor %}
-    </div>
-  {% else %}
-    <p>{% include localized.html key="no_projects" %}</p>
-  {% endif %}
-</main>
+{% capture heading %}{% include localized.html key="projects" %}{% endcapture %}
+{% if site.projects.size > 0 %}
+  {% bookshop page-heading title=heading %}
+  {% bookshop projects-list show_projects=true %}
+{% else %}
+  {% capture empty_message %}{% include localized.html key="no_projects" %}{% endcapture %}
+  {% bookshop page-heading title=heading description=empty_message %}
+{% endif %}

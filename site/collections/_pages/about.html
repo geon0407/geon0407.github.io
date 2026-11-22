@@ -1,8 +1,11 @@
 ---
 title: About
+interface_title: about
 ---
-<main class="container personal-page">
-  <h1>{% include localized.html key="about" %}</h1>
+{% capture heading %}{% include localized.html key="about" %}{% endcapture %}
+{% bookshop page-heading title=heading %}
+{% capture introduction %}
   <p>{% include localized.html key="bio" %}</p>
   <p>{% include localized.html key="interest" %}</p>
-</main>
+{% endcapture %}
+{% bookshop content content_html=introduction %}

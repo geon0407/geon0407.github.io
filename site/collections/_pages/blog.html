@@ -1,15 +1,12 @@
 ---
 title: Blog
+interface_title: blog
 ---
-<main class="container personal-page">
-  <h1>{% include localized.html key="blog" %}</h1>
-  {% if site.posts.size > 0 %}
-    <div class="row">
-      {% for post in site.posts %}
-        {% bookshop blog-card post=post %}
-      {% endfor %}
-    </div>
-  {% else %}
-    <p>{% include localized.html key="no_posts" %}</p>
-  {% endif %}
-</main>
+{% capture heading %}{% include localized.html key="blog" %}{% endcapture %}
+{% if site.posts.size > 0 %}
+  {% bookshop page-heading title=heading %}
+  {% bookshop posts-list show_posts=true %}
+{% else %}
+  {% capture empty_message %}{% include localized.html key="no_posts" %}{% endcapture %}
+  {% bookshop page-heading title=heading description=empty_message %}
+{% endif %}

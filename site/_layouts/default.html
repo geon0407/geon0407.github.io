@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: 'ko' }}" data-interface-language="ko">
+<html lang="{{ page.lang | default: 'ko' }}" data-interface-language="ko"{% unless page.interface_title %} data-content-language="{{ page.lang | default: 'ko' | escape }}"{% endunless %}>
 
 {% include head.html %}
 

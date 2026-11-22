@@ -1,13 +1,17 @@
 ---
 title: Home
+interface_title: home
 permalink: /
 ---
-<main class="container personal-page">
-  <p>GIST · EECS</p>
-  <h1>{% include localized.html key="greeting" %}</h1>
-  <p>{% include localized.html key="bio" %}</p>
-  <div class="personal-home-links">
-    <a href="{{ '/projects/' | relative_url }}">{% include localized.html key="projects" %}</a>
-    <a href="{{ '/blog/' | relative_url }}">{% include localized.html key="blog" %}</a>
-  </div>
-</main>
+{% capture hero_title %}{% include localized.html key="greeting" %}{% endcapture %}
+{% capture hero_description %}<p>{% include localized.html key="bio" %}</p>{% endcapture %}
+{% capture projects_link %}{% include localized.html key="projects" %}{% endcapture %}
+{% capture blog_link %}{% include localized.html key="blog" %}{% endcapture %}
+{% bookshop hero title=hero_title description_html=hero_description image=page.hero_image hero_image_alt=page.hero_image_alt cta_button=projects_link cta_button_link="/projects/" works_button=blog_link works_button_link="/blog/" %}
+
+{% if site.projects.size > 0 %}
+  {% bookshop projects-section title=projects_link link_url="/projects/" show_projects=true %}
+{% endif %}
+{% if site.posts.size > 0 %}
+  {% bookshop blog-section title=blog_link link_url="/blog/" show_posts=true %}
+{% endif %}

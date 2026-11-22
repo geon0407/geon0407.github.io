@@ -50,12 +50,14 @@
 
         <div class="site-tools">
           {% bookshop_include social-link %}
-          <select id="site-theme" aria-label="화면 테마 / Color theme">
-            <option value="system">자동 / Auto</option><option value="light">라이트 / Light</option><option value="dark">다크 / Dark</option>
-          </select>
-          <select id="site-language" aria-label="언어 / Language">
-            <option value="ko">한국어</option><option value="en">English</option>
-          </select>
+          <div class="site-preferences" hidden>
+            <button type="button" id="site-theme">
+              <ion-icon name="desktop-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button type="button" id="site-language">
+              <span aria-hidden="true">EN</span>
+            </button>
+          </div>
         </div>
 
         <div class="nav-button">

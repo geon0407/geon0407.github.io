@@ -8,3 +8,9 @@ bio: {ko: GIST에서 전기전자컴퓨터공학을 공부하고 있습니다. �
 interest: {ko: 효율적인 언어 모델과 양자화에 관심이 있습니다., en: "I’m interested in efficient language models and quantization."}
 no_projects: {ko: 아직 공개한 프로젝트가 없습니다., en: No projects published yet.}
 no_posts: {ko: 아직 공개한 글이 없습니다., en: No posts published yet.}
+share_post: {ko: 글 공유, en: Share this post}
+previous_post: {ko: 이전 글, en: Previous post}
+next_post: {ko: 다음 글, en: Next post}
+related_posts: {ko: 관련 글, en: Related posts}
+see_all: {ko: 모두 보기, en: See all}
+next_project: {ko: 다음 프로젝트, en: Next project}
