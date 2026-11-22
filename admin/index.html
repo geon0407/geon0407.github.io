@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>블로그 관리</title>
+</head>
+<body>
+<main id="setup"><h1>블로그 관리</h1><p id="status">설정을 읽는 중입니다.</p><a href="../">블로그로 돌아가기</a></main>
+<script>
+(async () => {
+  const status = document.getElementById('status');
+  try {
+    const response = await fetch('config.yml');
+    if (!response.ok) throw new Error();
+    const config = await response.text();
+    if (config.includes('REPLACE_WITH_TURBO_SITE_ID')) {
+      status.textContent = 'GitHub 연결이 아직 설정되지 않았습니다. admin/config.yml에 Decap Turbo Site ID를 입력하세요.';
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/decap-cms@3.17.0/dist/decap-cms.js';
+    script.onload = () => document.getElementById('setup').remove();
+    script.onerror = () => { status.textContent = '관리 화면을 불러오지 못했습니다. 연결을 확인하고 새로고침하세요.'; };
+    document.body.append(script);
+  } catch {
+    status.textContent = '관리 설정을 불러오지 못했습니다.';
+  }
+})();
+</script>
+</body>
+</html>
