@@ -1,0 +1,8 @@
+- title: Personal
+  topics:
+    - { slug: diary, title: Diary }
+    - { slug: thoughts, title: Thoughts }
+- title: Academic
+  topics:
+    - { slug: paper-reviews, title: Paper Reviews }
+    - { slug: algorithms, title: Algorithms }

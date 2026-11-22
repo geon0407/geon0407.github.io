@@ -1,11 +1,12 @@
 ---
 title: Blog
 ---
-{% capture heading %}Blog{% endcapture %}
+{% bookshop page-heading title=page.title %}
+{% include blog-categories.html %}
+
 {% if site.posts.size > 0 %}
-  {% bookshop page-heading title=heading %}
-  {% bookshop posts-list show_posts=true %}
-{% else %}
-  {% capture empty_message %}No posts published yet.{% endcapture %}
-  {% bookshop page-heading title=heading description=empty_message %}
+  <section aria-labelledby="all-posts-title">
+    <div class="container"><h2 id="all-posts-title">All Posts</h2></div>
+    {% bookshop posts-list show_posts=true %}
+  </section>
 {% endif %}
