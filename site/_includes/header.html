@@ -21,14 +21,14 @@
               <ion-icon class="nav-icon-close" name="close"></ion-icon>
             </div>
 
-            <div class="nav__title">Menu</div>
+            <div class="nav__title" data-ko="메뉴">Menu</div>
 
               <ul class="nav__list list-reset">
 
               {% for item in site.data.navigation.menu__settings.menu__items %}
                 {% if item.url == '/blog/' %}
                 <li class="nav__item blog-nav">
-                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url or page.url contains '/blog/' %} active-link{% endif %}">{{ item.title | escape }}</a>
+                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url or page.url contains '/blog/' %} active-link{% endif %}"><span data-ko="{{ item.title_ko | escape }}">{{ item.title | escape }}</span></a>
                   <button class="blog-nav__toggle" type="button" aria-label="Blog categories" aria-expanded="false" aria-controls="blog-nav-categories" hidden>
                     <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
                   </button>
@@ -37,14 +37,14 @@
                       {% for group in site.data.blog_categories %}
                         <div class="blog-nav__group">
                           <button type="button" class="blog-nav__group-toggle" aria-expanded="false" aria-controls="blog-nav-group-{{ forloop.index }}">
-                            {{ group.title | escape }}
+                            <span data-ko="{{ group.title_ko | escape }}">{{ group.title | escape }}</span>
                             <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
                           </button>
                           <div class="blog-nav__topics" id="blog-nav-group-{{ forloop.index }}" inert>
                             <ul class="list-reset">
                             {% for topic in group.topics %}
                               {% assign topic_url = '/blog/category/' | append: topic.slug | append: '/' %}
-                              <li><a href="{{ topic_url | relative_url }}"{% if page.url == topic_url %} aria-current="page"{% endif %}>{{ topic.title | escape }}</a></li>
+                              <li><a href="{{ topic_url | relative_url }}"{% if page.url == topic_url %} aria-current="page"{% endif %}><span data-ko="{{ topic.title_ko | escape }}">{{ topic.title | escape }}</span></a></li>
                             {% endfor %}
                             </ul>
                           </div>
@@ -65,7 +65,7 @@
 
                 {% else %}
                 <li class="nav__item">
-                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url %} active-link{% endif %}">{{ item.title | escape }}</a>
+                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url %} active-link{% endif %}"><span data-ko="{{ item.title_ko | escape }}">{{ item.title | escape }}</span></a>
                 </li>
                 {% endif %}
               {% endfor %}
@@ -77,6 +77,10 @@
 
         <div class="site-tools">
           {% bookshop_include social-link %}
+          <div class="language-switch" data-language-switch role="group" aria-label="Language" hidden>
+            <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="true">EN</button>
+            <button type="button" data-language="ko" lang="ko" aria-pressed="false">한국어</button>
+          </div>
         </div>
 
         <div class="nav-button">

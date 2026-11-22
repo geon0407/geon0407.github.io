@@ -179,8 +179,9 @@
   text-align: center;
 }
 .about-profile h1 { font-size: clamp(2.15rem, 5vw, 3.625rem); }
-.about-profile__intro p:last-child { margin-bottom: 0; }
-.about-profile__affiliation { font-weight: 600; }
+.about-profile__bio { text-align: left; }
+.about-profile__bio p { text-wrap: pretty; }
+.about-profile__bio p:last-child { margin-bottom: 0; }
 .about-profile__photo {
   grid-row: 1;
   width: 100%;
@@ -238,3 +239,36 @@
   .about-timeline__body { padding: 3px 0 0; border: 0; }
   .about-timeline__body::before { content: none; }
 }
+
+.language-switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  margin-inline-start: 8px;
+  padding: 2px;
+  border: 1px solid #cbd4e2;
+  border-radius: 9px;
+}
+.language-switch[hidden] { display: none; }
+.language-switch button {
+  min-height: 32px;
+  padding: 4px 7px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.language-switch button[aria-pressed="true"] { background: #dbeaf1; color: #123c50; }
+.language-switch button:focus-visible { outline: 2px solid #14788d; outline-offset: 1px; }
+
+.about-verse {
+  margin: 24px 0 0;
+  padding-inline-start: 16px;
+  border-inline-start: 2px solid #1495a7;
+}
+.about-verse blockquote { margin: 0; padding: 0; border: 0; font: inherit; }
+.about-verse figcaption { margin-top: 6px; color: #525a71; font-size: .875rem; }
