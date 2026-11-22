@@ -2,6 +2,6 @@ logo_image:
 menu__settings:
   menu__items:
     - {title: Home, url: /}
-    - {title: About, url: /about/}
+    - {title: About Me, url: /about/}
     - {title: Projects, url: /projects/}
     - {title: Blog, url: /blog/}

@@ -150,3 +150,91 @@
 @media (prefers-reduced-motion: reduce) {
   .blog-nav__panel, .blog-nav__topics, .blog-nav__toggle ion-icon { transition: none; }
 }
+
+@media (min-width: 1025px) {
+  .main-nav .nav__list > .nav__item { position: relative; }
+  .main-nav .nav__list > .nav__item + .nav__item::before {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + clamp(.45rem, 1.3vw, 24px));
+    width: 1px;
+    height: 1em;
+    background: #cbd4e2;
+    transform: translateY(-50%);
+    content: "";
+    pointer-events: none;
+  }
+}
+
+.about-profile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.5fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding-block: clamp(48px, 7vw, 106px);
+}
+.about-profile__intro {
+  grid-column: 2;
+  grid-row: 1;
+  text-align: center;
+}
+.about-profile h1 { font-size: clamp(2.15rem, 5vw, 3.625rem); }
+.about-profile__intro p:last-child { margin-bottom: 0; }
+.about-profile__affiliation { font-weight: 600; }
+.about-profile__photo {
+  grid-row: 1;
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+}
+.about-profile__photo--portrait { grid-column: 1; aspect-ratio: 3 / 4; }
+.about-profile__photo--feature { grid-column: 3; aspect-ratio: 4 / 3; }
+
+.about-timeline { max-width: 780px; margin: 0 auto 80px; }
+.about-timeline__list { margin: 0; padding: 0; list-style: none; }
+.about-timeline__item { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); }
+.about-timeline__period {
+  padding-right: 16px;
+  color: #525a71;
+  font-size: .9375rem;
+  font-variant-numeric: tabular-nums;
+}
+.about-timeline__body {
+  position: relative;
+  padding: 0 0 26px 20px;
+  border-left: 1px solid #cbd4e2;
+}
+.about-timeline__body::before {
+  position: absolute;
+  top: .45em;
+  left: -4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1495a7;
+  content: "";
+}
+.about-timeline__item:last-child .about-timeline__body { padding-bottom: 0; }
+.about-timeline__body h3 { margin: 0; font-size: 1.125rem; line-height: 1.4; }
+.about-timeline__body h3 a { text-decoration: underline; text-underline-offset: .2em; }
+.about-timeline__body p { margin: 4px 0 0; color: #525a71; }
+
+@media (max-width: 700px) {
+  .about-profile { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .about-profile__intro { grid-column: 1 / -1; }
+  .about-profile__photo { grid-row: 2; }
+  .about-profile__photo--feature { grid-column: 2; }
+  .about-timeline__item { display: block; position: relative; padding: 0 0 22px 18px; border-left: 1px solid #cbd4e2; }
+  .about-timeline__item::before {
+    position: absolute;
+    top: .55em;
+    left: -4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #1495a7;
+    content: "";
+  }
+  .about-timeline__body { padding: 3px 0 0; border: 0; }
+  .about-timeline__body::before { content: none; }
+}

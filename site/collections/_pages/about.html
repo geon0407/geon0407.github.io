@@ -1,10 +1,84 @@
 ---
-title: About
+title: About Me
+portrait:
+  path:
+  alt:
+feature_photo:
+  path:
+  alt:
+timeline:
+  - period: "2026.03–Present"
+    title: Teaching Assistant in Mathematics, GIST
+    detail: "Recitations for Calculus and Applications (Spring 2026) and Multivariable Calculus (Fall 2026)."
+  - period: "2024.03–2025.09"
+    title: Military Service, Republic of Korea Army
+    detail: 3rd Airborne Special Forces Brigade, Special Warfare Command.
+  - period: "2023.03–Present"
+    title: Electrical Engineering and Computer Science, GIST
+    detail: Declared my major in March 2023.
+  - period: "2022.02"
+    title: Entered Gwangju Institute of Science and Technology
+    detail: Joined the Division of Liberal Arts and Sciences before declaring a major.
+    url: https://www.gist.ac.kr/en/
+  - period: "2021.08"
+    title: Hanwha Science Challenge
+    detail: Received an award with Team nanum for research on an electromagnetic air well designed to provide fresh water in water-scarce areas.
+    url: https://cc.newdaily.co.kr/svc/article_print.html?no=2021090200015
+  - period: "2020.11"
+    title: Korean Society for Aeronautical and Space Sciences Fall Conference
+    detail: "Co-authored “Development of Oil Leakage Response System Using Cansat and Drone,” conference proceedings, pp. 291–292."
+    url: https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE10526060
+  - period: "2020.09"
+    title: CanSat Competition, High School Division
+    detail: Received an award with Team CBSH CanSat for developing an oil spill response system.
+    url: https://www.fnnews.com/news/202009220915255134
+  - period: "2019.03–2022.01"
+    title: Chungbuk Science High School
+    detail: Attended Chungbuk Science High School.
+    url: https://school.cbe.go.kr/cbs-h/
+  - period: "2018.07"
+    title: 35th Korea Olympiad in Informatics
+    detail: Represented North Chungcheong Province and received an award at the national programming competition.
+    url: https://koi.or.kr/archives/
+  - period: "2015.07"
+    title: 32nd Korea Olympiad in Informatics
+    detail: Represented South Chungcheong Province and received an award at the national programming competition.
+    url: https://koi.or.kr/archives/
+  - period: "2003.04.07"
+    title: Born in Daejeon, South Korea
+    url: https://ko.wikipedia.org/wiki/대전광역시
 ---
-{% capture heading %}About{% endcapture %}
-{% bookshop page-heading title=heading %}
-{% capture introduction %}
-  <p>I study electrical engineering and computer science at GIST. This is where I write about research, development, and everyday life.</p>
-  <p>I’m interested in efficient language models and quantization.</p>
-{% endcapture %}
-{% bookshop content content_html=introduction %}
+<main class="container about-page">
+  <div class="about-profile">
+    <div class="about-profile__intro">
+      <h1>GeonHyoung Kim</h1>
+      <p class="about-profile__affiliation">GIST · Electrical Engineering and Computer Science</p>
+      <p>Hello, I’m GeonHyoung Kim. I study artificial intelligence and computer engineering in the School of Electrical Engineering and Computer Science at GIST.</p>
+      <p>Below are some of the moments that have shaped my life so far. Thank you for taking the time to get to know me. I hope you’re happy.</p>
+    </div>
+    {% if page.portrait.path %}
+      <img class="about-profile__photo about-profile__photo--portrait" src="{{ page.portrait.path | relative_url }}" alt="{{ page.portrait.alt | escape }}">
+    {% endif %}
+    {% if page.feature_photo.path %}
+      <img class="about-profile__photo about-profile__photo--feature" src="{{ page.feature_photo.path | relative_url }}" alt="{{ page.feature_photo.alt | escape }}">
+    {% endif %}
+  </div>
+
+  <section class="about-timeline" aria-labelledby="timeline-title">
+    <h2 id="timeline-title">Timeline</h2>
+    <ol class="about-timeline__list">
+      {% for entry in page.timeline %}
+        <li class="about-timeline__item">
+          <span class="about-timeline__period">{{ entry.period | escape }}</span>
+          <div class="about-timeline__body">
+            <h3>
+              {% if entry.url %}<a href="{{ entry.url | escape }}">{{ entry.title | escape }}</a>
+              {% else %}{{ entry.title | escape }}{% endif %}
+            </h3>
+            {% if entry.detail %}<p>{{ entry.detail | escape }}</p>{% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  </section>
+</main>
