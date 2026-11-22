@@ -64,3 +64,89 @@
   margin-bottom: 24px;
   text-decoration: underline;
 }
+
+.blog-nav { position: relative; }
+.blog-nav__toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.blog-nav__toggle[hidden] { display: none; }
+.blog-nav__toggle ion-icon { transition: transform .2s ease; }
+.blog-nav__toggle[aria-expanded="true"] ion-icon { transform: rotate(180deg); }
+.blog-nav__panel {
+  position: absolute;
+  z-index: 100;
+  top: 100%;
+  left: -16px;
+  padding-top: 10px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+.blog-nav__panel:not([inert]) {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+.blog-nav__groups {
+  display: grid;
+  width: 214px;
+  padding: 8px;
+  border: 1px solid #d5dce3;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(17, 14, 56, .08);
+}
+.blog-nav__group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.blog-nav__group-toggle:hover,
+.blog-nav__group-toggle[aria-expanded="true"] { background: #f2f6ff; }
+.blog-nav__group-toggle[aria-expanded="true"] ion-icon { transform: rotate(180deg); }
+.blog-nav__topics {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows .2s ease, visibility .2s;
+}
+.blog-nav__topics[inert] { grid-template-rows: 0fr; visibility: hidden; }
+.blog-nav__topics > ul { min-height: 0; overflow: hidden; margin: 0; padding-inline: 18px 10px; }
+.blog-nav__groups a {
+  display: block;
+  padding: 5px 0;
+  white-space: nowrap;
+}
+.blog-nav__groups a:hover,
+.blog-nav__groups a[aria-current="page"] { text-decoration: underline; }
+@media (max-width: 1024px) {
+  .main-nav .blog-nav > .nav__link { display: inline-block; }
+  .blog-nav__toggle { margin-bottom: 24px; }
+  .blog-nav__panel { position: static; padding: 0 0 20px; }
+  .blog-nav__panel[inert] { display: none; }
+  .blog-nav__groups { width: min(100%, 280px); }
+  .blog-nav__groups a { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blog-nav__panel, .blog-nav__topics, .blog-nav__toggle ion-icon { transition: none; }
+}

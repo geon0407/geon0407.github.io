@@ -26,7 +26,34 @@
               <ul class="nav__list list-reset">
 
               {% for item in site.data.navigation.menu__settings.menu__items %}
-                {% if item.submenu %}
+                {% if item.url == '/blog/' %}
+                <li class="nav__item blog-nav">
+                  <a href="{{ item.url | relative_url }}" class="nav__link{% if page.url == item.url or page.url contains '/blog/' %} active-link{% endif %}">{{ item.title | escape }}</a>
+                  <button class="blog-nav__toggle" type="button" aria-label="Blog categories" aria-expanded="false" aria-controls="blog-nav-categories" hidden>
+                    <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                  </button>
+                  <div id="blog-nav-categories" class="blog-nav__panel" inert>
+                    <div class="blog-nav__groups">
+                      {% for group in site.data.blog_categories %}
+                        <div class="blog-nav__group">
+                          <button type="button" class="blog-nav__group-toggle" aria-expanded="false" aria-controls="blog-nav-group-{{ forloop.index }}">
+                            {{ group.title | escape }}
+                            <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                          </button>
+                          <div class="blog-nav__topics" id="blog-nav-group-{{ forloop.index }}" inert>
+                            <ul class="list-reset">
+                            {% for topic in group.topics %}
+                              {% assign topic_url = '/blog/category/' | append: topic.slug | append: '/' %}
+                              <li><a href="{{ topic_url | relative_url }}"{% if page.url == topic_url %} aria-current="page"{% endif %}>{{ topic.title | escape }}</a></li>
+                            {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </li>
+                {% elsif item.submenu %}
                 <li class="nav__item dropdown">
                   <span class="nav__link dropdown-toggle">{{ item.title }} <ion-icon class="arrow-down" name="chevron-down"></ion-icon></span>
                   <div class="dropdown-menu">
