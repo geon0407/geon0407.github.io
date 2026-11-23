@@ -15,11 +15,11 @@ home:
     ko: 최근 글
 profile:
   portrait:
-    path: null
-    alt: null
+    path: ''
+    alt: ''
   feature_photo:
-    path: null
-    alt: null
+    path: ''
+    alt: ''
   timeline:
   - period: '2026.08'
     title: GIST AX Challenge
@@ -31,11 +31,11 @@ profile:
     group: research
   - period: 2026.03–Present
     group: background
-    title: Teaching Assistant in Mathematics, GIST
+    title: Teaching Assistant, Department of Mathematical Sciences, GIST
     detail: Led recitations for Calculus (Spring 2026) and Multivariable Calculus
       (Fall 2026)
     period_ko: 2026.03–현재
-    title_ko: 광주과학기술원 수학과 수업 조교
+    title_ko: 광주과학기술원 수리과학과 수업 조교
     detail_ko: 2026학년도 봄학기 미적분학, 2026학년도 가을학기 다변수해석학 Recitation 진행
     url: ''
   - period: 2024.03–2025.09
