@@ -220,7 +220,7 @@ function renderConfig() {
   }
   if (view === 'settings') {
     out = panel('기본 정보', grid(field('사이트 이름', 'site.title') + field('작성자 이름', 'site.author') + field('사이트 설명', 'site.description', 'textarea', true)
-      + field('작성자 사진', 'site.avatar', 'image', true) + field('GitHub 링크', 'site.github') + field('Instagram 링크', 'site.instagram')))
+      + field('작성자 사진', 'site.avatar', 'image', true) + field('LinkedIn 링크', 'site.linkedin') + field('GitHub 링크', 'site.github') + field('Instagram 링크', 'site.instagram')))
       + panel('페이지 제목', grid(pair('프로젝트 페이지', 'pages.projects') + pair('블로그 페이지', 'pages.blog')));
   }
   $('#main').innerHTML = out + saveBar();

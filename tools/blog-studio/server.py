@@ -206,7 +206,7 @@ def validate_config(data):
         raise Problem('섹션 순서를 확인하세요')
     for v in [data['home']['image'], data['profile']['portrait']['path'],
               data['profile']['feature_photo']['path'], data['site']['avatar'],
-              data['site']['github'], data['site']['instagram']]:
+              data['site']['linkedin'], data['site']['github'], data['site']['instagram']]:
         url(v or '')
     return data
 
@@ -227,7 +227,7 @@ def save_config(data):
 
     social = yaml.safe_load(safe_path('site/_data/social_links.yml').read_text())
     for item in social.get('social', []):
-        for kind in ('github', 'instagram'):
+        for kind in ('linkedin', 'github', 'instagram'):
             if kind in item.get('icon', '').lower() or kind in item.get('link', '').lower():
                 item['link'] = config['site'][kind]
     write_repo('site/_data/social_links.yml', yaml_bytes(social))

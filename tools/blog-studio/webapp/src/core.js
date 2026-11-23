@@ -332,7 +332,7 @@ export class Studio {
       await this.setSiteText('site/_data/author.yml', dumpYaml(author));
       const social = loadYaml(await this.siteText('site/_data/social_links.yml'));
       for (const item of social.social || []) {
-        for (const kind of ['github', 'instagram']) {
+        for (const kind of ['linkedin', 'github', 'instagram']) {
           if ((item.icon || '').toLowerCase().includes(kind) || (item.link || '').toLowerCase().includes(kind)) item.link = config.site[kind];
         }
       }
@@ -813,6 +813,6 @@ export function validateConfig(data, current) {
   for (const [key, [lo, hi]] of Object.entries(ranges)) if (!(lo <= design[key] && design[key] <= hi)) throw new Problem(`${key} 범위는 ${lo}~${hi}입니다`);
   if (![1, 2, 3].includes(design.columns)) throw new Problem('열 수는 1, 2, 3 중 선택하세요');
   if (!['projects-first', 'posts-first'].includes(data.home.order)) throw new Problem('섹션 순서를 확인하세요');
-  for (const v of [data.home.image, data.profile.portrait.path, data.profile.feature_photo.path, data.site.avatar, data.site.github, data.site.instagram]) url(v || '');
+  for (const v of [data.home.image, data.profile.portrait.path, data.profile.feature_photo.path, data.site.avatar, data.site.linkedin, data.site.github, data.site.instagram]) url(v || '');
   return data;
 }

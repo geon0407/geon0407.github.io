@@ -66,7 +66,9 @@ class StudioTests(unittest.TestCase):
         config=studio.yaml.safe_load(studio.safe_path(studio.CONFIG).read_text());config['site']['title']='New name';config['site']['github']='https://github.com/example'
         studio.save_config({'config':config,'version':studio.version(studio.safe_path(studio.CONFIG))})
         self.assertEqual(studio.yaml.safe_load(studio.safe_path('site/_data/general_settings.yml').read_text())['title'],'New name')
-        self.assertEqual(studio.yaml.safe_load(studio.safe_path('site/_data/social_links.yml').read_text())['social'][0]['link'],'https://github.com/example')
+        social={s['icon']:s['link'] for s in studio.yaml.safe_load(studio.safe_path('site/_data/social_links.yml').read_text())['social']}
+        self.assertEqual(social['github'],'https://github.com/example')
+        self.assertEqual(social['linkedin'],'https://www.linkedin.com/in/geonhyoung-kim-63b521438/')
         config['design']['colors']['dark']['ink']='red; } body {'
         with self.assertRaises(studio.Problem):studio.validate_config(config)
     def test_publish_only_owned_changes_and_push(self):
