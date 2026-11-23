@@ -665,6 +665,36 @@ async function publishNow() {
   await refresh();
   if (view === 'posts' || view === 'projects') renderList();
   notice(result.message);
+  watchDeploy();
+}
+
+// After publishing, follow the GitHub Actions deploy until it finishes. A failure stays
+// visible (also after reopening) until the next successful publish.
+let deployTimer = null, deployPolls = 0;
+async function watchDeploy(first = true) {
+  clearTimeout(deployTimer);
+  if (first) deployPolls = 0;
+  let status;
+  try { status = await studio.deployStatus(); } catch { return; }
+  renderDeploy(status);
+  if (status?.state === 'running' && ++deployPolls < 40) deployTimer = setTimeout(() => watchDeploy(false), 15000);
+}
+function renderDeploy(s) {
+  const box = $('#deploy');
+  if (!s || (s.state === 'success' && Date.now() - Date.parse(s.at) > 24 * 3600 * 1000)) { box.hidden = true; return; }
+  const text = {
+    running: '배포 중입니다. 1~2분 뒤 공개 사이트에 반영됩니다.',
+    success: '배포 완료 — 공개 사이트에 반영됐습니다.',
+    failure: '배포 실패 — 공개 사이트는 발행 전 상태 그대로입니다.',
+    unknown: '배포 결과를 확인하지 못했습니다. Actions 기록에서 직접 확인하세요.',
+  }[s.state];
+  const help = s.state === 'failure'
+    ? `<p>Codespace에서 Claude에게 “웹 Studio 발행(커밋 ${esc(s.sha.slice(0, 7))})의 배포가 실패했다”고 알려주면 원인을 찾아 고칠 수 있습니다. 그 전까지 이 표시는 남아 있습니다.</p>` : '';
+  box.hidden = false;
+  box.className = 'deploy deploy-' + s.state;
+  box.innerHTML = `<div><strong>${esc(text)}</strong>
+    <small>${esc(s.at.replace('T', ' ').slice(0, 16))} 발행 · ${esc(s.detail)}${s.summary ? ' · ' + esc(s.summary.replace(/^content\(studio-web\): /, '')) : ''}</small>${help}</div>
+    <a href="${esc(s.url)}" target="_blank" rel="noopener">Actions 기록 보기</a>`;
 }
 
 $('#preview').onclick = () => job(previewRecord);
@@ -682,6 +712,7 @@ $('#reload').onclick = () => job(async () => {
   await studio.reload();
   await refresh();
   navigate(view);
+  watchDeploy();
   notice('GitHub에서 최신 내용을 불러왔습니다.');
 });
 $$('#nav button').forEach(b => b.onclick = () => navigate(b.dataset.view));
@@ -733,6 +764,7 @@ async function connect(session) {
   $('#app').hidden = false;
   $('#repo-name').textContent = session.data;
   if (!resuming) navigate('posts');
+  watchDeploy();
 }
 
 async function withButton(form, fn) {

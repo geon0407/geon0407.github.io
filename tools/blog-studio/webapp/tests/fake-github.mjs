@@ -7,6 +7,9 @@ export class FakeRepo {
     this.blobs = new Map(); this.trees = new Map(); this.commits = new Map();
     this.ref = null;
     this.calls = 0;
+    this.runs = [];            // fake GitHub Actions runs: {id, head_sha, status, conclusion}
+    this.jobs = {};            // run id -> jobs
+    this.actionsNeedNoToken = false;  // like a token without Actions permission
     if (files) {
       const tree = {};
       for (const [path, text] of Object.entries(files)) tree[path] = this.addBlob(Buffer.from(text).toString('base64'));
@@ -30,8 +33,14 @@ export class FakeRepo {
     }
     this.ref = this.addCommit(this.addTree(tree), [this.ref]);
   }
-  handle(method, path, body) {
+  handle(method, path, body, authorized = true) {
     this.calls++;
+    if (path.startsWith('/actions/')) {
+      if (this.actionsNeedNoToken && authorized) return [403, {message: 'Resource not accessible by personal access token'}];
+      let a;
+      if ((a = path.match(/^\/actions\/runs\?head_sha=(\w+)/))) return [200, {workflow_runs: this.runs.filter(r => r.head_sha === a[1]).map(r => ({...r, html_url: `https://github.com/run/${r.id}`}))}];
+      if ((a = path.match(/^\/actions\/runs\/(\d+)\/jobs$/))) return [200, {jobs: this.jobs[a[1]] || []}];
+    }
     const m = (re) => path.match(re);
     if (method === 'GET' && path === '') return [200, {default_branch: 'main', private: this.isPrivate, permissions: {push: true}}];
     if (method === 'GET' && path === '/git/ref/heads/main') return this.ref ? [200, {object: {sha: this.ref}}] : [409, {message: 'Git Repository is empty.'}];
@@ -74,7 +83,7 @@ export function fakeFetch(repos) {
   return async (url, options) => {
     const match = url.match(/^https:\/\/api\.github\.com\/repos\/([\w.-]+\/[\w.-]+)(.*)$/);
     const repo = repos[match[1]];
-    const [status, data] = repo.handle(options.method, match[2], options.body ? JSON.parse(options.body) : undefined);
+    const [status, data] = repo.handle(options.method, match[2], options.body ? JSON.parse(options.body) : undefined, Boolean(options.headers?.Authorization));
     return {status, ok: status < 300, json: async () => data};
   };
 }

@@ -18,5 +18,8 @@
     "build": "node build-editor.cjs",
     "build:web": "node webapp/build.cjs",
     "test:web": "node --test webapp/tests/"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.3"
   }
 }

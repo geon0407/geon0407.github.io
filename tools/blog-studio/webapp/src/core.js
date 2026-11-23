@@ -96,12 +96,13 @@ export class GitHub {
     this.blobs = new Map();
     this.branch = 'main';
   }
-  async api(method, path, body) {
+  async api(method, path, body, {anonymous = false} = {}) {
     const response = await this.fetch('https://api.github.com' + path, {
       method,
       cache: 'no-store',
       headers: {
-        Authorization: `Bearer ${this.token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28',
+        ...(anonymous ? {} : {Authorization: `Bearer ${this.token}`}),
+        Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28',
         ...(body ? {'Content-Type': 'application/json'} : {}),
       },
       body: body ? JSON.stringify(body) : undefined,
@@ -112,6 +113,16 @@ export class GitHub {
     return data;
   }
   path(p = '') { return `/repos/${this.repo}${p}`; }
+  // Actions data. The token only has Contents permission; for a public repo the same
+  // data is readable without a token, so fall back to an anonymous request.
+  async actions(p) {
+    try {
+      return await this.api('GET', this.path('/actions' + p));
+    } catch (e) {
+      if (e.status !== 403 && e.status !== 404) throw e;
+      return this.api('GET', this.path('/actions' + p), undefined, {anonymous: true});
+    }
+  }
   async info() {
     const info = await this.api('GET', this.path());
     this.branch = info.default_branch || 'main';
@@ -676,12 +687,44 @@ export class Studio {
         entries.push({path: item.path, mode: '100644', type: 'blob', sha});
       }
       const baseTree = (await this.site.api('GET', this.site.path(`/git/commits/${this.siteHead}`))).tree.sha;
-      await this.site.commit({base: this.siteHead, baseTree, entries, message: commitMessage(items)});
-      this.pending = {writes: {}, deletes: {}, base: {}};
+      const message = commitMessage(items);
+      const result = await this.site.commit({base: this.siteHead, baseTree, entries, message});
+      // Remembered (in the private repo) so a failed deploy is still shown after closing the tab.
+      this.pending = {writes: {}, deletes: {}, base: {}, last_publish: {sha: result.commit, at: localIso(), summary: message.split('\n')[0]}};
       await this.dataCommit({}, 'studio: published');
       await this.reload();
-      return {ok: true, message: 'GitHub에 발행했습니다. Actions 배포가 끝나면(1~2분) 공개 사이트에 반영됩니다.'};
+      return {ok: true, message: 'GitHub에 발행했습니다. 배포 결과를 확인하는 중입니다.'};
     });
+  }
+
+  // Result of the GitHub Actions deploy for the last publish made from the web Studio.
+  //   state: running | success | failure | unknown
+  async deployStatus() {
+    const last = this.pending.last_publish;
+    if (!last) return null;
+    const base = {sha: last.sha, at: last.at, summary: last.summary, url: `https://github.com/${this.site.repo}/actions`};
+    let runs;
+    try {
+      runs = (await this.site.actions(`/runs?head_sha=${last.sha}&per_page=10`)).workflow_runs || [];
+    } catch (e) {
+      return {...base, state: 'unknown', detail: '배포 상태를 읽지 못했습니다: ' + e.message};
+    }
+    if (!runs.length) {
+      const minutes = (Date.now() - Date.parse(last.at)) / 60000;
+      return {...base, state: minutes < 10 ? 'running' : 'unknown', detail: minutes < 10 ? '배포 대기 중' : '이 발행에 대한 배포 기록을 찾지 못했습니다'};
+    }
+    const run = runs[0];
+    const result = {...base, url: run.html_url || base.url};
+    if (run.status !== 'completed') return {...result, state: 'running', detail: '배포 중'};
+    if (run.conclusion === 'success') return {...result, state: 'success', detail: '배포 완료'};
+    let detail = `배포 ${run.conclusion === 'cancelled' ? '취소' : '실패'}`;
+    try {
+      const jobs = (await this.site.actions(`/runs/${run.id}/jobs`)).jobs || [];
+      const job = jobs.find(j => j.conclusion && j.conclusion !== 'success' && j.conclusion !== 'skipped');
+      const step = job?.steps?.find(s => s.conclusion === 'failure');
+      if (job) detail += ` · 단계: ${job.name}${step ? ' → ' + step.name : ''}`;
+    } catch { /* the run link is enough */ }
+    return {...result, state: 'failure', detail};
   }
 }
 

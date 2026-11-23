@@ -13,3 +13,13 @@
 #login-error{color:#a3261a;white-space:pre-wrap}
 .change-list .grow{flex:1;min-width:0}
 .change-list .link-button{flex:none;font-size:13px}
+.deploy{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px 16px;border-radius:9px;margin-bottom:16px;border:1px solid var(--line);background:#fff;font-size:14px;line-height:1.6}
+.deploy small{display:block;color:var(--muted);overflow-wrap:anywhere}
+.deploy p{margin:6px 0 0}
+.deploy a{flex:none;white-space:nowrap}
+.deploy-running{background:#eef3fb;border-color:#c9d7ee}
+.deploy-success{background:#e9f5ec;border-color:#bfdec7}
+.deploy-failure{background:#fff0ed;border-color:#e4b8af}
+.deploy-failure strong{color:#9e291d}
+.deploy-unknown{background:#fff6df;border-color:#ecd9a6}
+@media(max-width:600px){.deploy{flex-direction:column}}

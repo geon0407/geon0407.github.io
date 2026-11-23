@@ -204,6 +204,30 @@ test('categories come from the site data file', async () => {
   await assert.rejects(studio.saveRecord(draftPost({meta: {...draftPost().meta, categories: ['nope']}})), /카테고리/);
 });
 
+test('deploy status after publishing: waiting, running, failure with the failed step, success', async () => {
+  const {studio, site, make} = await setup();
+  assert.equal(await studio.deployStatus(), null);
+  const post = (await studio.listRecords()).find(r => r.meta.title === 'Post Test');
+  await studio.saveRecord({...post, body: 'deploy me'});
+  await studio.publish();
+  const sha = site.ref;
+  assert.equal((await studio.deployStatus()).state, 'running');  // no run yet: queued
+  site.actionsNeedNoToken = true;  // token lacks Actions permission: anonymous fallback
+  site.runs.push({id: 7, head_sha: sha, status: 'in_progress', conclusion: null});
+  assert.equal((await studio.deployStatus()).state, 'running');
+  site.runs[0] = {id: 7, head_sha: sha, status: 'completed', conclusion: 'failure'};
+  site.jobs[7] = [{name: 'build', conclusion: 'failure', steps: [{name: 'Set up', conclusion: 'success'}, {name: 'Run npm run build', conclusion: 'failure'}]}, {name: 'deploy', conclusion: 'skipped'}];
+  const failed = await studio.deployStatus();
+  assert.equal(failed.state, 'failure');
+  assert.match(failed.detail, /build → Run npm run build/);
+  assert.equal(failed.url, 'https://github.com/run/7');
+  const reopened = make();  // closing and reopening the tab still shows it
+  await reopened.connect();
+  assert.equal((await reopened.deployStatus()).state, 'failure');
+  site.runs[0].conclusion = 'success';
+  assert.equal((await reopened.deployStatus()).state, 'success');
+});
+
 test('encoding helpers round-trip Korean text', () => {
   assert.equal(b64ToText(textToB64('안녕 👋')), '안녕 👋');
 });
