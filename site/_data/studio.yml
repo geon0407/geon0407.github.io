@@ -2,8 +2,8 @@ home:
   greeting:
     en: Hi, I’m GeonHyoung Kim.
     ko: 안녕하세요, 김건형입니다
-  image: ''
-  image_alt: ''
+  image: /uploads/2026/11/3366e77fcaac17dcd6dbf805.jpg
+  image_alt: 안녕하세요. 김건형입니다.
   show_projects: true
   show_posts: true
   order: projects-first
@@ -32,8 +32,7 @@ profile:
   - period: 2026.03–Present
     group: background
     title: Teaching Assistant, Department of Mathematical Sciences, GIST
-    detail: Led recitations for Calculus (Spring 2026) and Multivariable Calculus
-      (Fall 2026)
+    detail: Led recitations for Calculus (Spring 2026) and Multivariable Calculus (Fall 2026)
     period_ko: 2026.03–현재
     title_ko: 광주과학기술원 수리과학과 수업 조교
     detail_ko: 2026학년도 봄학기 미적분학, 2026학년도 가을학기 다변수해석학 Recitation 진행
@@ -64,8 +63,7 @@ profile:
     group: research
   - period: '2020.11'
     title: Korean Society for Aeronautical and Space Sciences Fall Conference
-    detail: Co-authored “Development of Oil Leakage Response System Using Cansat and
-      Drone”
+    detail: Co-authored “Development of Oil Leakage Response System Using Cansat and Drone”
     url: https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE10526060
     title_ko: 한국항공우주학회 추계학술대회
     detail_ko: 「캔위성과 드론을 이용한 기름 유출사고 대응시스템 개발」 공동저술
@@ -81,8 +79,7 @@ profile:
     group: research
   - period: 2015.07 · 2018.07
     title: Korea Olympiad in Informatics
-    detail: National awards representing South Chungcheong (2015) and North Chungcheong
-      (2018)
+    detail: National awards representing South Chungcheong (2015) and North Chungcheong (2018)
     url: https://koi.or.kr/archives/
     title_ko: 한국정보올림피아드
     detail_ko: 충청남도(2015)·충청북도(2018) 대표로 전국대회 입상
@@ -100,16 +97,13 @@ profile:
     en: GeonHyoung Kim
     ko: 김건형
   bio:
-    en: Hello, I’m GeonHyoung Kim. At GIST, I study artificial intelligence and computer
-      engineering in the School of Electrical Engineering and Computer Science.
+    en: Hello, I’m GeonHyoung Kim. At GIST, I study artificial intelligence and computer engineering in the School of Electrical Engineering and Computer Science.
     ko: 안녕하십니까. 김건형입니다. 저는 광주과학기술원 전기전자컴퓨터공학과에서 인공지능과 컴퓨터공학을 공부하고 있습니다.
   closing:
-    en: Below are some of the moments that have shaped my life so far. Thank you for
-      taking the time to get to know me. I hope you’re happy.
+    en: Below are some of the moments that have shaped my life so far. Thank you for taking the time to get to know me. I hope you’re happy.
     ko: 아래는 지금까지의 제 삶을 요약한 내용입니다. 제게 관심 가져주셔서 정말 고맙습니다. 저는 당신이 행복했으면 좋겠습니다.
   verse:
-    en: Beloved, I wish above all things that thou mayest prosper and be in health,
-      even as thy soul prospereth.
+    en: Beloved, I wish above all things that thou mayest prosper and be in health, even as thy soul prospereth.
     ko: 사랑하는 자여 네 영혼이 잘 됨같이 네가 범사에 잘 되고 강건하기를 내가 간구하노라
   verse_source:
     en: 3 John 1:2 · KJV

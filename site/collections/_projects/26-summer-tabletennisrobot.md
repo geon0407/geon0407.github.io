@@ -1,5 +1,5 @@
 ---
-title: '[2026 Summer] GIST AX Challenge Track 1 : AI Table tennis robot'
+title: '[2026 Summer] GIST AX Challenge Track 1 : AI Table Tennis Robot'
 description: 2026학년도 여름학기 GIST AX Challenge Track 1에 출품한 인공지능 탁구 로봇 프로젝트입니다.
 subtitle: '''26 Summer GIST AX Challenge Track 1 : AI Table tennis robot'
 image: /uploads/2026/11/91b4013594866c8c0934d69c.jpg
@@ -33,4 +33,10 @@ studio_number: 1
 
 
 ![KakaoTalk_20261123_213123420.jpg](/uploads/2026/11/428e95ae0abe014850231e3a.jpg)
+
+
+
+구동 영상입니다.
+
+<div class="video-embed video-file"><video src="/uploads/2026/11/d3c0eaa4eff7eb12df5dfbee.mp4" controls preload="metadata" playsinline></video></div>
 
