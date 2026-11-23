@@ -321,6 +321,18 @@ def save_record(data):
     original = dict(old['meta']) if old else {}
     for key in ('title', 'description', 'subtitle', 'image', 'date', 'tags', 'categories', 'lang'):
         original[key] = meta.get(key, [] if key in ('tags', 'categories') else '')
+    if kind == 'project':
+        # Shown on the project card: "2026.07 – 2026.08" or "2026.09 – Ongoing".
+        for key in ('period_start', 'period_end'):
+            value = text(str(meta.get(key) or ''), 7)
+            if value and not re.fullmatch(r'\d{4}-(0[1-9]|1[0-2])', value):
+                raise Problem('기간은 YYYY-MM 형식으로 입력하세요')
+            original[key] = value
+        original['ongoing'] = bool(meta.get('ongoing'))
+        if original['ongoing']:
+            original['period_end'] = ''
+        if original['period_start'] and original['period_end'] and original['period_end'] < original['period_start']:
+            raise Problem('종료 연월이 시작 연월보다 빠릅니다')
     original.update(layout=kind, render_with_liquid=False)
     original.pop('published', None)
 

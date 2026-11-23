@@ -13,10 +13,12 @@ const {GitHub, Studio, Problem, splitDoc, b64ToText, textToB64} = await import('
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
 
+// Fixed test data (a copy of the site's _data plus sample posts), so editing the real blog never breaks tests.
+const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 function siteFiles() {
   const files = {};
   for (const dir of ['site/_data', 'site/collections/_posts', 'site/collections/_projects']) {
-    for (const name of readdirSync(join(ROOT, dir))) files[`${dir}/${name}`] = readFileSync(join(ROOT, dir, name), 'utf8');
+    for (const name of readdirSync(join(FIXTURES, dir))) files[`${dir}/${name}`] = readFileSync(join(FIXTURES, dir, name), 'utf8');
   }
   return files;
 }
@@ -239,6 +241,21 @@ test('video uploads: mp4/webm up to 50MB, published like images', async () => {
   assert.ok((await studio.listUploads()).find(f => f.url === clip.url).used);
   await studio.publish();
   assert.equal(site.files()['site/uploads/' + clip.url.slice(9)].length, 21 * 1024 * 1024);
+});
+
+test('project period fields are validated and saved', async () => {
+  const {studio} = await setup();
+  const project = meta => ({kind: 'project', id: '', version: '', draft: false, slug: 'robot', body: 'x',
+    meta: {title: '탁구 로봇', date: '2026-08-24', tags: [], categories: [], image: '', description: '', subtitle: '부제', lang: 'ko', ...meta}});
+  let saved = await studio.saveRecord(project({period_start: '2026-07', period_end: '2026-08', ongoing: false}));
+  assert.deepEqual([saved.meta.period_start, saved.meta.period_end, saved.meta.ongoing], ['2026-07', '2026-08', false]);
+  saved = await studio.saveRecord({...saved, meta: {...saved.meta, ongoing: true}});
+  assert.deepEqual([saved.meta.period_end, saved.meta.ongoing], ['', true]);
+  for (const bad of [{period_start: '2026-13'}, {period_start: '2026/07'}, {period_start: '2026-08', period_end: '2026-07'}]) {
+    await assert.rejects(studio.saveRecord(project({...bad, title: 'x' + Math.random()})), Problem);
+  }
+  const post = await studio.saveRecord({...draftPost(), draft: false});
+  assert.equal(post.meta.period_start, undefined);
 });
 
 test('encoding helpers round-trip Korean text', () => {

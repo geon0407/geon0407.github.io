@@ -12,10 +12,12 @@ import {FakeRepo, fakeFetch} from './fake-github.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// Fixed test data (a copy of the site's _data plus sample posts), so editing the real blog never breaks tests.
+const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 function siteFiles() {
   const files = {};
   for (const dir of ['site/_data', 'site/collections/_posts', 'site/collections/_projects']) {
-    for (const name of readdirSync(join(ROOT, dir))) files[`${dir}/${name}`] = readFileSync(join(ROOT, dir, name), 'utf8');
+    for (const name of readdirSync(join(FIXTURES, dir))) files[`${dir}/${name}`] = readFileSync(join(FIXTURES, dir, name), 'utf8');
   }
   return files;
 }
@@ -164,4 +166,37 @@ test('clicking the menu while a slow delete runs does not break it', async t => 
   await idle();
   assert.ok(!$('#notice').classList.contains('error'), notice());
   assert.match(notice(), /휴지통으로 옮겼습니다/);
+});
+
+test('project editor: period fields and ongoing checkbox are saved', async t => {
+  const site = new FakeRepo({files: siteFiles()});
+  const data = new FakeRepo({isPrivate: true});
+  const {w, $, idle, notice, close} = openStudio({site, data});
+  t.after(close);
+  await idle();
+  $('#token').value = 'github_pat_test';
+  $('#site-repo').value = 'me/site';
+  $('#data-repo').value = 'me/data';
+  $('#connect-form').dispatchEvent(new w.Event('submit', {cancelable: true}));
+  for (let i = 0; i < 100 && $('#app').hidden; i++) await sleep(30);
+  await idle();
+  w.document.querySelector('[data-view="projects"]').click();
+  await idle();
+  $('[data-open]').click();
+  await idle();
+  $('[data-meta="period_start"]').value = '2026-07';
+  $('[data-meta="period_end"]').value = '2026-08';
+  $('[data-meta="ongoing"]').checked = true;
+  $('[data-meta="ongoing"]').dispatchEvent(new w.Event('change'));
+  assert.ok($('[data-meta="period_end"]').disabled, 'end month disabled while ongoing');
+  $('#save-record').click();
+  await idle();
+  assert.match(notice(), /저장했습니다/);
+  w.document.querySelector('[data-view="projects"]').click();
+  await idle();
+  $('[data-open]').click();
+  await idle();
+  assert.equal($('[data-meta="period_start"]').value, '2026-07');
+  assert.equal($('[data-meta="period_end"]').value, '');
+  assert.ok($('[data-meta="ongoing"]').checked);
 });

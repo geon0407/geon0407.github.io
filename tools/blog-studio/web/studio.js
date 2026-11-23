@@ -265,7 +265,7 @@ function metaField(label, key, type = 'text', wide = false, hint = '') {
   const value = key === 'tags' ? (raw || []).join(', ') : String(raw ?? '').slice(0, key === 'date' ? 10 : undefined);
   const input = type === 'textarea'
     ? `<textarea data-meta="${key}">${esc(raw)}</textarea>`
-    : `<input type="${type}" data-meta="${key}" value="${esc(value)}">`;
+    : `<input type="${type}" data-meta="${key}" value="${esc(value)}"${type === 'month' ? ' placeholder="YYYY-MM"' : ''}>`;
   return `<label class="${wide ? 'wide' : ''}">${label}${input}${hint ? `<span class="hint">${hint}</span>` : ''}</label>`;
 }
 
@@ -290,10 +290,15 @@ function openRecord(item) {
   const address = hasAddress
     ? `<label>글 주소<input value="${esc((current.source_id || current.id).split('/').pop())}" disabled><span class="hint">주소는 처음 발행할 때 정해지며, 날짜를 바꿔도 바뀌지 않습니다.</span></label>`
     : `<label>글 주소<input id="slug" placeholder="비워두면 번호로 자동 생성" value="${esc(current.slug || '')}"></label>`;
-  const info = grid(metaField('제목', 'title', 'text', true) + metaField('날짜', 'date', 'date')
+  const project = current.kind === 'project';
+  const info = grid(metaField('제목', 'title', 'text', true, project ? '프로젝트 카드에 항상 표시됩니다.' : '') + metaField('날짜', 'date', 'date')
     + `<label>언어<select data-meta="lang"><option value="ko" ${current.meta.lang !== 'en' ? 'selected' : ''}>한국어</option><option value="en" ${current.meta.lang === 'en' ? 'selected' : ''}>English</option></select></label>`
     + metaField('요약 (목록에 표시)', 'description', 'textarea', true)
-    + (current.kind === 'project' ? metaField('부제', 'subtitle', 'text', true) : categorySelect())
+    + (project
+      ? metaField('부제', 'subtitle', 'text', true, '프로젝트 카드에 마우스를 올리면 제목 아래에 펼쳐집니다.')
+        + metaField('시작 연월', 'period_start', 'month') + metaField('종료 연월', 'period_end', 'month')
+        + `<label class="inline-check wide"><input type="checkbox" data-meta="ongoing" ${current.meta.ongoing ? 'checked' : ''}> 진행 중 (종료 연월 대신 “진행 중”으로 표시)</label>`
+      : categorySelect())
     + metaField('태그 (쉼표로 구분)', 'tags') + metaField('번호 (비워두면 자동)', 'studio_number', 'number') + address
     + `<label class="wide">대표 이미지<div class="row"><input data-meta="image" value="${esc(current.meta.image)}"><button id="cover">사진 선택</button></div></label>`);
 
@@ -320,6 +325,12 @@ function openRecord(item) {
 
   editor = window.StudioEditor($('#editor'), current.body, () => { editorChanged = true; changed(); }, files => job(() => insertFiles(files)));
   $$('[data-meta],#category,#slug').forEach(el => el.addEventListener('input', changed));
+  const ongoing = $('[data-meta="ongoing"]');
+  if (ongoing) {
+    const syncEnd = () => { $('[data-meta="period_end"]').disabled = ongoing.checked; };
+    ongoing.addEventListener('change', () => { syncEnd(); changed(); });
+    syncEnd();
+  }
   $('#source').addEventListener('input', () => { editorChanged = true; changed(); });
   $$('[data-command]').forEach(btn => { btn.onmousedown = e => e.preventDefault(); btn.onclick = () => tool(btn.dataset.command); });
   $('#code-lang').onchange = () => editor.chain().focus().updateAttributes('codeBlock', {language: $('#code-lang').value}).run();
@@ -347,7 +358,8 @@ function offerRecovery() {
   $('#restore').onclick = () => {
     for (const [key, value] of Object.entries(saved.meta || {})) {
       const el = $(`[data-meta="${key}"]`);
-      if (el) el.value = key === 'tags' ? value.join(', ') : value;
+      if (el && el.type === 'checkbox') el.checked = Boolean(value);
+      else if (el) el.value = key === 'tags' ? value.join(', ') : value;
     }
     if ($('#slug')) $('#slug').value = saved.slug || '';
     if ($('#category') && saved.meta.categories?.[0]) $('#category').value = saved.meta.categories[0];
@@ -367,7 +379,8 @@ function bodyText() { return sourceMode ? $('#source').value : editorChanged ? e
 function collectRecord() {
   const meta = clone(current.meta);
   $$('[data-meta]').forEach(el => {
-    meta[el.dataset.meta] = el.dataset.meta === 'tags' ? el.value.split(',').map(s => s.trim()).filter(Boolean) : el.value;
+    meta[el.dataset.meta] = el.dataset.meta === 'tags' ? el.value.split(',').map(s => s.trim()).filter(Boolean)
+      : el.type === 'checkbox' ? el.checked : el.value;
   });
   if ($('#category')) meta.categories = [$('#category').value];
   return {...current, meta, body: bodyText(), slug: $('#slug')?.value || ''};

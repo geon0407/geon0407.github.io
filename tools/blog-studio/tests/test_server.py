@@ -40,6 +40,17 @@ class StudioTests(unittest.TestCase):
         for value in ['x.html','x.svg','x.js']:
             with self.assertRaises(studio.Problem):studio.upload({'name':value,'data':'aGVsbG8='})
         file=studio.upload({'name':'report.pdf','data':'JVBERi0xLjQ='});self.assertTrue(file['url'].startswith('/uploads/'))
+    def test_project_period(self):
+        project=lambda **meta:{'kind':'project','id':'','version':'','draft':False,'slug':'robot','body':'x',
+            'meta':{'title':'탁구 로봇','date':'2026-08-24','tags':[],'categories':[],'image':'','description':'','subtitle':'부제','lang':'ko',**meta}}
+        saved=studio.save_record(project(period_start='2026-07',period_end='2026-08',ongoing=False))
+        self.assertEqual({k:saved['meta'][k] for k in ('period_start','period_end','ongoing')},{'period_start':'2026-07','period_end':'2026-08','ongoing':False})
+        saved=studio.save_record({**saved,'meta':{**saved['meta'],'ongoing':True}})
+        self.assertEqual((saved['meta']['period_end'],saved['meta']['ongoing']),('',True))  # ongoing drops the end month
+        for bad in [{'period_start':'2026-13'},{'period_start':'2026/07'},{'period_start':'2026-08','period_end':'2026-07'}]:
+            with self.assertRaises(studio.Problem):studio.save_record(project(**bad))
+        post=studio.save_record(self.post(draft=False))
+        self.assertNotIn('period_start',post['meta'])  # posts do not get project fields
     def test_video_uploads(self):
         mp4=studio.upload({'name':'clip.MP4','data':'AAAAGGZ0eXBtcDQy'});self.assertTrue(mp4['url'].endswith('.mp4'))
         big=__import__('base64').b64encode(b'0'*(21*1024*1024)).decode()

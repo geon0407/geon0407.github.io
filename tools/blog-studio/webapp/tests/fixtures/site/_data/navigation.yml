@@ -1,0 +1,7 @@
+logo_image:
+menu__settings:
+  menu__items:
+    - {title: Home, title_ko: 홈, url: /}
+    - {title: About Me, title_ko: 소개, url: /about/}
+    - {title: Projects, title_ko: 프로젝트, url: /projects/}
+    - {title: Blog, title_ko: 블로그, url: /blog/}

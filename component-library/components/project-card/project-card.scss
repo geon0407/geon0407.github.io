@@ -1,14 +1,9 @@
+// Project card, shared by the home "Latest Works" section and the Projects page.
+// At rest: period + title on a colour band over the lower part of the thumbnail.
+// On hover / keyboard focus: the band grows upward and the subtitle slides in.
 .c-project-card { $c: &;
+	--card-tint: color-mix(in srgb, var(--accent, #b92c1e) 82%, #000);
 	margin-bottom: 20px;
-	transition: transform .2s ease;
-
-	&:hover {
-		#{$c}__title, #{$c}__subtitle {
-			opacity: 1;
-			transform: translateZ(0);
-			transition: transform .4s cubic-bezier(.165,.85,.45,1) .2s,opacity .4s cubic-bezier(.165,.85,.45,1) .2s;
-		}
-	}
 
 	@media only screen and (max-width: $tablet) {
 		&:last-child {
@@ -16,118 +11,160 @@
 		}
 	}
 
-	&__image {
-		position: absolute;
-		display: block;
-		width: 100%;
-		height: 100%;
-		user-select: none;
-		background-color: $blue-gray;
-
-		&::before {
-			content: "";
-			position: absolute;
-			top: 0;
-			left: 0;
-			z-index: 1;
-			width: 100%;
-			height: 100%;
-			transition: all .4s ease 0s;
-			opacity: 0;
-			visibility: hidden;
-			background: linear-gradient(360deg, $primary-color 0%, rgba($secondary-color, 0.3) 120.95%);
-		}
-
-		img {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			border-radius: 16px;
-			background-color: $blue-gray;
-			pointer-events: none;
-			transition: all .4s ease 0s;
-			will-change: transform;
-		}
-
-		&:hover {
-			&::before {
-				opacity: 1;
-				visibility: visible;
-			}
-
-			img {
-				transform: scale(1.05);
-			}
-		}
-	}
-
 	&__content {
 		position: relative;
-		display: flex;
+		display: block;
 		width: 100%;
-		height: 100%;
-		min-height: 280px;
 		border-radius: 16px;
-		transform: translate(0);
-		box-shadow: 0px 0px 30px rgba($primary-color, 0.1);
 		overflow: hidden;
+		color: #fff;
+		text-decoration: none;
+		background-color: $blue-gray;
+		box-shadow: 0 0 30px rgba($primary-color, 0.1);
+		transform: translate(0);  // keeps rounded corners clipping the image in Safari
 
-		@media only screen and (max-width: $desktop) {
-			&::after {
+		&::after {
+			content: "";
+			display: block;
+			padding-top: 110%;
+
+			@media only screen and (max-width: $desktop) {
 				padding-top: 100%;
 			}
 		}
 
-		@media only screen and (max-width: $mobile) {
-			.project__info {
-				padding: 0 32px 32px;
-			}
+		&:hover, &:focus-visible {
+			color: #fff;
 		}
 
-		&::after {
-			content: "";
-			display: table;
-			padding-top: 110%;
+		&:focus-visible {
+			outline: 3px solid var(--accent, #b92c1e);
+			outline-offset: 3px;
+		}
+	}
+
+	// No thumbnail: a soft tint so the card is not an empty grey box.
+	&__content--no-image {
+		background: linear-gradient(150deg, color-mix(in srgb, var(--accent, #b92c1e) 35%, #fff), color-mix(in srgb, var(--accent, #b92c1e) 70%, #000));
+	}
+
+	&__image {
+		position: absolute;
+		inset: 0;
+		display: block;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform .5s cubic-bezier(.165, .84, .44, 1);
+			will-change: transform;
 		}
 	}
 
 	&__info {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
 		z-index: 1;
-		width: 100%;
-		margin-top: auto;
-		padding: 0 32px 36px;
-		text-align: center;
-		pointer-events: none;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		min-height: 30%;
+		padding: 48px 24px 22px;
+		text-align: left;
+		// Solid at the bottom, fading into the photo above.
+		background: linear-gradient(to top,
+			color-mix(in srgb, var(--card-tint) 94%, transparent) 0%,
+			color-mix(in srgb, var(--card-tint) 82%, transparent) 55%,
+			transparent 100%);
+		transition: background-color .4s ease;
 	}
 
-	&__info-wrap {
-		overflow: hidden;
+	&__period {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 6px;
+		margin-bottom: 6px;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: .04em;
+		font-variant-numeric: tabular-nums;
+		opacity: .92;
+	}
+
+	&__ongoing {
+		display: inline-block;
+		padding: 2px 9px;
+		border-radius: 999px;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: .02em;
+		color: var(--card-tint);
+		background: #fff;
 	}
 
 	&__title {
-		font-size: 28px;
+		margin: 0;
+		color: #fff;
+		font-size: 22px;
 		line-height: 1.3;
-		margin-bottom: 0;
-		transform: translate3d(0,100%,0);
+		font-weight: 700;
+		overflow-wrap: anywhere;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	// Collapsed until hover/focus; grid-template-rows animates to the text's natural height.
+	&__details {
+		display: grid;
+		grid-template-rows: 0fr;
+		opacity: 0;
+		transition: grid-template-rows .45s cubic-bezier(.165, .84, .44, 1), opacity .35s ease;
 	}
 
 	&__subtitle {
-		font-size: 16px;
-		line-height: 1.4;
-		opacity: 0;
-		transform: translate3d(0,-100%,0);
+		min-height: 0;
+		overflow: hidden;
+		margin: 0;
+		padding-top: 10px;
+		font-size: 15px;
+		line-height: 1.55;
+		color: rgba(#fff, .92);
+		overflow-wrap: anywhere;
+	}
 
-		&:hover {
-			opacity: 0.7;
+	&__content:hover, &__content:focus-visible {
+		#{$c}__image img {
+			transform: scale(1.05);
+		}
+
+		#{$c}__info {
+			background-color: color-mix(in srgb, var(--card-tint) 35%, transparent);
+		}
+
+		#{$c}__title {
+			-webkit-line-clamp: unset;
+		}
+
+		#{$c}__details {
+			grid-template-rows: 1fr;
+			opacity: 1;
 		}
 	}
 
-	&__title, &__subtitle {
-		color: $white;
-		opacity: 0;
-		transition: transform .4s cubic-bezier(.165,.85,.45,1),opacity .4s cubic-bezier(.165,.85,.45,1);
+	@media (prefers-reduced-motion: reduce) {
+		&__image img, &__info, &__details {
+			transition: none;
+		}
 	}
+}
+
+// Dark theme: the light accent would make white text hard to read, so darken the band more.
+:root[data-theme="dark"] .c-project-card {
+	--card-tint: color-mix(in srgb, var(--accent, #ff9587) 45%, #000);
 }

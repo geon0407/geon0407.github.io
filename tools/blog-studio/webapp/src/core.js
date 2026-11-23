@@ -402,6 +402,17 @@ export class Studio {
       for (const key of ['title', 'description', 'subtitle', 'image', 'date', 'tags', 'categories', 'lang']) {
         original[key] = meta[key] ?? (['tags', 'categories'].includes(key) ? [] : '');
       }
+      if (kind === 'project') {
+        // Shown on the project card: "2026.07 – 2026.08" or "2026.09 – Ongoing".
+        for (const key of ['period_start', 'period_end']) {
+          const value = text(String(meta[key] || ''), 7);
+          if (value && !/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) throw new Problem('기간은 YYYY-MM 형식으로 입력하세요');
+          original[key] = value;
+        }
+        original.ongoing = Boolean(meta.ongoing);
+        if (original.ongoing) original.period_end = '';
+        if (original.period_start && original.period_end && original.period_end < original.period_start) throw new Problem('종료 연월이 시작 연월보다 빠릅니다');
+      }
       Object.assign(original, {layout: kind, render_with_liquid: false});
       delete original.published;
 
