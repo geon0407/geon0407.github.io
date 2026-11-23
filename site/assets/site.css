@@ -173,9 +173,20 @@
   gap: 24px;
   padding-block: clamp(48px, 7vw, 106px);
 }
+.about-profile__header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px 56px;
+  margin-bottom: clamp(8px, 2vw, 24px);
+}
+.about-profile__header h1 { margin: 0; }
 .about-profile__intro {
   grid-column: 2;
-  grid-row: 1;
+  grid-row: 2;
   text-align: center;
 }
 .about-profile h1 { font-size: clamp(2.15rem, 5vw, 3.625rem); }
@@ -183,7 +194,7 @@
 .about-profile__bio p { text-wrap: pretty; }
 .about-profile__bio p:last-child { margin-bottom: 0; }
 .about-profile__photo {
-  grid-row: 1;
+  grid-row: 2;
   width: 100%;
   border-radius: 16px;
   object-fit: cover;
@@ -222,8 +233,9 @@
 
 @media (max-width: 700px) {
   .about-profile { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .about-profile__header { flex-direction: column; gap: 20px; }
   .about-profile__intro { grid-column: 1 / -1; }
-  .about-profile__photo { grid-row: 2; }
+  .about-profile__photo { grid-row: 3; }
   .about-profile__photo--feature { grid-column: 2; }
   .about-timeline__item { display: block; position: relative; padding: 0 0 22px 18px; border-left: 1px solid var(--line, #d7dcd9); }
   .about-timeline__item::before {
@@ -348,7 +360,7 @@
 .video-embed.youtube { aspect-ratio: 16 / 9; }
 .video-embed.youtube iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 12px; }
 
-/* Contact: email under the home greeting, and a card at the end of About */
+/* Contact: email under the home greeting, and a card next to the name on About */
 .c-hero__contact { margin-top: 28px; }
 .contact-line { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 15px; }
 .contact-line li { display: flex; align-items: center; gap: 7px; }
@@ -356,20 +368,17 @@
 .contact-line a { color: var(--muted); text-decoration: none; overflow-wrap: anywhere; }
 .contact-line a:hover, .contact-line a:focus-visible { color: var(--accent); }
 
-.about-contact { max-width: 780px; margin: 0 auto 80px; padding: 30px 32px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
-.about-contact h2 { margin: 0 0 20px; }
-.about-contact__email { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
-.about-contact__email > ion-icon { font-size: 22px; color: var(--accent); }
-.about-contact__address { font-size: 1.1em; font-weight: 600; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+.about-contact { width: 100%; max-width: 360px; padding: 18px 22px 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-align: left; }
+.about-contact h2 { margin: 0 0 10px; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.about-contact__email { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 10px; }
+.about-contact__email > ion-icon { font-size: 20px; color: var(--accent); }
+.about-contact__address { font-size: 1.0625rem; font-weight: 600; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
 .about-contact__address:hover { color: var(--accent); }
-.about-contact__actions { display: flex; gap: 8px; margin-left: auto; }
-.about-contact__btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1px solid var(--accent); border-radius: 999px; background: transparent; color: var(--accent); font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; text-decoration: none; cursor: pointer; transition: background-color .2s ease, color .2s ease; }
+.about-contact__actions { display: flex; gap: 8px; width: 100%; }
+.about-contact__btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--accent); border-radius: 999px; background: transparent; color: var(--accent); font: inherit; font-size: 13px; font-weight: 600; line-height: 1.2; text-decoration: none; cursor: pointer; transition: background-color .2s ease, color .2s ease; }
 .about-contact__btn:hover, .about-contact__btn:focus-visible { background: var(--selected); color: var(--accent); }
 .about-contact__btn--primary { background: var(--accent); color: var(--surface); }
 .about-contact__btn--primary:hover, .about-contact__btn--primary:focus-visible { background: var(--accent); color: var(--surface); opacity: .88; }
 .about-contact__btn.is-copied { background: var(--accent); color: var(--surface); }
-.about-contact__place { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; color: var(--muted); font-size: .9375rem; }
-@media (max-width: 600px) {
-  .about-contact { padding: 22px 20px; margin-bottom: 56px; }
-  .about-contact__actions { margin-left: 0; width: 100%; }
-}
+.about-contact__place { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: .875rem; line-height: 1.5; }
+.about-contact__place ion-icon { flex: none; }
