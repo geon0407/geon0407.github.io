@@ -1,17 +1,7 @@
-{% comment %} One-line contact under the home greeting: email · LinkedIn · GitHub {% endcomment %}
+{% comment %} Email line under the home greeting (social links are already in the header). {% endcomment %}
 {% assign contact_email = site.data.studio.profile.contact.email | default: "" | strip %}
-{% assign linkedin = site.data.studio.site.linkedin | default: "" %}
-{% assign github = site.data.studio.site.github | default: "" %}
-{% if contact_email != "" or linkedin != "" or github != "" %}
+{% if contact_email != "" %}
 <ul class="contact-line list-reset">
-  {% if contact_email != "" %}
   <li><ion-icon name="mail-outline" aria-hidden="true"></ion-icon>{% include contact-email.html %}</li>
-  {% endif %}
-  {% if linkedin != "" %}
-  <li><ion-icon name="logo-linkedin" aria-hidden="true"></ion-icon><a href="{{ linkedin | escape }}" target="_blank" rel="noopener">LinkedIn</a></li>
-  {% endif %}
-  {% if github != "" %}
-  <li><ion-icon name="logo-github" aria-hidden="true"></ion-icon><a href="{{ github | escape }}" target="_blank" rel="noopener">GitHub</a></li>
-  {% endif %}
 </ul>
 {% endif %}

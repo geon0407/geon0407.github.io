@@ -348,7 +348,7 @@
 .video-embed.youtube { aspect-ratio: 16 / 9; }
 .video-embed.youtube iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 12px; }
 
-/* Contact: one line under the home greeting, and a card at the end of About */
+/* Contact: email under the home greeting, and a card at the end of About */
 .c-hero__contact { margin-top: 28px; }
 .contact-line { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 15px; }
 .contact-line li { display: flex; align-items: center; gap: 7px; }
@@ -368,10 +368,6 @@
 .about-contact__btn--primary { background: var(--accent); color: var(--surface); }
 .about-contact__btn--primary:hover, .about-contact__btn--primary:focus-visible { background: var(--accent); color: var(--surface); opacity: .88; }
 .about-contact__btn.is-copied { background: var(--accent); color: var(--surface); }
-.about-contact__links { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 20px; }
-.about-contact__links a { display: flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 500; text-decoration: none; }
-.about-contact__links a:hover, .about-contact__links a:focus-visible { color: var(--accent); }
-.about-contact__links ion-icon { font-size: 20px; }
 .about-contact__place { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; color: var(--muted); font-size: .9375rem; }
 @media (max-width: 600px) {
   .about-contact { padding: 22px 20px; margin-bottom: 56px; }

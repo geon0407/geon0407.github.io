@@ -41,7 +41,7 @@ title_ko: 소개
           <span class="about-timeline__period"{% if entry.period_ko %} data-ko="{{ entry.period_ko | escape }}"{% endif %}>{{ entry.period | escape }}</span>
           <div class="about-timeline__body">
             <h3>
-              {% if entry.url %}<a href="{{ entry.url | escape }}" data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</a>
+              {% if entry.url and entry.url != "" %}<a href="{{ entry.url | escape }}" target="_blank" rel="noopener" data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</a>
               {% else %}<span data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</span>{% endif %}
             </h3>
             {% if entry.detail %}<p data-ko="{{ entry.detail_ko | escape }}">{{ entry.detail | escape }}</p>{% endif %}
@@ -66,11 +66,6 @@ title_ko: 소개
       </div>
     </div>
     {% endif %}
-    <ul class="about-contact__links list-reset">
-      {% if site.data.studio.site.linkedin != "" %}<li><a href="{{ site.data.studio.site.linkedin | escape }}" target="_blank" rel="noopener"><ion-icon name="logo-linkedin" aria-hidden="true"></ion-icon>LinkedIn</a></li>{% endif %}
-      {% if site.data.studio.site.github != "" %}<li><a href="{{ site.data.studio.site.github | escape }}" target="_blank" rel="noopener"><ion-icon name="logo-github" aria-hidden="true"></ion-icon>GitHub</a></li>{% endif %}
-      {% if site.data.studio.site.instagram != "" %}<li><a href="{{ site.data.studio.site.instagram | escape }}" target="_blank" rel="noopener"><ion-icon name="logo-instagram" aria-hidden="true"></ion-icon>Instagram</a></li>{% endif %}
-    </ul>
     {% if contact.affiliation.en and contact.affiliation.en != "" %}
     <p class="about-contact__place"><ion-icon name="location-outline" aria-hidden="true"></ion-icon><span{% if contact.affiliation.ko and contact.affiliation.ko != "" %} data-ko="{{ contact.affiliation.ko | escape }}"{% endif %}>{{ contact.affiliation.en | escape }}</span></p>
     {% endif %}
