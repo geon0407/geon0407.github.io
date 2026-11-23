@@ -13,7 +13,7 @@ studio_number: 1
 period_start: 2026-06
 period_end: 2026-08
 ongoing: false
-card_title: AI Table Tennis Robot
+card_title: 'Table Tennis Robot : Gwangju-SYB'
 card_subtitle: '''26 Summer GIST AX Challenge Track 1 Grand Prix'
 ---
 
