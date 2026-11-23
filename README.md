@@ -8,7 +8,7 @@ CloudCannon의 [Vonge](https://github.com/CloudCannon/vonge-jekyll-bookshop-temp
 
 - `site/` — Jekyll 소스 (`_config.yml`, `_data/studio.yml`, `collections/`의 페이지·게시글·프로젝트)
 - `component-library/` — Bookshop 컴포넌트와 SCSS
-- `tools/blog-studio/` — 비공개 편집·발행 도구 ([사용법](tools/blog-studio/README.md))
+- `tools/blog-studio/` — 개인용 편집·발행 도구
 - `.github/workflows/pages-deploy.yml` — `main` 푸시 시 GitHub Pages 배포
 
 ## 로컬 실행
