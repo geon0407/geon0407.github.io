@@ -1,10 +1,10 @@
-# Project ordering, used by the Projects page, the "Next project" link and home "Latest Works":
-#   1. finished projects, latest end month first
-#      (end month falls back to start month, then to the date field);
-#   2. then ongoing projects, latest start month first — the longest-running comes last.
+# Project ordering.
+#   finished projects: latest end month first (end month falls back to start month, then date)
+#   ongoing projects:  latest start month first — the longest-running comes last
 #
-# Home (site.data.home_projects) shows at most HOME_LIMIT cards: every ongoing project,
-# with the remaining slots going to the most recently finished, in the same order.
+# Projects page and "Next project" link (site.projects): finished first, then ongoing.
+# Home "Latest Works" (site.data.home_projects): ongoing first, then finished; at most
+# HOME_LIMIT cards — every ongoing project, remaining slots to the most recently finished.
 module StudioProjectOrder
   HOME_LIMIT = 8
 
@@ -22,7 +22,7 @@ module StudioProjectOrder
       projects.docs.replace(finished + ongoing)
 
       home_ongoing = ongoing.first(HOME_LIMIT)
-      site.data["home_projects"] = finished.first(HOME_LIMIT - home_ongoing.size) + home_ongoing
+      site.data["home_projects"] = home_ongoing + finished.first(HOME_LIMIT - home_ongoing.size)
     end
 
     private
