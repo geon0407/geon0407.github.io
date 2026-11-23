@@ -8,7 +8,9 @@
 
           <div class="{{c}}__left{% unless include.image %} {{c}}__left--solo{% endunless %}">
             <h1 class="{{c}}__title"{% if include.title_ko %} data-ko="{{ include.title_ko | escape }}"{% endif %}>{{ include.title }}</h1>
+            {% if include.description_html and include.description_html != "" %}
             <div class="{{c}}__description">{{ include.description_html }}</div>
+            {% endif %}
             <div class="{{c}}__btn">
               <a href="{{ include.cta_button_link }}" class="cta-button c-button c-button--primary c-button--small"{% if include.cta_button_ko %} data-ko="{{ include.cta_button_ko | escape }}"{% endif %}>{{ include.cta_button }}</a>
               <a class="works-button c-button c-button--secondary c-button--small" href="{{ include.works_button_link }}">

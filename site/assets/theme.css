@@ -1,25 +1,28 @@
-/* Edit these two palettes to customize both modes. */
+/* GIST UI reference: https://www.gist.ac.kr/kr/html/sub01/01030301.html
+   Artwork swatches sampled as red #df3624 / gray #59625d.
+   The interface uses adjusted shades for readable light/dark contrast.
+   Edit these two palettes to customize both modes. */
 :root {
   color-scheme: light;
-  --page-bg: #f2f6ff;
+  --page-bg: #f7f8f7;
   --surface: #ffffff;
-  --ink: #110e38;
-  --muted: #525a71;
-  --line: #cbd4e2;
-  --accent: #14788d;
-  --selected: #dbeaf1;
-  --footer-bg: linear-gradient(90deg, #1495a7, #095d93);
+  --ink: #242a27;
+  --muted: #59625d;
+  --line: #d7dcd9;
+  --accent: #b92c1e;
+  --selected: #f8e5e2;
+  --footer-bg: linear-gradient(90deg, #3c4540, #262d29);
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page-bg: #141821;
-  --surface: #202734;
-  --ink: #edf1f8;
-  --muted: #b4bfd1;
-  --line: #465166;
-  --accent: #7dd6e1;
-  --selected: #304c59;
-  --footer-bg: linear-gradient(90deg, #164653, #19354f);
+  --page-bg: #171b19;
+  --surface: #242b27;
+  --ink: #edf1ee;
+  --muted: #b5bfb8;
+  --line: #48554c;
+  --accent: #ff9587;
+  --selected: #4b2c28;
+  --footer-bg: linear-gradient(90deg, #242c27, #171c19);
 }
 body, body::after { background-color: var(--page-bg); color: var(--ink); }
 a, .logo__link:hover, .nav-button, .main-nav .nav__link:hover { color: var(--ink); }
@@ -97,3 +100,12 @@ a:hover { color: var(--accent); }
 :root[data-theme="dark"] code,
 :root[data-theme="dark"] .highlight { background: var(--surface); color: var(--ink); }
 :root[data-theme="dark"] .highlight span { color: inherit; }
+
+/* Shared accents across all page types. */
+.c-footer { background: var(--footer-bg); }
+.c-footer, .c-footer a { color: #fff; }
+.main-nav .nav__list .nav__item .nav__link.active-link::after,
+.about-timeline__body::before, .about-timeline__item::before { background: var(--accent); }
+.language-switch button:focus-visible { outline-color: var(--accent); }
+.main-nav .nav__list > .nav__item + .nav__item::before { background: var(--line); }
+::selection { color: #fff; background: #b92c1e; }
