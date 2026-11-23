@@ -17,7 +17,9 @@ card_title: AI Table Tennis Robot
 card_subtitle: '''26 Summer GIST AX Challenge Track 1 Grand Prix'
 ---
 
-## GIST AX Challenge Track 1 : 탁구 로봇 만들기 경진대회
+> ## GIST AX Challenge Track 1 : 탁구 로봇 만들기 경진대회
+
+---
 
 2026년 여름학기 GIST AX Challenge Track 1에 인공지능 탁구 로봇 프로젝트 출품 및 대상 수상했습니다.  
 아래는 활동 기록물 입니다.
