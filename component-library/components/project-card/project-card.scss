@@ -132,7 +132,8 @@
 	}
 
 	// Collapsed until hover/focus; grid-template-rows animates to the text's natural height,
-	// and the text slides down into place like the original card's subtitle.
+	// and the text slides down into place at the same time (same duration and curve), so the
+	// title rising and the subtitle appearing read as one motion.
 	&__details {
 		display: grid;
 		grid-template-rows: 0fr;
@@ -173,7 +174,6 @@
 		#{$c}__subtitle {
 			opacity: 1;
 			transform: translateZ(0);
-			transition-delay: .15s;
 		}
 	}
 
