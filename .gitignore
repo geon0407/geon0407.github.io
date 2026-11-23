@@ -12,3 +12,4 @@ site/.bundle
 tools/blog-studio/.venv/
 tools/blog-studio/.state/
 __pycache__/
+start-studio-local.sh

@@ -1,53 +1,25 @@
-# Vonge
+# geon0407.github.io
 
-Vonge is a Personal portfolio/blog site template for Jekyll. Browse through a [live demo](https://jazzed-kale.cloudvent.net/).
-Increase the web presence of your brand with this configurable theme.
+김건형의 개인 블로그 겸 포트폴리오입니다. → https://geon0407.github.io
 
-![Vonge template screenshot](_screenshot.png)
+CloudCannon의 [Vonge](https://github.com/CloudCannon/vonge-jekyll-bookshop-template) Jekyll 템플릿(MIT)을 바탕으로, 한/영 전환·다크 모드·GIST 색상 테마를 더하고 개인 편집기(Blog Studio)를 붙였습니다.
 
-Vonge was made by [CloudCannon](http://cloudcannon.com/), the JAMStack Cloud CMS.
-The component library is built and maintained for use with [Bookshop](https://github.com/cloudcannon/bookshop/)
+## 구조
 
-Find more templates, themes and step-by-step Jekyll tutorials at [CloudCannon Community](https://cloudcannon.com/community/).
+- `site/` — Jekyll 소스 (`_config.yml`, `_data/studio.yml`, `collections/`의 페이지·게시글·프로젝트)
+- `component-library/` — Bookshop 컴포넌트와 SCSS
+- `tools/blog-studio/` — 비공개 편집·발행 도구 ([사용법](tools/blog-studio/README.md))
+- `.github/workflows/pages-deploy.yml` — `main` 푸시 시 GitHub Pages 배포
 
-[![Deploy to CloudCannon](https://buttons.cloudcannon.com/deploy.svg)](https://app.cloudcannon.com/register#sites/connect/github/CloudCannon/vonge-jekyll-bookshop-template)
-
-## Features
-
-* Component library for website building
-* Fully configurable Website
-* Pre-built pages
-* Pre-styled components
-* Blog
-* Category pages
-* Testimonials
-* Portfolio
-* Live editing with [CloudCannon](http://cloudcannon.com/)
-* Optimised for editing in [CloudCannon](http://cloudcannon.com/)
-* Search engine optimisation
-
-## Develop
-
-Vonge was built with [Jekyll](http://jekyllrb.com/) version 4.2.1, but should support newer versions as well.
-
-Install the dependencies for Bookshop:
+## 로컬 실행
 
 ~~~bash
-$ npm install
+npm ci                 # Bookshop 의존성
+npm run jekyll:install # Ruby/Bundler 의존성
+npm start              # http://localhost:6060
+npm run build          # _site/ 로 빌드
 ~~~
 
-Install the Jekyll dependencies with [Bundler](http://bundler.io/):
+## 라이선스
 
-~~~bash
-$ npm run jekyll:install
-~~~
-
-Run the website:
-
-~~~bash
-$ npm start
-~~~
-
-
-> [!IMPORTANT]
-> When running locally, the pagination will not work. Deploy to CloudCannon to see successful pagination. 
+템플릿 원본은 [LICENSE](LICENSE)(MIT, CloudCannon)를 따릅니다.

@@ -1,7 +1,7 @@
 {
-  "name": "vonge-jekyll-bookshop-template",
+  "name": "geon0407.github.io",
   "private": true,
-  "description": "Vonge template for CloudCannon",
+  "description": "Personal blog and portfolio of GeonHyoung Kim (based on the Vonge Jekyll template)",
   "scripts": {
     "jekyll:install": "bundle config set --local path 'vendor/bundle' && BUNDLE_GEMFILE=site/Gemfile bundle install",
     "build": "BUNDLE_GEMFILE=site/Gemfile bundle exec jekyll build --source site",
@@ -10,14 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CloudCannon/vonge-jekyll-bookshop-template.git"
+    "url": "git+https://github.com/geon0407/geon0407.github.io.git"
   },
-  "author": "CloudCannon",
+  "author": "GeonHyoung Kim",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/CloudCannon/vonge-jekyll-bookshop-template/issues"
-  },
-  "homepage": "https://github.com/CloudCannon/vonge-jekyll-bookshop-template#readme",
+  "homepage": "https://geon0407.github.io",
   "dependencies": {
     "@bookshop/jekyll-engine": "3.16.5",
     "@bookshop/generate": "3.16.5"
