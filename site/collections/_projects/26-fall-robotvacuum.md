@@ -8,8 +8,8 @@ tags: []
 categories: []
 lang: ko
 period_start: 2026-09
-period_end: 2026-12
-ongoing: false
+period_end: ''
+ongoing: true
 card_title: EdgeSort
 card_subtitle: A smarter, more versatile robot vacuum
 layout: project
