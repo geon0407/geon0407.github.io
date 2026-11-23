@@ -1,0 +1,15 @@
+
+/* --- web version additions --- */
+.login{max-width:560px}
+.login h1 .eyebrow{font-weight:500;margin-left:6px}
+.login form{display:grid;gap:14px;margin-top:20px}
+.login form button{justify-self:start;margin-top:4px}
+#unlock-box form{margin-top:10px}
+#forget{margin-top:14px}
+.setup{margin-top:26px;border-top:1px solid var(--line);padding-top:16px;font-size:14px;line-height:1.7}
+.setup summary{cursor:pointer;font-weight:600}
+.setup li{margin:6px 0}
+.setup code{background:#eef1ee;border-radius:4px;padding:1px 5px}
+#login-error{color:#a3261a;white-space:pre-wrap}
+.change-list .grow{flex:1;min-width:0}
+.change-list .link-button{flex:none;font-size:13px}

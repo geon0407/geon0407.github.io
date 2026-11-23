@@ -51,6 +51,11 @@ defaults:
       type: posts
     values:
       layout: post
+  # Browser Blog Studio (static files under site/studio/): keep it out of the sitemap.
+  - scope:
+      path: "studio"
+    values:
+      sitemap: false
 
 # Tags
 tag_page_dir: tag

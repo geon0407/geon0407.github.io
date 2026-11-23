@@ -1,0 +1,209 @@
+// Tests for the browser Studio data layer against an in-memory fake of the GitHub Git API.
+// Run: node --test tools/blog-studio/webapp/tests/
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {webcrypto} from 'node:crypto';
+import {FakeRepo, fakeFetch} from './fake-github.mjs';
+import {readFileSync, readdirSync} from 'node:fs';
+import {join, dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+if (!globalThis.crypto) globalThis.crypto = webcrypto;
+const {GitHub, Studio, Problem, splitDoc, b64ToText, textToB64} = await import('../src/core.js');
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
+
+function siteFiles() {
+  const files = {};
+  for (const dir of ['site/_data', 'site/collections/_posts', 'site/collections/_projects']) {
+    for (const name of readdirSync(join(ROOT, dir))) files[`${dir}/${name}`] = readFileSync(join(ROOT, dir, name), 'utf8');
+  }
+  return files;
+}
+
+async function setup({dataPrivate = true} = {}) {
+  const site = new FakeRepo({files: siteFiles()});
+  const data = new FakeRepo({isPrivate: dataPrivate});
+  const fetch = fakeFetch({'me/site': site, 'me/data': data});
+  const make = () => new Studio({site: new GitHub({token: 't', repo: 'me/site', fetch}), data: new GitHub({token: 't', repo: 'me/data', fetch})});
+  const studio = make();
+  await studio.connect();
+  return {studio, site, data, make};
+}
+
+const draftPost = (extra = {}) => ({
+  kind: 'post', id: '', version: '', draft: true, slug: 'first-post',
+  meta: {title: '한글 테스트', date: '2026-01-01', tags: ['C++'], categories: ['algorithms'], image: '', description: '요약', subtitle: '', lang: 'ko'},
+  body: '## 표\n\n| A | B |\n| --- | --- |\n| 1 | 2 |\n\n```cpp\n{{ literal }}\n```', ...extra,
+});
+
+test('connect initializes the private data repo and refuses a public one', async () => {
+  const {data} = await setup();
+  assert.ok(data.text('README.md').includes('Blog Studio'));
+  await assert.rejects(setup({dataPrivate: false}), /비공개/);
+});
+
+test('draft stays private; publishing writes the post and clears pending', async () => {
+  const {studio, site, data} = await setup();
+  const saved = await studio.saveRecord(draftPost());
+  assert.match(saved.id, /^draft-/);
+  assert.ok(data.text(`drafts/${saved.id}.json`));
+  assert.deepEqual(await studio.changes(), []);
+  const ready = await studio.saveRecord({...saved, draft: false});
+  assert.equal(ready.id, 'site/collections/_posts/2026-01-01-first-post.md');
+  assert.equal(data.text(`drafts/${saved.id}.json`), undefined);
+  assert.deepEqual((await studio.changes()).map(i => [i.label, i.status, i.title]), [['게시글', 'added', '한글 테스트']]);
+  const result = await studio.publish();
+  assert.match(result.message, /발행/);
+  const [meta, body] = splitDoc(site.text(ready.id));
+  assert.equal(meta.render_with_liquid, false);
+  assert.equal(meta.date, '2026-01-01');
+  assert.equal(meta.studio_number, 2);  // the existing "Post Test" owns #1
+  assert.equal(body.trim(), draftPost().body.trim());
+  assert.deepEqual(JSON.parse(data.text('pending.json')).writes, {});
+  await assert.rejects(studio.saveRecord({...draftPost(), draft: false}), /같은 주소/);
+});
+
+test('editing an existing post keeps its fields; no-op edits leave nothing pending', async () => {
+  const {studio} = await setup();
+  const post = (await studio.listRecords()).find(r => r.meta.title === 'Post Test');
+  const same = await studio.saveRecord({...post, slug: ''});
+  assert.deepEqual(await studio.changes(), []);
+  await studio.saveRecord({...same, body: same.body + '\n추가\n'});
+  const [item] = await studio.changes();
+  assert.deepEqual([item.status, item.title], ['modified', 'Post Test']);
+  assert.equal((await studio.record(post.id)).meta.studio_number, 1);
+});
+
+test('stale versions are rejected', async () => {
+  const {studio} = await setup();
+  const post = (await studio.listRecords()).find(r => r.meta.title === 'Post Test');
+  await studio.saveRecord({...post, body: 'one'});
+  await assert.rejects(studio.saveRecord({...post, body: 'two'}), e => e.status === 409);
+});
+
+test('making a post private and public again restores the same address', async () => {
+  const {studio} = await setup();
+  const post = (await studio.listRecords()).find(r => r.meta.title === 'Post Test');
+  const hidden = await studio.saveRecord({...post, draft: true});
+  assert.equal(hidden.source_id, post.id);
+  assert.deepEqual((await studio.changes()).map(i => i.status), ['deleted']);
+  const back = await studio.saveRecord({...hidden, draft: false});
+  assert.equal(back.id, post.id);
+  assert.deepEqual(await studio.changes(), []);
+});
+
+test('trash: archive, restore, conflict and purge', async () => {
+  const {studio} = await setup();
+  const post = (await studio.listRecords()).find(r => r.meta.title === 'Post Test');
+  await studio.archiveRecord(post);
+  assert.deepEqual((await studio.changes()).map(i => i.status), ['deleted']);
+  const [entry] = await studio.listTrash();
+  assert.equal(entry.title, 'Post Test');
+  assert.equal(entry.draft, false);
+  await studio.restoreTrash({id: entry.id});
+  assert.deepEqual(await studio.changes(), []);
+  const draft = await studio.saveRecord(draftPost());
+  await studio.archiveRecord(draft);
+  await studio.saveRecord({...draftPost(), id: ''});  // a new draft, different id: restore still fine
+  const [d] = await studio.listTrash();
+  assert.equal((await studio.restoreTrash({id: d.id})).public, false);
+  await studio.archiveRecord(await studio.record(draft.id));
+  await studio.purgeTrash({id: 'all'});
+  assert.deepEqual(await studio.listTrash(), []);
+  await assert.rejects(studio.restoreTrash({id: '../x'}), Problem);
+});
+
+test('uploads: published with the post, unused ones can be trashed and restored', async () => {
+  const {studio, site} = await setup();
+  const used = await studio.upload({name: 'a.png', data: textToB64('hello')});
+  const unused = await studio.upload({name: 'b.png', data: textToB64('bye')});
+  await assert.rejects(studio.upload({name: 'x.html', data: textToB64('<script>')}), /지원 파일/);
+  const saved = await studio.saveRecord({...draftPost(), draft: false, body: `![a](${used.url})`});
+  const usedRel = used.url.slice(9), unusedRel = unused.url.slice(9);
+  const files = Object.fromEntries((await studio.listUploads()).map(f => [f.path, f]));
+  assert.equal(files[usedRel].used, true);
+  assert.equal(files[unusedRel].used, false);
+  assert.deepEqual((await studio.changes()).map(i => i.label), ['게시글', '첨부파일']);
+  await studio.publish();
+  assert.equal(site.text('site/uploads/' + usedRel), 'hello');
+  assert.equal(site.text('site/uploads/' + unusedRel), undefined);
+  await assert.rejects(studio.deleteUpload({path: usedRel}), /사용 중/);
+  await studio.deleteUpload({path: unusedRel});
+  assert.ok(!(await studio.listUploads()).some(f => f.path === unusedRel));
+  const [entry] = await studio.listTrash();
+  await studio.restoreTrash({id: entry.id});
+  assert.ok((await studio.listUploads()).some(f => f.path === unusedRel));
+  assert.ok(saved.id);
+});
+
+test('deleting a published unused upload removes it from the site on publish, and restore brings it back', async () => {
+  const {studio, site} = await setup();
+  const file = await studio.upload({name: 'c.png', data: textToB64('img')});
+  const rel = file.url.slice(9);
+  const post = await studio.saveRecord({...draftPost(), draft: false, body: `![c](${file.url})`});
+  await studio.publish();
+  await studio.saveRecord({...(await studio.record(post.id)), body: 'no image'});
+  await studio.publish();
+  await studio.deleteUpload({path: rel});
+  assert.deepEqual((await studio.changes()).map(i => [i.label, i.status]), [['첨부파일', 'deleted']]);
+  await studio.publish();
+  assert.equal(site.text('site/uploads/' + rel), undefined);
+  const [entry] = await studio.listTrash();
+  assert.equal((await studio.restoreTrash({id: entry.id})).public, true);
+  await studio.publish();
+  assert.equal(site.text('site/uploads/' + rel), 'img');
+});
+
+test('publish refuses when the same file changed elsewhere, but rebases over unrelated changes', async () => {
+  const {studio, site} = await setup();
+  const post = (await studio.listRecords()).find(r => r.meta.title === 'Post Test');
+  await studio.saveRecord({...post, body: 'web edit'});
+  site.push({'README.md': 'changed elsewhere'});
+  await studio.publish();
+  assert.match(site.text(post.id), /web edit/);
+  assert.equal(site.text('README.md'), 'changed elsewhere');
+  const again = await studio.record(post.id);
+  await studio.saveRecord({...again, body: 'second web edit'});
+  site.push({[post.id]: site.text(post.id) + '\ncodespace edit'});
+  await assert.rejects(studio.publish(), e => e.status === 409 && e.message.includes(post.id));
+  await studio.discard({path: post.id});
+  assert.deepEqual(await studio.changes(), []);
+});
+
+test('two studio sessions writing the data repo: the stale one gets a 409', async () => {
+  const {studio, make} = await setup();
+  const other = make();
+  await other.connect();
+  await studio.saveRecord(draftPost());
+  await assert.rejects(other.saveRecord(draftPost({slug: 'x'})), e => e.status === 409);
+  await other.reload();
+  await other.saveRecord(draftPost({slug: 'x'}));
+});
+
+test('settings: validated, and synced into the other data files', async () => {
+  const {studio, site} = await setup();
+  const {config, version} = await studio.config();
+  config.site.title = 'New name';
+  config.site.github = 'https://github.com/example';
+  await studio.saveConfig({config, version});
+  const labels = (await studio.changes()).map(i => i.title).sort();
+  // author.yml is unchanged (same author/avatar), so only these three are pending.
+  assert.deepEqual(labels, ['general_settings.yml', 'social_links.yml', 'studio.yml']);
+  const bad = (await studio.config());
+  bad.config.design.colors.dark.ink = 'red; } body {';
+  await assert.rejects(studio.saveConfig(bad), /색상/);
+  await studio.publish();
+  assert.match(site.text('site/_data/general_settings.yml'), /title: New name/);
+  assert.match(site.text('site/_data/studio.yml'), /period: '2026\.08'/);  // stays a string, not a number
+});
+
+test('categories come from the site data file', async () => {
+  const {studio} = await setup();
+  assert.deepEqual((await studio.categories()).map(c => c.slug), ['diary', 'thoughts', 'paper-reviews', 'algorithms']);
+  await assert.rejects(studio.saveRecord(draftPost({meta: {...draftPost().meta, categories: ['nope']}})), /카테고리/);
+});
+
+test('encoding helpers round-trip Korean text', () => {
+  assert.equal(b64ToText(textToB64('안녕 👋')), '안녕 👋');
+});
