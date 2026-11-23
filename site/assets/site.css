@@ -182,7 +182,9 @@
 .about-profile__bio { text-align: left; }
 /* Bio + contact card row; without side photos it may use the whole width. */
 .about-profile--no-photos .about-profile__intro { grid-column: 1 / -1; width: 100%; max-width: 1040px; margin-inline: auto; }
-.about-profile__body { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 28px 48px; }
+/* align-items: center puts the card at the vertical middle of the bio; when the row wraps
+   (narrow screens) the card sits alone on the next line, under the bio. */
+.about-profile__body { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 28px 48px; }
 .about-profile__body > .about-profile__bio { flex: 1 1 360px; max-width: 640px; }
 .about-profile__body > .about-contact { flex: 0 1 320px; }
 .about-profile__bio p { text-wrap: pretty; }
@@ -361,7 +363,7 @@
 .contact-line a { color: var(--muted); text-decoration: none; overflow-wrap: anywhere; }
 .contact-line a:hover, .contact-line a:focus-visible { color: var(--accent); }
 
-.about-contact { width: 100%; max-width: 360px; margin-top: 4px; padding: 18px 22px 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-align: left; }
+.about-contact { width: 100%; max-width: 360px; padding: 18px 22px 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-align: left; }
 .about-contact h2 { margin: 0 0 10px; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .about-contact__email { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 10px; }
 .about-contact__email > ion-icon { font-size: 20px; color: var(--accent); }
