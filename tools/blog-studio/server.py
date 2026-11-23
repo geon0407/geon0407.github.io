@@ -172,22 +172,61 @@ def save_record(data):
     if any(v not in ('diary','thoughts','paper-reviews','algorithms') for v in meta.get('categories',[])):raise Problem('카테고리를 확인하세요')
     body=text(data.get('body',''),2_000_000)
     draft=bool(data.get('draft'))
-    if old and not old['draft'] and draft:raise Problem('발행한 글은 보관 기능을 이용하세요')
+    source_id = old.get('source_id', '') if old else ''
+    if draft and old and not old['draft']:
+        source_id = identifier
     original=dict(old['meta']) if old else {}
     for key in ('title','description','subtitle','image','date','tags','categories','lang'):original[key]=meta.get(key,'' if key not in ('tags','categories') else [])
     original.update(layout=kind,render_with_liquid=False)
     original.pop('published',None)
-    if draft:
-        identifier=identifier or 'draft-'+secrets.token_hex(12)
-        atomic(record_path(identifier),json.dumps({'kind':kind,'meta':original,'body':body,'draft':True,'slug':text(data.get('slug',''),100)},ensure_ascii=False).encode())
+    slug = text(data.get('slug', ''), 100).strip()
+    number = str(meta.get('studio_number') or '').strip()
+    peers = [record for record in list_records()
+             if record['kind'] == kind and record['id'] != identifier]
+    used_numbers = {str(record['meta'].get('studio_number')) for record in peers}
+    if number and not re.fullmatch(r'[1-9][0-9]{0,8}', number):
+        raise Problem('번호는 1 이상 9자리 이하의 정수로 입력하세요')
+    if number and number in used_numbers:
+        raise Problem('같은 종류의 글에 이미 사용 중인 번호입니다', 409)
+    if not draft and not number:
+        candidate = 1
+        while str(candidate) in used_numbers:
+            candidate += 1
+        number = str(candidate)
+    if number:
+        original['studio_number'] = int(number)
     else:
-        if not identifier or identifier.startswith('draft-'):
-            slug=text(data.get('slug',''),100)
+        original.pop('studio_number', None)
+    if draft:
+        identifier = identifier if identifier.startswith('draft-') else 'draft-' + secrets.token_hex(12)
+        atomic(record_path(identifier), json.dumps({
+            'kind': kind, 'meta': original, 'body': body, 'draft': True,
+            'slug': slug, 'source_id': source_id,
+        }, ensure_ascii=False).encode())
+        if old and not old['draft']:
+            mark(source_id)
+            record_path(source_id).unlink()
+    else:
+        if source_id:
+            identifier = source_id
+            if record_path(identifier).exists():
+                raise Problem('기존 주소의 파일이 이미 존재합니다', 409)
+        elif not identifier or identifier.startswith('draft-'):
+            if not slug:
+                slug = f'{kind}-{number}'
+            used_slugs = {
+                str(peer['meta'].get('slug') or re.sub(
+                    r'^\d{4}-\d{2}-\d{2}-' if kind == 'post' else r'(?!)',
+                    '', Path(peer.get('source_id') or peer['id']).stem))
+                for peer in peers if not peer['draft'] or peer.get('source_id')
+            }
+            if slug in used_slugs:
+                raise Problem('같은 주소의 글이 있습니다. 주소를 바꿔주세요', 409)
             if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',slug):raise Problem('주소는 영문 소문자·숫자·하이픈으로 입력하세요')
             filename=(str(original['date'])[:10]+'-' if kind=='post' else '')+slug+'.md'
             identifier='site/collections/_'+('posts' if kind=='post' else 'projects')+'/'+filename
             if record_path(identifier).exists():raise Problem('같은 주소의 글이 있습니다. 주소를 바꿔주세요',409)
-        write_repo(identifier,b'---\n'+yaml_bytes(original)+b'---\n\n'+body.encode()+b'\n')
+        write_repo(identifier,b'---\n'+yaml_bytes(original)+b'---\n\n'+body.encode()+(b'' if body.endswith('\n') else b'\n'))
         if old and old['draft']:record_path(old['id']).unlink()
     return record(identifier)
 
@@ -234,7 +273,9 @@ def publish():
     behind=int(command(['git','rev-list','--count','HEAD..origin/main']))
     if behind:raise Problem('원격 저장소에 새 변경이 있습니다. 먼저 터미널에서 git pull --rebase origin main을 실행하세요',409)
     collect_public_assets()
-    paths=[p for p in pending() if p.startswith(('site/','component-library/'))]
+    tracked = set(command(['git', 'ls-files']).splitlines())
+    paths = [p for p in pending() if p.startswith(('site/', 'component-library/'))
+             and (safe_path(p).exists() or p in tracked)]
     staged=command(['git','diff','--cached','--name-only']).splitlines()
     if set(staged)-set(paths):raise Problem('관리 화면 밖에서 스테이징한 파일이 있습니다. 먼저 해당 커밋을 정리하세요',409)
     build()
@@ -264,7 +305,10 @@ class Handler(BaseHTTPRequestHandler):
         return session
     def origin_check(self):
         origin=self.headers.get('Origin','')
-        if origin and origin not in self.server.origins:raise Problem('다른 사이트에서 보낸 요청은 허용하지 않습니다',403)
+        fetch_site = self.headers.get('Sec-Fetch-Site')
+        if fetch_site == 'same-origin':
+            return
+        if fetch_site in ('cross-site', 'same-site') or origin not in self.server.origins:raise Problem('다른 사이트에서 보낸 요청은 허용하지 않습니다',403)
     def json_body(self):
         size=int(self.headers.get('Content-Length','0'))
         if size<1 or size>LIMIT:raise Problem('요청 크기를 확인하세요',413)
@@ -295,6 +339,30 @@ class Handler(BaseHTTPRequestHandler):
         mime=mimetypes.guess_type(str(path))[0] or 'application/octet-stream'
         self.send_header('Content-Type',mime);self.send_header('X-Content-Type-Options','nosniff');self.send_header('Cache-Control','no-store')
         self.end_headers();self.wfile.write(content)
+    def send_preview_page(self, path):
+        if not path.is_file():
+            raise Problem('미리보기 페이지를 찾을 수 없습니다', 404)
+        page = path.read_text(encoding='utf-8')
+        # The preview sandbox disables the theme script that clears the loading overlay.
+        style = '<style>body::after{display:none!important}.lazy{opacity:1!important}</style>'
+        page = re.sub(r'</head>', lambda match: style + match[0], page, count=1, flags=re.I)
+        page = re.sub(r"""(\bhref=["'])/(?=["'])""", r'\g<1>/preview/', page, flags=re.I)
+        script_hashes = []
+        for name in ('theme.js', 'language.js'):
+            script = (ROOT / 'site' / 'js' / name).read_text(encoding='utf-8')
+            script = re.sub(r'</script', lambda match: '<\\/' + match[0][2:], script, flags=re.I)
+            digest = base64.b64encode(hashlib.sha256(script.encode('utf-8')).digest()).decode('ascii')
+            script_hashes.append(f"'sha256-{digest}'")
+            page = re.sub(r'</body>', lambda match: f'<script>{script}</script>' + match[0],
+                          page, count=1, flags=re.I)
+        allowed_scripts = ' '.join(script_hashes)
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.send_header('Cache-Control', 'no-store')
+        self.send_header('Content-Security-Policy', f"sandbox allow-same-origin allow-scripts; script-src {allowed_scripts}; form-action 'none'; object-src 'none'")
+        self.end_headers()
+        self.wfile.write(page.encode('utf-8'))
+
     def do_GET(self):
         try:
             route=unquote(urlparse(self.path).path)
@@ -318,6 +386,8 @@ class Handler(BaseHTTPRequestHandler):
                 path=(ROOT/'_site'/relative.lstrip('/')).resolve()
                 if not path.is_relative_to((ROOT/'_site').resolve()):raise Problem('잘못된 경로입니다',403)
                 if path.is_dir():path=path/'index.html'
+                if path.suffix == '.html':
+                    return self.send_preview_page(path)
             self.send_file(path)
         except Problem as e:self.respond({'error':e.message},e.status)
         except Exception as e:self.respond({'error':str(e)},400)

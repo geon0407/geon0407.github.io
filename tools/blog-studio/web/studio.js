@@ -5,7 +5,7 @@ let state,view='posts',config,editor,current,dirty=false,sourceMode=false,editor
 const labels={posts:'게시글',projects:'프로젝트',home:'홈',profile:'소개 · 이력',design:'색상 · 레이아웃',settings:'기본 설정'};
 const categoryNames={'diary':'일기','thoughts':'잡담','paper-reviews':'논문 리뷰','algorithms':'알고리즘'};
 function notice(message,error=false){$('#notice').hidden=false;$('#notice').classList.toggle('error',error);$('#notice').textContent=message;}
-async function api(path,data){const r=await fetch('/api/'+path,{method:data===undefined?'GET':'POST',headers:data===undefined?{}:{'Content-Type':'application/json','X-Studio-CSRF':state?.csrf||''},body:data===undefined?undefined:JSON.stringify(data)});const result=await r.json();if(!r.ok)throw Error(result.error||'요청 실패');return result;}
+async function api(path,data){const r=await fetch('/api/'+path,{method:data===undefined?'GET':'POST',headers:data===undefined?{}:{'Content-Type':'application/json','X-Studio-CSRF':state?.csrf||''},body:data===undefined?undefined:JSON.stringify(data)});const result=await r.json().catch(()=>{throw Error('Codespaces 프록시가 로그인 응답을 반환했습니다. Ports 탭에서 8787 주소를 열고 GitHub 계정 인증을 완료한 뒤 다시 시도하세요.');});if(!r.ok)throw Error(result.error||'요청 실패');return result;}
 async function job(fn){if(busy)return;busy=true;document.body.classList.add('busy');try{await fn();}catch(e){notice(e.message,true);}finally{busy=false;document.body.classList.remove('busy');}}
 function clone(x){return JSON.parse(JSON.stringify(x));}
 function get(obj,path){return path.split('.').reduce((x,k)=>x?.[k],obj);}
@@ -51,7 +51,7 @@ function navigate(next){if(dirty&&!confirm('저장하지 않은 변경이 있습
 function renderList(){
  const kind=view==='posts'?'post':'project';const records=state.records.filter(r=>r.kind===kind);
  $('#main').innerHTML=`<div class="list-toolbar"><input id="search" placeholder="제목으로 검색" aria-label="글 검색"><button id="new-record" class="primary">${kind==='post'?'새 게시글':'새 프로젝트'}</button></div><section class="panel" id="record-list"></section>`;
- const fill=()=>{const query=$('#search').value.toLowerCase();const filtered=records.filter(r=>r.meta.title.toLowerCase().includes(query));$('#record-list').innerHTML=filtered.length?filtered.map(r=>`<div class="record"><div><h3>${esc(r.meta.title)}<span class="badge">${r.draft?'비공개 초안':state.pending.includes(r.id)?'발행 대기':'저장소 글'}</span></h3><small>${esc(String(r.meta.date||'').slice(0,10))} · ${esc((r.meta.categories||[]).map(c=>categoryNames[c]||c).join(', '))}</small></div><button data-open="${esc(r.id)}">편집</button></div>`).join(''):'<div class="empty">아직 글이 없습니다. 첫 기록을 남겨보세요.</div>';$$('[data-open]').forEach(b=>b.onclick=()=>openRecord(records.find(r=>r.id===b.dataset.open)));};fill();$('#search').oninput=fill;
+ const fill=()=>{const query=$('#search').value.toLowerCase();const filtered=records.filter(r=>r.meta.title.toLowerCase().includes(query));$('#record-list').innerHTML=filtered.length?filtered.map(r=>`<div class="record"><div><h3>${esc(r.meta.title)}<span class="badge">${r.draft?(r.source_id?'비공개 보관':'비공개 초안'):state.pending.includes(r.id)?'발행 대기':'저장소 글'}</span></h3><small>${esc(String(r.meta.date||'').slice(0,10))} · ${esc((r.meta.categories||[]).map(c=>categoryNames[c]||c).join(', '))}</small></div><button data-open="${esc(r.id)}">편집</button></div>`).join(''):'<div class="empty">아직 글이 없습니다. 첫 기록을 남겨보세요.</div>';$$('[data-open]').forEach(b=>b.onclick=()=>openRecord(records.find(r=>r.id===b.dataset.open)));};fill();$('#search').oninput=fill;
  $('#new-record').onclick=()=>openRecord({id:'',version:'',kind,draft:true,meta:{title:'',date:localDate(),description:'',subtitle:'',tags:[],categories:kind==='post'?['diary']:[],image:'',lang:'ko'},body:''});
 }
 function localDate(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
@@ -59,9 +59,9 @@ function metaField(label,key,type='text',wide=false){return `<label class="${wid
 function openRecord(item){
  editor?.destroy();current=clone(item);originalBody=current.body;editorChanged=false;sourceMode=false;dirty=false;
  $('#page-title').textContent=current.kind==='post'?'게시글 편집':'프로젝트 편집';
- $('#main').innerHTML=`<div id="recovery"></div>${panel('기본 정보',grid(metaField('제목','title','text',true)+metaField('날짜','date','date')+`<label>언어<select data-meta="lang"><option value="ko" ${current.meta.lang!=='en'?'selected':''}>한국어</option><option value="en" ${current.meta.lang==='en'?'selected':''}>English</option></select></label>`+metaField('요약 (목록에 표시)','description','textarea',true)+(current.kind==='project'?metaField('부제','subtitle','text',true):`<label>카테고리<select id="category">${Object.entries(categoryNames).map(([key,label])=>`<option value="${key}" ${current.meta.categories?.includes(key)?'selected':''}>${label}</option>`).join('')}</select></label>`)+metaField('태그 (쉼표로 구분)','tags')+`<label>글 주소${current.id&&!current.draft?`<input value="${esc(current.id.split('/').pop())}" disabled>`:'<input id="slug" placeholder="예: my-first-post" value="${esc(current.slug)}">'}</label>`+`<label class="wide">대표 이미지<div class="row"><input data-meta="image" value="${esc(current.meta.image)}"><button id="cover">사진 선택</button></div></label>`))}
+ $('#main').innerHTML=`<div id="recovery"></div>${panel('기본 정보',grid(metaField('제목','title','text',true)+metaField('날짜','date','date')+`<label>언어<select data-meta="lang"><option value="ko" ${current.meta.lang!=='en'?'selected':''}>한국어</option><option value="en" ${current.meta.lang==='en'?'selected':''}>English</option></select></label>`+metaField('요약 (목록에 표시)','description','textarea',true)+(current.kind==='project'?metaField('부제','subtitle','text',true):`<label>카테고리<select id="category">${Object.entries(categoryNames).map(([key,label])=>`<option value="${key}" ${current.meta.categories?.includes(key)?'selected':''}>${label}</option>`).join('')}</select></label>`)+metaField('태그 (쉼표로 구분)','tags')+metaField('번호 (비워두면 자동)','studio_number','number')+`<label>글 주소${(current.source_id||(current.id&&!current.draft))?`<input value="${esc((current.source_id||current.id).split('/').pop())}" disabled>`:`<input id="slug" placeholder="비워두면 번호로 자동 생성" value="${esc(current.slug === '${esc(current.slug)}' ? '' : current.slug)}">`}</label>`+`<label class="wide">대표 이미지<div class="row"><input data-meta="image" value="${esc(current.meta.image)}"><button id="cover">사진 선택</button></div></label>`))}
  ${panel('본문',`<div class="toolbar" id="toolbar"></div><div id="editor" class="editor-surface"></div><textarea id="source" hidden aria-label="Markdown 원문"></textarea><div class="editor-foot" id="word-count"></div>`,'사진을 붙여넣거나 끌어놓을 수 있습니다. 표는 헤더가 있는 일반 표로 저장됩니다.')}
- <div class="sticky-actions"><button id="save-record" class="primary">${current.draft?'초안 저장':'수정 저장'}</button><button id="ready-record">${current.draft?'공개할 글로 저장':'저장 후 미리보기'}</button><button id="export">Markdown 내보내기</button><button id="back">목록</button>${current.id?'<button id="archive">보관함으로 이동</button>':''}</div>`;
+ <div class="sticky-actions"><button id="save-record" class="primary">${current.draft?(current.source_id?'비공개 변경 저장':'초안 저장'):'수정 저장'}</button><button id="ready-record">${current.draft?(current.source_id?'다시 공개할 글로 저장':'공개할 글로 저장'):'저장 후 미리보기'}</button><button id="export">Markdown 내보내기</button><button id="back">목록</button>${current.id&&!current.draft?'<button id="make-private">비공개로 전환</button>':''}</div>`;
  const toolbar=[['굵게','bold'],['기울임','italic'],['취소선','strike'],['제목 2','h2'],['제목 3','h3'],['본문','paragraph'],['인용','quote'],['목록','bullet'],['번호','ordered'],['체크','task'],['구분선','hr'],['인라인 코드','code'],['코드 블록','codeblock'],['링크','link'],['표','table'],['행 추가','row'],['열 추가','column'],['행 삭제','delrow'],['열 삭제','delcolumn'],['표 삭제','deltable'],['사진','image'],['파일 첨부','file'],['실행 취소','undo'],['다시 실행','redo'],['Markdown','source']];
  $('#toolbar').innerHTML=toolbar.map(([name,key])=>`<button type="button" data-command="${key}">${name}</button>`).join('')+'<select id="code-lang" aria-label="코드 언어"><option value="plaintext">일반 텍스트</option><option value="cpp">C++</option><option value="python">Python</option><option value="javascript">JavaScript</option><option value="typescript">TypeScript</option><option value="bash">Bash</option><option value="json">JSON</option><option value="yaml">YAML</option><option value="sql">SQL</option><option value="java">Java</option><option value="c">C</option></select>';
  editor=window.StudioEditor($('#editor'),current.body,()=>{editorChanged=true;changed();},files=>job(()=>insertFiles(files)));
@@ -71,7 +71,10 @@ function openRecord(item){
  $('#cover').onclick=()=>chooseFile(async files=>{const result=await uploadFile(files[0]);$('[data-meta="image"]').value=result.url;changed();},'image/*');
  $('#save-record').onclick=()=>job(()=>saveRecord(current.draft));$('#ready-record').onclick=()=>job(async()=>{await saveRecord(false);await preview();});
  $('#back').onclick=()=>navigate(view);$('#export').onclick=()=>download((($('#slug')?.value)||'post')+'.md',bodyText());
- if($('#archive'))$('#archive').onclick=()=>job(async()=>{if(!confirm('글을 보관함으로 옮길까요? 공개 글은 다음 발행 때 사이트에서 제거됩니다.'))return;await api('archive',{id:current.id,version:current.version});dirty=false;await refresh();navigate(view);notice('보관함으로 이동했습니다. 원본은 Codespace의 .state/trash에 남아 있습니다.');});
+ if($('#make-private'))$('#make-private').onclick=()=>job(async()=>{
+   if(!confirm('현재 내용을 비공개로 저장할까요? 다음 발행 때 사이트에서 내려갑니다.'))return;
+   await saveRecord(true);
+ });
  const saved=readRecovery();if(saved&&saved.body!==current.body){$('#recovery').innerHTML='<div class="recovery"><span>이 브라우저에 저장하지 않은 작성 내용이 있습니다.</span><button id="restore">복구</button><button id="discard-recovery">버리기</button></div>';$('#restore').onclick=()=>{for(const [key,value]of Object.entries(saved.meta||{})){const el=$(`[data-meta="${key}"]`);if(el)el.value=key==='tags'?value.join(', '):value;}if($('#slug'))$('#slug').value=saved.slug||'';if($('#category'))$('#category').value=saved.meta.categories?.[0]||'diary';editor.commands.setContent(saved.body,{contentType:'markdown'});editorChanged=true;changed();$('#recovery').innerHTML='';};$('#discard-recovery').onclick=()=>{localStorage.removeItem(recoveryKey());$('#recovery').innerHTML='';};}count();
 }
 function recoveryKey(){return 'studio-recovery:'+current.kind+':'+(current.id||'new');}
@@ -97,5 +100,35 @@ $('#preview').onclick=()=>job(preview);$('#close-preview').onclick=()=>$('#previ
 $('#publish').onclick=()=>job(async()=>{if(dirty)throw Error('먼저 현재 편집 내용을 저장해주세요.');if(!confirm('저장한 공개 글·설정·첨부파일을 GitHub에 커밋하고 푸시할까요? 비공개 초안은 제외됩니다.'))return;notice('빌드 검사와 GitHub 업로드 중입니다. 창을 닫지 마세요.');const result=await api('publish',{});await refresh();notice(result.message);});
 $$('#nav button').forEach(b=>b.onclick=()=>navigate(b.dataset.view));window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 async function enter(){await refresh();$('#login').hidden=true;$('#app').hidden=false;navigate('posts');}
-$('#login-form').onsubmit=e=>{e.preventDefault();job(async()=>{await api('session',{key:$('#key').value});$('#key').value='';await enter();});};
-(async()=>{try{const key=new URLSearchParams(location.hash.slice(1)).get('key');if(key){history.replaceState(null,'','/studio');await api('session',{key});}await enter();}catch(e){$('#login').hidden=false;$('#app').hidden=true;console.error(e.message);}})();
+const loginError = $('#login-error');
+async function signIn(key) {
+  loginError.textContent = '';
+  const button = $('#login-form button');
+  button.disabled = true;
+  try {
+    await api('session', {key: key.trim()});
+    await enter();
+    $('#key').value = '';
+    if (location.hash) history.replaceState(null, '', '/studio');
+  } catch (error) {
+    loginError.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+}
+$('#login-form').onsubmit = event => {
+  event.preventDefault();
+  signIn($('#key').value);
+};
+(async () => {
+  const key = new URLSearchParams(location.hash.slice(1)).get('key');
+  try {
+    if (!key) await enter();
+    else {
+      $('#login').hidden = false;
+      await signIn(key);
+    }
+  } catch {
+    $('#login').hidden = false;
+  }
+})();
