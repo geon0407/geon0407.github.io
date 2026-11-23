@@ -383,3 +383,20 @@
 .about-contact__cv ion-icon { font-size: 20px; color: var(--accent); }
 .about-contact__cv:hover, .about-contact__cv:focus-visible { color: var(--accent); }
 .about-contact__cv-date { color: var(--muted); font-size: .875rem; font-weight: 400; }
+
+/* Home (Latest Works, Recent Posts): four smaller cards per row, two rows. The card
+   proportions stay the same; text and padding shrink to fit. Tablet/phone keep 2 / 1 columns. */
+@media (min-width: 1025px) {
+  .home-cards .c-project-card.col, .home-cards .c-blog-card.col { flex: 0 0 25%; max-width: 25%; }
+  .home-cards .c-project-card__info { padding: 36px 18px 16px; }
+  .home-cards .c-project-card__period { font-size: 12px; margin-bottom: 4px; }
+  .home-cards .c-project-card__ongoing { font-size: 11px; padding: 1px 7px; }
+  .home-cards .c-project-card__title { font-size: 18px; }
+  .home-cards .c-project-card__subtitle { font-size: 13.5px; padding-top: 8px; }
+  .home-cards .c-blog-card__content { padding: 20px; }
+  .home-cards .c-blog-card__title { margin: 10px 0; font-size: 18px; }
+  .home-cards .c-blog-card__excerpt { margin-bottom: 14px; font-size: 13.5px; }
+  .home-cards .c-blog-card__tag { padding: 6px 9px; font-size: 11px; }
+  .home-cards .c-blog-card__author-image { width: 34px; height: 34px; }
+  .home-cards .c-blog-card__author-name { font-size: 14px; }
+}

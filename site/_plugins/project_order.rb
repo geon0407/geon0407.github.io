@@ -1,9 +1,13 @@
-# Orders projects newest first, for the home "Latest Works" section, the Projects page
-# and the "Next project" link:
-#   1. ongoing projects (newest start month first)
-#   2. then by end month, falling back to start month, then to the date field.
-# Jekyll would otherwise list projects by the date field, oldest first.
+# Project ordering, used by the Projects page, the "Next project" link and home "Latest Works":
+#   1. finished projects, latest end month first
+#      (end month falls back to start month, then to the date field);
+#   2. then ongoing projects, latest start month first — the longest-running comes last.
+#
+# Home (site.data.home_projects) shows at most HOME_LIMIT cards: every ongoing project,
+# with the remaining slots going to the most recently finished, in the same order.
 module StudioProjectOrder
+  HOME_LIMIT = 8
+
   class Generator < Jekyll::Generator
     safe true
     priority :low
@@ -12,21 +16,36 @@ module StudioProjectOrder
       projects = site.collections["projects"]
       return unless projects
 
-      projects.docs.sort_by! { |doc| sort_key(doc) }.reverse!
+      ongoing, finished = projects.docs.partition { |doc| ongoing?(doc) }
+      ongoing = newest_first(ongoing) { |doc| start_month(doc) }
+      finished = newest_first(finished) { |doc| end_month(doc) }
+      projects.docs.replace(finished + ongoing)
+
+      home_ongoing = ongoing.first(HOME_LIMIT)
+      site.data["home_projects"] = finished.first(HOME_LIMIT - home_ongoing.size) + home_ongoing
     end
 
     private
 
-    def sort_key(doc)
-      data = doc.data
-      date = data["date"].respond_to?(:strftime) ? data["date"].strftime("%Y-%m-%d") : data["date"].to_s
-      ongoing = data["ongoing"] == true
-      month = if ongoing
-                month(data["period_start"]) || date[0, 7]
-              else
-                month(data["period_end"]) || month(data["period_start"]) || date[0, 7]
-              end
-      [ongoing ? 1 : 0, month.to_s, date, doc.relative_path]
+    def newest_first(docs)
+      docs.sort_by { |doc| [yield(doc), date(doc), doc.relative_path] }.reverse
+    end
+
+    def ongoing?(doc)
+      doc.data["ongoing"] == true
+    end
+
+    def start_month(doc)
+      month(doc.data["period_start"]) || date(doc)[0, 7]
+    end
+
+    def end_month(doc)
+      month(doc.data["period_end"]) || month(doc.data["period_start"]) || date(doc)[0, 7]
+    end
+
+    def date(doc)
+      value = doc.data["date"]
+      value.respond_to?(:strftime) ? value.strftime("%Y-%m-%d") : value.to_s
     end
 
     def month(value)

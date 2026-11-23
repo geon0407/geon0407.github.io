@@ -1,5 +1,5 @@
 <!-- begin projects -->
-<section class="section projects" id="projects">
+<section class="section projects home-cards" id="projects">
   <div class="container">
     <div class="row">
       <div class="col col-12">
@@ -17,10 +17,10 @@
           <p{% if include.empty_message_ko %} data-ko="{{ include.empty_message_ko | escape }}"{% endif %}>{{ include.empty_message | escape }}</p>
           {% elsif include.show_projects %}
           <div class="row">
-            {% for project in site.projects %}
-              {% if forloop.index <= 6 %}
-                {% bookshop project-card project=project %}
-              {% endif %}
+            {% comment %} Up to 8 picked and ordered by _plugins/project_order.rb {% endcomment %}
+            {% assign home_projects = site.data.home_projects | default: site.projects %}
+            {% for project in home_projects limit:8 %}
+              {% bookshop project-card project=project %}
             {% endfor %}
           </div>
           {% endif %}
