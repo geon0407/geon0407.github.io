@@ -1,6 +1,9 @@
 title: GeonHyoung Kim
 url: https://geon0407.github.io
 
+# Publish posts/projects dated in the future right away (a project may have a fixed end date).
+future: true
+
 plugins:
   - jekyll-bookshop
   - jekyll-sitemap

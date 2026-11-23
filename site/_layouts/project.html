@@ -13,12 +13,14 @@ layout: default
     {{ content }}
   </div>
 
-  {% if page.previous.url %}
+  {% comment %} Projects are ordered newest first (_plugins/project_order.rb), so the
+     "next" project is the following card in that list. {% endcomment %}
+  {% if page.next.url %}
   <div class="project__navigation animate">
-    <a class="project__prev" href="{{page.previous.url}}">
+    <a class="project__prev" href="{{page.next.url}}">
       <div class="project__box">
         <span class="project__nav__info" data-ko="다음 프로젝트">Next project</span>
-        <h2 class="project__nav__title">{{page.previous.title}}<ion-icon name="arrow-right"></ion-icon></h2>
+        <h2 class="project__nav__title">{{page.next.title}}<ion-icon name="arrow-right"></ion-icon></h2>
       </div>
     </a>
   </div>
