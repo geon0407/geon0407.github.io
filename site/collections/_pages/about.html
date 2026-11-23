@@ -17,10 +17,10 @@ title_ko: 소개
         </figure>
       </div>
     </div>
-    {% if site.data.studio.profile.portrait.path %}
+    {% if site.data.studio.profile.portrait.path and site.data.studio.profile.portrait.path != "" %}
       <img class="about-profile__photo about-profile__photo--portrait" src="{{ site.data.studio.profile.portrait.path | relative_url }}" alt="{{ site.data.studio.profile.portrait.alt | escape }}">
     {% endif %}
-    {% if site.data.studio.profile.feature_photo.path %}
+    {% if site.data.studio.profile.feature_photo.path and site.data.studio.profile.feature_photo.path != "" %}
       <img class="about-profile__photo about-profile__photo--feature" src="{{ site.data.studio.profile.feature_photo.path | relative_url }}" alt="{{ site.data.studio.profile.feature_photo.alt | escape }}">
     {% endif %}
   </div>

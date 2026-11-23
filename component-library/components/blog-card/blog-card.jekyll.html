@@ -2,7 +2,7 @@
 <div class="{{c}} col col-4 col-d-6 col-t-12">
   <div class="{{c}}__inner">
 
-    {% if include.post.image %}
+    {% if include.post.image and include.post.image != "" %}
     <div class="{{c}}__image-wrap">
       <a class="{{c}}__image" href="{{ include.post.url }}">
         <img loading="lazy" src="{{ include.post.image }}" alt="{{ include.post.title }}">
