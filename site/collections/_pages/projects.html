@@ -2,11 +2,11 @@
 title: Projects
 title_ko: 프로젝트
 ---
-{% capture heading %}Projects{% endcapture %}
+{% assign heading = site.data.studio.pages.projects.en %}
 {% if site.projects.size > 0 %}
-  {% bookshop page-heading title=heading title_ko="프로젝트" %}
+  {% bookshop page-heading title=heading title_ko=site.data.studio.pages.projects.ko %}
   {% bookshop projects-list show_projects=true %}
 {% else %}
   {% capture empty_message %}No projects published yet.{% endcapture %}
-  {% bookshop page-heading title=heading title_ko="프로젝트" description=empty_message description_ko="아직 등록된 프로젝트가 없습니다" %}
+  {% bookshop page-heading title=heading title_ko=site.data.studio.pages.projects.ko description=empty_message description_ko="아직 등록된 프로젝트가 없습니다" %}
 {% endif %}

@@ -1,0 +1,10 @@
+{% if site.data.studio.home.show_projects %}
+{% bookshop projects-section
+  title=site.data.studio.home.projects_title.en
+  title_ko=site.data.studio.home.projects_title.ko
+  link_url="/projects/"
+  show_projects=true
+  empty_message="No projects published yet."
+  empty_message_ko="아직 등록된 프로젝트가 없습니다"
+%}
+{% endif %}

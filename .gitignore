@@ -8,3 +8,7 @@ bookshop-live.js
 .DS_Store
 site/.bundle
 .bundle
+# Private Blog Studio runtime (never publish sessions or drafts/backups)
+tools/blog-studio/.venv/
+tools/blog-studio/.state/
+__pycache__/

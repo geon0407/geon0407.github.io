@@ -1,0 +1,32 @@
+---
+layout: null
+---
+/* Managed by Blog Studio. Values live in _data/studio.yml. */
+{% for mode in site.data.studio.design.colors %}
+{% if mode[0] == 'light' %}:root{% else %}:root[data-theme="dark"]{% endif %} {
+{% for color in mode[1] %}  --{{ color[0] | replace: '_', '-' }}: {{ color[1] }};
+{% endfor %}}
+{% endfor %}
+body { font-size: {{ site.data.studio.design.body_size }}px; line-height: {{ site.data.studio.design.line_height }}; }
+@media (min-width: 1025px) { .container { max-width: {{ site.data.studio.design.width }}px; } }
+.c-blog-card__inner, .c-blog-card__content, .c-project-card__image, .blog-category { border-radius: {{ site.data.studio.design.radius }}px; }
+.c-projects-section, .c-blog-section { margin-bottom: {{ site.data.studio.design.section_gap }}px; }
+@media (min-width: 1025px) {
+ .c-blog-card.col, .c-project-card.col { flex: 0 0 calc(100% / {{ site.data.studio.design.columns }}); max-width: calc(100% / {{ site.data.studio.design.columns }}); }
+}
+@media (max-width: 700px) { .c-blog-card.col, .c-project-card.col { flex: 0 0 100%; max-width: 100%; } }
+.c-button--primary, .c-button--primary::before, .post-tags__tag, .c-blog-card__tag,
+.c-hero__btn .circle-bg, .nav__icon-close, .top { background: var(--accent); }
+.c-button--primary, .post-tags__tag, .c-blog-card__tag { color: var(--page-bg); }
+:root[data-theme="dark"] .c-button--primary,
+:root[data-theme="dark"] .post-tags__tag,
+:root[data-theme="dark"] .c-blog-card__tag { color: var(--page-bg); }
+.post__content pre, .page pre { overflow-x: auto; white-space: pre; word-break: normal; overflow-wrap: normal; border-radius: 10px; padding: 20px; }
+.post__content table, .page table { display: block; overflow-x: auto; font-size: 1rem; }
+.post__content img, .page img { max-width: 100%; height: auto; }
+.post__content ul.task-list { list-style: none; padding-left: 0; }
+.copy-code { float: right; margin: 0 0 8px 8px; padding: 5px 9px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: var(--surface); cursor: pointer; font: inherit; font-size: 13px; }
+:root[data-theme="dark"] .highlight .k, :root[data-theme="dark"] .highlight .kd, :root[data-theme="dark"] .highlight .kn { color: #ffaea2; }
+:root[data-theme="dark"] .highlight .s, :root[data-theme="dark"] .highlight .s1, :root[data-theme="dark"] .highlight .s2 { color: #b9e2af; }
+:root[data-theme="dark"] .highlight .mi, :root[data-theme="dark"] .highlight .mf { color: #edc48c; }
+:root[data-theme="dark"] .highlight .c, :root[data-theme="dark"] .highlight .c1, :root[data-theme="dark"] .highlight .cm { color: #a9b4b9; }

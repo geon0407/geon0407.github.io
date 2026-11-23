@@ -1,0 +1,10 @@
+{% if site.data.studio.home.show_posts %}
+{% bookshop blog-section
+  title=site.data.studio.home.posts_title.en
+  title_ko=site.data.studio.home.posts_title.ko
+  link_url="/blog/"
+  show_posts=true
+  empty_message="No posts published yet."
+  empty_message_ko="아직 게시된 글이 없습니다"
+%}
+{% endif %}

@@ -5,11 +5,11 @@ hero_image:
 hero_image_alt:
 ---
 {% bookshop hero
-  title="Hi, I’m GeonHyoung Kim."
-  title_ko="안녕하세요, 김건형입니다"
+  title=site.data.studio.home.greeting.en
+  title_ko=site.data.studio.home.greeting.ko
   description_html=""
-  image=page.hero_image
-  hero_image_alt=page.hero_image_alt
+  image=site.data.studio.home.image
+  hero_image_alt=site.data.studio.home.image_alt
   cta_button="Projects"
   cta_button_ko="프로젝트"
   cta_button_link="/projects/"
@@ -18,20 +18,10 @@ hero_image_alt:
   works_button_link="/blog/"
 %}
 
-{% bookshop projects-section
-  title="Latest Works"
-  title_ko="최근 프로젝트"
-  link_url="/projects/"
-  show_projects=true
-  empty_message="No projects published yet."
-  empty_message_ko="아직 등록된 프로젝트가 없습니다"
-%}
-
-{% bookshop blog-section
-  title="Recent Posts"
-  title_ko="최근 글"
-  link_url="/blog/"
-  show_posts=true
-  empty_message="No posts published yet."
-  empty_message_ko="아직 게시된 글이 없습니다"
-%}
+{% if site.data.studio.home.order == 'posts-first' %}
+  {% include home-posts.html %}
+  {% include home-projects.html %}
+{% else %}
+  {% include home-projects.html %}
+  {% include home-posts.html %}
+{% endif %}
