@@ -1,0 +1,10 @@
+{% comment %}
+  Email link with light spam protection: the address is written into the page reversed,
+  and js/contact.js turns it back into a normal mailto: link with the readable address.
+  Without JavaScript only the word "Email" shows. Optional: class="…".
+{% endcomment %}
+{% assign contact_email = site.data.studio.profile.contact.email | default: "" | strip %}
+{% if contact_email != "" %}
+{% assign contact_email_reversed = contact_email | split: "" | reverse | join: "" %}
+<a class="contact-email{% if include.class %} {{ include.class }}{% endif %}" href="#" data-contact-email="{{ contact_email_reversed | escape }}"><span class="contact-email__text">Email</span></a>
+{% endif %}

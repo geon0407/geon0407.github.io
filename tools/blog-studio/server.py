@@ -202,6 +202,9 @@ def validate_config(data):
             raise Problem(f'{key} 범위는 {lo}~{hi}입니다')
     if design['columns'] not in (1, 2, 3):
         raise Problem('열 수는 1, 2, 3 중 선택하세요')
+    email = data['profile']['contact']['email'].strip()
+    if email and not re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', email):
+        raise Problem('이메일 주소 형식을 확인하세요')
     if data['home']['order'] not in ('projects-first', 'posts-first'):
         raise Problem('섹션 순서를 확인하세요')
     for v in [data['home']['image'], data['profile']['portrait']['path'],
@@ -831,7 +834,7 @@ class Handler(BaseHTTPRequestHandler):
         page = re.sub(r'</head>', lambda match: style + match[0], page, count=1, flags=re.I)
         page = re.sub(r"""(\bhref=["'])/(?=["'])""", r'\g<1>/preview/', page, flags=re.I)
         script_hashes = []
-        for name in ('theme.js', 'language.js'):
+        for name in ('theme.js', 'language.js', 'contact.js'):
             script = (ROOT / 'site' / 'js' / name).read_text(encoding='utf-8')
             script = re.sub(r'</script', lambda match: '<\\/' + match[0][2:], script, flags=re.I)
             script_digest = base64.b64encode(hashlib.sha256(script.encode('utf-8')).digest()).decode('ascii')

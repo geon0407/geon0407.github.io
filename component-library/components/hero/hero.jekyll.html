@@ -17,6 +17,9 @@
                 <span class="circle-bg"><ion-icon class="button-arrow" name="arrow-forward-outline"></ion-icon></span> <span{% if include.works_button_ko %} data-ko="{{ include.works_button_ko | escape }}"{% endif %}>{{ include.works_button }}</span>
               </a>
             </div>
+            {% if include.contact_html and include.contact_html != "" %}
+            <div class="{{c}}__contact">{{ include.contact_html }}</div>
+            {% endif %}
           </div>
 
           {% if include.image and include.image != "" %}

@@ -51,4 +51,28 @@ title_ko: 소개
     </ol>
   </section>
   {% endfor %}
+
+  {% assign contact = site.data.studio.profile.contact %}
+  {% assign contact_email = contact.email | default: "" | strip %}
+  <section class="about-contact" aria-labelledby="contact-title">
+    <h2 id="contact-title" data-ko="연락처">Contact</h2>
+    {% if contact_email != "" %}
+    <div class="about-contact__email">
+      <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+      {% include contact-email.html class="about-contact__address" %}
+      <div class="about-contact__actions">
+        <a class="about-contact__btn about-contact__btn--primary" href="#" data-contact-mailto><span data-ko="메일 보내기">Send email</span></a>
+        <button class="about-contact__btn" type="button" data-contact-copy aria-label="Copy email address"><ion-icon name="copy-outline" aria-hidden="true"></ion-icon><span data-ko="복사">Copy</span></button>
+      </div>
+    </div>
+    {% endif %}
+    <ul class="about-contact__links list-reset">
+      {% if site.data.studio.site.linkedin != "" %}<li><a href="{{ site.data.studio.site.linkedin | escape }}" target="_blank" rel="noopener"><ion-icon name="logo-linkedin" aria-hidden="true"></ion-icon>LinkedIn</a></li>{% endif %}
+      {% if site.data.studio.site.github != "" %}<li><a href="{{ site.data.studio.site.github | escape }}" target="_blank" rel="noopener"><ion-icon name="logo-github" aria-hidden="true"></ion-icon>GitHub</a></li>{% endif %}
+      {% if site.data.studio.site.instagram != "" %}<li><a href="{{ site.data.studio.site.instagram | escape }}" target="_blank" rel="noopener"><ion-icon name="logo-instagram" aria-hidden="true"></ion-icon>Instagram</a></li>{% endif %}
+    </ul>
+    {% if contact.affiliation.en and contact.affiliation.en != "" %}
+    <p class="about-contact__place"><ion-icon name="location-outline" aria-hidden="true"></ion-icon><span{% if contact.affiliation.ko and contact.affiliation.ko != "" %} data-ko="{{ contact.affiliation.ko | escape }}"{% endif %}>{{ contact.affiliation.en | escape }}</span></p>
+    {% endif %}
+  </section>
 </main>

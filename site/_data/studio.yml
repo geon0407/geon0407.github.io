@@ -108,6 +108,11 @@ profile:
   verse_source:
     en: 3 John 1:2 · KJV
     ko: 요한삼서 1장 2절 · 개역한글
+  contact:
+    email: geon0407@gm.gist.ac.kr
+    affiliation:
+      en: School of Electrical Engineering and Computer Science, GIST
+      ko: 광주과학기술원 전기전자컴퓨터공학과
 pages:
   projects:
     en: Projects

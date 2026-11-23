@@ -812,6 +812,8 @@ export function validateConfig(data, current) {
   const ranges = {body_size: [16, 22], line_height: [1.4, 2], width: [960, 1440], radius: [0, 32], section_gap: [24, 120], columns: [1, 3]};
   for (const [key, [lo, hi]] of Object.entries(ranges)) if (!(lo <= design[key] && design[key] <= hi)) throw new Problem(`${key} 범위는 ${lo}~${hi}입니다`);
   if (![1, 2, 3].includes(design.columns)) throw new Problem('열 수는 1, 2, 3 중 선택하세요');
+  const email = String(data.profile.contact.email || '').trim();
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Problem('이메일 주소 형식을 확인하세요');
   if (!['projects-first', 'posts-first'].includes(data.home.order)) throw new Problem('섹션 순서를 확인하세요');
   for (const v of [data.home.image, data.profile.portrait.path, data.profile.feature_photo.path, data.site.avatar, data.site.linkedin, data.site.github, data.site.instagram]) url(v || '');
   return data;

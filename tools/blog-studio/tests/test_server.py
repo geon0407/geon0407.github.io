@@ -69,6 +69,9 @@ class StudioTests(unittest.TestCase):
         social={s['icon']:s['link'] for s in studio.yaml.safe_load(studio.safe_path('site/_data/social_links.yml').read_text())['social']}
         self.assertEqual(social['github'],'https://github.com/example')
         self.assertEqual(social['linkedin'],'https://www.linkedin.com/in/geonhyoung-kim-63b521438/')
+        bad=studio.yaml.safe_load(studio.safe_path(studio.CONFIG).read_text());bad['profile']['contact']['email']='not an email'
+        with self.assertRaises(studio.Problem):studio.validate_config(bad)
+        bad['profile']['contact']['email']='';studio.validate_config(bad)  # empty hides the contact
         config['design']['colors']['dark']['ink']='red; } body {'
         with self.assertRaises(studio.Problem):studio.validate_config(config)
     def test_publish_only_owned_changes_and_push(self):

@@ -193,6 +193,9 @@ test('settings: validated, and synced into the other data files', async () => {
   // author.yml is unchanged (same author/avatar), so only these three are pending.
   assert.deepEqual(labels, ['general_settings.yml', 'social_links.yml', 'studio.yml']);
   const bad = (await studio.config());
+  const badEmail = await studio.config();
+  badEmail.config.profile.contact.email = 'not an email';
+  await assert.rejects(studio.saveConfig(badEmail), /이메일/);
   bad.config.design.colors.dark.ink = 'red; } body {';
   await assert.rejects(studio.saveConfig(bad), /색상/);
   await studio.publish();

@@ -4,6 +4,7 @@ permalink: /
 hero_image:
 hero_image_alt:
 ---
+{% capture contact_html %}{% include contact-line.html %}{% endcapture %}
 {% bookshop hero
   title=site.data.studio.home.greeting.en
   title_ko=site.data.studio.home.greeting.ko
@@ -16,6 +17,7 @@ hero_image_alt:
   works_button="Blog"
   works_button_ko="블로그"
   works_button_link="/blog/"
+  contact_html=contact_html
 %}
 
 {% if site.data.studio.home.order == 'posts-first' %}
