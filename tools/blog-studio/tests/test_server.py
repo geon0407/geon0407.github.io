@@ -40,6 +40,14 @@ class StudioTests(unittest.TestCase):
         for value in ['x.html','x.svg','x.js']:
             with self.assertRaises(studio.Problem):studio.upload({'name':value,'data':'aGVsbG8='})
         file=studio.upload({'name':'report.pdf','data':'JVBERi0xLjQ='});self.assertTrue(file['url'].startswith('/uploads/'))
+    def test_video_uploads(self):
+        mp4=studio.upload({'name':'clip.MP4','data':'AAAAGGZ0eXBtcDQy'});self.assertTrue(mp4['url'].endswith('.mp4'))
+        big=__import__('base64').b64encode(b'0'*(21*1024*1024)).decode()
+        self.assertTrue(studio.upload({'name':'clip.webm','data':big})['url'].endswith('.webm'))  # videos may exceed 20MB
+        with self.assertRaises(studio.Problem):studio.upload({'name':'photo.png','data':big})
+        with self.assertRaises(studio.Problem):studio.upload({'name':'clip.mov','data':'AAAA'})
+        with patch.object(studio,'VIDEO_LIMIT',10):
+            with self.assertRaises(studio.Problem):studio.upload({'name':'clip.mp4','data':'AAAAGGZ0eXBtcDQy'})
     def test_config_validation_and_identity_sync(self):
         config=studio.yaml.safe_load(studio.safe_path(studio.CONFIG).read_text());config['site']['title']='New name';config['site']['github']='https://github.com/example'
         studio.save_config({'config':config,'version':studio.version(studio.safe_path(studio.CONFIG))})

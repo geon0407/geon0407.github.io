@@ -11,6 +11,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import {Markdown} from '@tiptap/markdown';
 import {common, createLowlight} from 'lowlight';
 import DOMPurify from 'dompurify';
+import {mediaExtensions} from '../../shared/media.js';
 
 export function createEditor(element, content, onChange, onFiles, resolveImage) {
   const StudioImage = Image.extend({
@@ -40,7 +41,7 @@ export function createEditor(element, content, onChange, onFiles, resolveImage) 
   return new Editor({
     element,
     extensions: [StarterKit.configure({codeBlock: false, underline: false, link: {openOnClick: false, defaultProtocol: 'https'}}),
-      TableKit.configure({table: {resizable: false}}), StudioImage, TaskList, TaskItem.configure({nested: true}),
+      TableKit.configure({table: {resizable: false}}), StudioImage, ...mediaExtensions({resolveSrc: resolveImage}), TaskList, TaskItem.configure({nested: true}),
       CodeBlockLowlight.configure({lowlight: createLowlight(common)}), Markdown],
     content, contentType: 'markdown',
     editorProps: {

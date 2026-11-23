@@ -8,10 +8,12 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { Markdown } from '@tiptap/markdown';
 import { common, createLowlight } from 'lowlight';
 import DOMPurify from 'dompurify';
+import * as media from '../shared/media.js';
+window.StudioMedia = media;
 window.StudioEditor = (element, content, onChange, onFiles) => new Editor({
   element,
   extensions: [StarterKit.configure({codeBlock:false, underline:false, link:{openOnClick:false,defaultProtocol:'https'}}),
-    TableKit.configure({table:{resizable:false}}), Image, TaskList, TaskItem.configure({nested:true}),
+    TableKit.configure({table:{resizable:false}}), Image, ...media.mediaExtensions(), TaskList, TaskItem.configure({nested:true}),
     CodeBlockLowlight.configure({lowlight:createLowlight(common)}), Markdown],
   content, contentType:'markdown',
   editorProps: {

@@ -79,8 +79,14 @@ test('web Studio: connect, write, publish, deploy status, every screen', async t
   $('[data-meta="title"]').value = '웹에서 쓴 글';
   $('[data-meta="title"]').dispatchEvent(new w.Event('input'));
   $('#slug').value = 'web-post';
+  w.prompt = () => 'https://youtu.be/dQw4w9WgXcQ?t=90';
+  w.document.querySelector('[data-command="youtube"]').click();
+  w.prompt = () => null;
+  assert.ok($('#editor iframe[src*="youtube-nocookie.com/embed/dQw4w9WgXcQ?start=90"]'), 'youtube shown in editor');
   $('#save-record').click();
   await idle();
+  const draftText = Object.entries(data.files()).find(([p]) => p.startsWith('drafts/'))[1].toString();
+  assert.match(JSON.parse(draftText).body, /<div class="video-embed youtube"><iframe class="reframe-off" src="https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ\?start=90"/);
   assert.equal(Object.keys(data.files()).filter(p => p.startsWith('drafts/')).length, 1, notice());
 
   $('#ready-record').click();
@@ -128,8 +134,34 @@ test('web Studio: connect, write, publish, deploy status, every screen', async t
   await idle();
   $('#delete-record').click();
   await idle();
+  assert.ok(!$('#notice').classList.contains('error'), 'move to trash: ' + notice());
+  assert.match(notice(), /휴지통으로 옮겼습니다/);
   w.document.querySelector('[data-view="trash"]').click();
   await idle();
   assert.match($('#main').textContent, /웹에서 쓴 글/);
   assert.deepEqual(errors, []);
+});
+
+test('clicking the menu while a slow delete runs does not break it', async t => {
+  const site = new FakeRepo({files: siteFiles()});
+  const data = new FakeRepo({isPrivate: true});
+  const {w, $, idle, notice, close} = openStudio({site, data});
+  t.after(close);
+  await idle();
+  $('#token').value = 'github_pat_test';
+  $('#site-repo').value = 'me/site';
+  $('#data-repo').value = 'me/data';
+  $('#connect-form').dispatchEvent(new w.Event('submit', {cancelable: true}));
+  for (let i = 0; i < 100 && $('#app').hidden; i++) await sleep(30);
+  await idle();
+  [...w.document.querySelectorAll('[data-open]')].find(b => b.dataset.open.includes('post-1')).click();
+  await idle();
+  data.delay = site.delay = 40;
+  $('#delete-record').click();
+  await sleep(20);
+  w.document.querySelector('[data-view="trash"]').click();  // user clicks around while it runs
+  assert.match(notice(), /진행 중인 작업/);
+  await idle();
+  assert.ok(!$('#notice').classList.contains('error'), notice());
+  assert.match(notice(), /휴지통으로 옮겼습니다/);
 });

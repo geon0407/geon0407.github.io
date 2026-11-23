@@ -228,6 +228,19 @@ test('deploy status after publishing: waiting, running, failure with the failed 
   assert.equal((await reopened.deployStatus()).state, 'success');
 });
 
+test('video uploads: mp4/webm up to 50MB, published like images', async () => {
+  const {studio, site} = await setup();
+  const big = Buffer.alloc(21 * 1024 * 1024).toString('base64');
+  const clip = await studio.upload({name: 'clip.mp4', data: big});
+  await assert.rejects(studio.upload({name: 'photo.png', data: big}), /20MB/);
+  await assert.rejects(studio.upload({name: 'clip.mov', data: textToB64('x')}), /지원 파일/);
+  const html = `<div class="video-embed video-file"><video src="${clip.url}" controls preload="metadata" playsinline></video></div>`;
+  await studio.saveRecord({...draftPost(), draft: false, body: '영상\n\n' + html});
+  assert.ok((await studio.listUploads()).find(f => f.url === clip.url).used);
+  await studio.publish();
+  assert.equal(site.files()['site/uploads/' + clip.url.slice(9)].length, 21 * 1024 * 1024);
+});
+
 test('encoding helpers round-trip Korean text', () => {
   assert.equal(b64ToText(textToB64('안녕 👋')), '안녕 👋');
 });

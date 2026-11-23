@@ -83,6 +83,7 @@ export function fakeFetch(repos) {
   return async (url, options) => {
     const match = url.match(/^https:\/\/api\.github\.com\/repos\/([\w.-]+\/[\w.-]+)(.*)$/);
     const repo = repos[match[1]];
+    if (repo.delay) await new Promise(r => setTimeout(r, repo.delay));  // simulate a slow network
     const [status, data] = repo.handle(options.method, match[2], options.body ? JSON.parse(options.body) : undefined, Boolean(options.headers?.Authorization));
     return {status, ok: status < 300, json: async () => data};
   };

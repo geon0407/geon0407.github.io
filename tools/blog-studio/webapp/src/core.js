@@ -9,7 +9,9 @@ import yaml from 'js-yaml';
 export const CONFIG = 'site/_data/studio.yml';
 export const CATEGORIES = 'site/_data/blog_categories.yml';
 export const UPLOAD_LIMIT = 20 * 1024 * 1024;
-export const EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.pdf', '.txt', '.csv', '.zip', '.docx', '.xlsx', '.pptx'];
+export const VIDEO_LIMIT = 50 * 1024 * 1024;
+const VIDEO_EXTENSIONS = ['.mp4', '.webm'];
+export const EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.pdf', '.txt', '.csv', '.zip', '.docx', '.xlsx', '.pptx', ...VIDEO_EXTENSIONS];
 const UPLOAD_REF = /\/uploads\/(\d{4}\/\d{2}\/[A-Za-z0-9_-]+\.[a-z0-9]+)/g;
 const UPLOAD_NAME = /^\d{4}\/\d{2}\/[A-Za-z0-9_-]+\.[a-z0-9]+$/;
 const RECORD_PATH = /^site\/collections\/_(posts|projects)\/[A-Za-z0-9_.-]+\.md$/;
@@ -526,9 +528,11 @@ export class Studio {
   async upload({name, data}) {
     return this.mutate(async () => {
       const ext = (String(name).match(/\.[^.]+$/)?.[0] || '').toLowerCase();
-      if (!EXTENSIONS.includes(ext)) throw new Problem('지원 파일: PNG/JPG/GIF/WebP/AVIF, PDF, TXT, CSV, ZIP, Office 문서');
+      if (!EXTENSIONS.includes(ext)) throw new Problem('지원 파일: PNG/JPG/GIF/WebP/AVIF, MP4/WebM 동영상, PDF, TXT, CSV, ZIP, Office 문서');
       const size = b64ToBytes(data).length;
-      if (!size || size > UPLOAD_LIMIT) throw new Problem('파일은 20MB 이하여야 합니다');
+      if (VIDEO_EXTENSIONS.includes(ext)) {
+        if (!size || size > VIDEO_LIMIT) throw new Problem('동영상은 50MB 이하여야 합니다. 긴 영상은 유튜브에 올려 넣어주세요');
+      } else if (!size || size > UPLOAD_LIMIT) throw new Problem('파일은 20MB 이하여야 합니다');
       const now = new Date();
       const rel = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${hex(12)}${ext}`;
       await this.dataCommit({['uploads/' + rel]: {b64: data}}, 'studio: upload file');

@@ -24,10 +24,12 @@ WEB = Path(__file__).parent / 'web'
 STATE = Path(__file__).parent / '.state'
 CONFIG = 'site/_data/studio.yml'
 CATEGORIES = 'site/_data/blog_categories.yml'
-REQUEST_LIMIT = 28 * 1024 * 1024
+REQUEST_LIMIT = 70 * 1024 * 1024  # a 50MB video, base64-encoded in JSON
 UPLOAD_LIMIT = 20 * 1024 * 1024
+VIDEO_LIMIT = 50 * 1024 * 1024
+VIDEO_EXTENSIONS = {'.mp4', '.webm'}
 EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.pdf', '.txt', '.csv',
-              '.zip', '.docx', '.xlsx', '.pptx'}
+              '.zip', '.docx', '.xlsx', '.pptx', *VIDEO_EXTENSIONS}
 TEXT_SUFFIXES = {'.md', '.markdown', '.html', '.yml', '.yaml', '.json', '.js', '.css', '.scss', '.txt'}
 UPLOAD_REF = re.compile(r'/uploads/(\d{4}/\d{2}/[A-Za-z0-9_-]+\.[a-z0-9]+)')
 UPLOAD_NAME = re.compile(r'\d{4}/\d{2}/[A-Za-z0-9_-]+\.[a-z0-9]+')
@@ -484,12 +486,15 @@ def upload(data):
     filename = text(data.get('name', ''), 300)
     ext = Path(filename).suffix.lower()
     if ext not in EXTENSIONS:
-        raise Problem('지원 파일: PNG/JPG/GIF/WebP/AVIF, PDF, TXT, CSV, ZIP, Office 문서')
+        raise Problem('지원 파일: PNG/JPG/GIF/WebP/AVIF, MP4/WebM 동영상, PDF, TXT, CSV, ZIP, Office 문서')
     try:
         content = base64.b64decode(data.get('data', ''), validate=True)
     except Exception:
         raise Problem('파일 데이터를 읽을 수 없습니다')
-    if not content or len(content) > UPLOAD_LIMIT:
+    if ext in VIDEO_EXTENSIONS:
+        if not content or len(content) > VIDEO_LIMIT:
+            raise Problem('동영상은 50MB 이하여야 합니다. 긴 영상은 유튜브에 올려 넣어주세요')
+    elif not content or len(content) > UPLOAD_LIMIT:
         raise Problem('파일은 20MB 이하여야 합니다')
     relative = dt.datetime.now().strftime('%Y/%m/') + secrets.token_hex(12) + ext
     atomic(STATE / 'uploads' / relative, content)

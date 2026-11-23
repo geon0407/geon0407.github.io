@@ -312,7 +312,7 @@ function openRecord(item) {
   const toolbar = [['굵게', 'bold'], ['기울임', 'italic'], ['취소선', 'strike'], ['제목 2', 'h2'], ['제목 3', 'h3'], ['본문', 'paragraph'], ['인용', 'quote'],
     ['목록', 'bullet'], ['번호', 'ordered'], ['체크', 'task'], ['구분선', 'hr'], ['인라인 코드', 'code'], ['코드 블록', 'codeblock'], ['링크', 'link'],
     ['표', 'table'], ['행 추가', 'row'], ['열 추가', 'column'], ['행 삭제', 'delrow'], ['열 삭제', 'delcolumn'], ['표 삭제', 'deltable'],
-    ['사진', 'image'], ['파일 첨부', 'file'], ['실행 취소', 'undo'], ['다시 실행', 'redo'], ['Markdown', 'source']];
+    ['사진', 'image'], ['동영상', 'video'], ['유튜브', 'youtube'], ['파일 첨부', 'file'], ['실행 취소', 'undo'], ['다시 실행', 'redo'], ['Markdown', 'source']];
   const languages = [['plaintext', '일반 텍스트'], ['cpp', 'C++'], ['python', 'Python'], ['javascript', 'JavaScript'], ['typescript', 'TypeScript'],
     ['bash', 'Bash'], ['json', 'JSON'], ['yaml', 'YAML'], ['sql', 'SQL'], ['java', 'Java'], ['c', 'C']];
   $('#toolbar').innerHTML = toolbar.map(([name, key]) => `<button type="button" data-command="${key}">${name}</button>`).join('')
@@ -330,7 +330,7 @@ function openRecord(item) {
   }, 'image/*');
   $('#save-record').onclick = () => job(() => saveRecord(current.draft));
   $('#ready-record').onclick = () => job(async () => { await saveRecord(false); await preview(); });
-  $('#back').onclick = () => navigate(view);
+  $('#back').onclick = () => { if (!busy) navigate(view); };
   $('#export').onclick = () => download(($('#slug')?.value || 'post') + '.md', bodyText());
   if ($('#make-private')) $('#make-private').onclick = () => job(async () => {
     if (confirm('현재 내용을 비공개로 저장할까요? 다음 발행 때 사이트에서 내려갑니다.')) await saveRecord(true);
@@ -359,9 +359,9 @@ function offerRecovery() {
   $('#discard-recovery').onclick = () => { forgetRecovery(); $('#recovery').innerHTML = ''; };
 }
 
-const recoveryKey = () => 'studio-recovery:' + current.kind + ':' + (current.id || 'new');
+const recoveryKey = (record = current) => 'studio-recovery:' + record.kind + ':' + (record.id || 'new');
 function readRecovery() { try { return JSON.parse(localStorage.getItem(recoveryKey())); } catch { return null; } }
-function forgetRecovery() { try { localStorage.removeItem(recoveryKey()); } catch {} }
+function forgetRecovery(record = current) { try { localStorage.removeItem(recoveryKey(record)); } catch {} }
 function bodyText() { return sourceMode ? $('#source').value : editorChanged ? editor.getMarkdown() : originalBody; }
 
 function collectRecord() {
@@ -386,10 +386,11 @@ function count() {
 }
 
 async function saveRecord(draft) {
+  const record = current;  // the screen may change while saving
   const data = collectRecord();
   data.draft = draft;
   const saved = await api('save', data);
-  forgetRecovery();
+  forgetRecovery(record);
   dirty = false;
   await refresh();
   openRecord(saved);
@@ -404,11 +405,12 @@ async function deleteRecord() {
       : '이 초안을 휴지통으로 옮길까요? 휴지통에서 복구할 수 있습니다.';
   if (!confirm(message)) return;
   if (dirty && !confirm('저장하지 않은 변경은 휴지통에 포함되지 않습니다. 계속할까요?')) return;
-  await api('archive', {id: current.id, version: current.version});
-  forgetRecovery();
+  const record = current;  // the screen may change while the request runs
+  await api('archive', {id: record.id, version: record.version});
+  forgetRecovery(record);
   dirty = false;
   await refresh();
-  navigate(current.kind === 'post' ? 'posts' : 'projects');
+  navigate(record.kind === 'post' ? 'posts' : 'projects');
   notice('휴지통으로 옮겼습니다.');
 }
 
@@ -422,6 +424,8 @@ function tool(action) {
     return;
   }
   if (action === 'image' || action === 'file') { chooseFile(files => insertFiles(files), action === 'image' ? 'image/*' : ''); return; }
+  if (action === 'video') { chooseFile(files => insertFiles(files), 'video/mp4,video/webm,.mp4,.webm'); return; }
+  if (action === 'youtube') { insertYoutube(); return; }
   if (sourceMode) { notice('서식 버튼을 사용하려면 Markdown 버튼을 눌러 편집 화면으로 돌아오세요.'); return; }
   const chain = editor.chain().focus();
   if (action === 'link') {
@@ -459,8 +463,21 @@ function chooseFile(callback, accept = '') {
   input.click();
 }
 
+function insertYoutube() {
+  const link = prompt('유튜브 영상 주소 (youtu.be/…, youtube.com/watch?v=…, 쇼츠 링크 모두 가능)');
+  if (!link) return;
+  const videoId = window.StudioMedia.youtubeId(link);
+  if (!videoId) { notice('유튜브 영상 주소를 확인하세요. 예: https://youtu.be/영상ID', true); return; }
+  const attrs = {videoId, start: window.StudioMedia.youtubeStart(link)};
+  if (sourceMode) { $('#source').value += `\n${window.StudioMedia.youtubeHtml(attrs)}\n`; changed(); }
+  else editor.chain().focus().setYoutube(attrs).run();
+}
+
 async function uploadFile(file) {
-  if (file.size > 20 * 1024 * 1024) throw Error('첨부파일은 20MB 이하여야 합니다');
+  const isVideo = window.StudioMedia.isVideoFile(file.name);
+  if (/\.(mov|avi|mkv|wmv|m4v|3gp)$/i.test(file.name)) throw Error('동영상은 mp4 또는 webm만 올릴 수 있습니다. 다른 형식은 mp4로 변환하거나 유튜브에 올린 뒤 유튜브 버튼으로 넣어주세요.');
+  if (isVideo && file.size > window.StudioMedia.VIDEO_LIMIT) throw Error('동영상은 50MB 이하만 올릴 수 있습니다. 긴 영상은 유튜브에 "일부 공개"로 올린 뒤 유튜브 버튼으로 넣어주세요.');
+  if (!isVideo && file.size > 20 * 1024 * 1024) throw Error('첨부파일은 20MB 이하여야 합니다');
   const data = await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result).split(',')[1]);
@@ -474,6 +491,11 @@ async function insertFiles(files) {
   for (const file of files) {
     const result = await uploadFile(file);
     const isImage = IMAGE.test(file.name);
+    if (window.StudioMedia.isVideoFile(file.name)) {
+      if (sourceMode) { $('#source').value += `\n${window.StudioMedia.videoHtml(result.url)}\n`; changed(); }
+      else editor.chain().focus().setVideo(result.url).run();
+      continue;
+    }
     if (sourceMode) {
       $('#source').value += `\n${isImage ? '!' : ''}[${file.name.replace(/[\[\]]/g, '')}](${result.url})\n`;
       changed();
@@ -502,7 +524,7 @@ async function renderFiles() {
   const fill = () => {
     const shown = $('#only-unused').checked ? unused : items;
     $('#file-list').innerHTML = shown.length ? shown.map(f => `<div class="record file-row">
-        ${IMAGE.test(f.path) ? `<img class="thumb" src="${esc(f.url)}" alt="" loading="lazy">` : '<span class="thumb file-icon">FILE</span>'}
+        ${IMAGE.test(f.path) ? `<img class="thumb" src="${esc(f.url)}" alt="" loading="lazy">` : `<span class="thumb file-icon">${/\.(mp4|webm)$/i.test(f.path) ? 'VIDEO' : 'FILE'}</span>`}
         <div class="grow"><h3><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.path)}</a>
           <span class="badge ${f.used ? '' : 'warn'}">${f.used ? '사용 중' : '사용 안 함'}</span></h3>
           <small>${size(f.size)} · ${f.where.includes('repo') ? '공개 저장소에 있음' : '발행 전 (Codespace에만 있음)'}</small></div>
@@ -592,7 +614,10 @@ $('#publish').onclick = () => job(async () => {
 });
 $('#publish-confirm').onclick = () => job(publishNow);
 $('#publish-cancel').onclick = () => $('#publish-dialog').close();
-$$('#nav button').forEach(b => b.onclick = () => navigate(b.dataset.view));
+$$('#nav button').forEach(b => b.onclick = () => {
+  if (busy) { notice('진행 중인 작업이 끝난 뒤에 이동하세요.'); return; }
+  navigate(b.dataset.view);
+});
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 
 // ------------------------------------------------------------------ login
