@@ -1,14 +1,76 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blog Studio · 김건형</title><link rel="stylesheet" href="/studio/studio.css"></head>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog Studio · 김건형</title>
+<link rel="stylesheet" href="/studio/studio.css">
+</head>
 <body>
-<div id="login" class="login" hidden><h1>Blog Studio</h1><p>본인만 사용하는 블로그 작업실입니다.<br>Codespaces 터미널에 표시된 관리 화면 주소를 열어주세요.</p><form id="login-form"><label>관리 키<input id="key" type="password" autocomplete="off" required></label><button class="primary">관리 화면 열기</button></form><p id="login-error" role="alert"></p></div>
-<div id="app" hidden>
-<aside><a class="brand" href="/studio">Blog Studio<span>GEONHYOUNG KIM</span></a><p class="nav-label">콘텐츠</p><nav id="nav"><button data-view="posts">게시글</button><button data-view="projects">프로젝트</button><p class="nav-label">사이트 편집</p><button data-view="home">홈</button><button data-view="profile">소개 · 이력</button><button data-view="design">색상 · 레이아웃</button><button data-view="settings">기본 설정</button></nav><div class="aside-bottom">PRIVATE WORKSPACE<br><a href="https://geon0407.github.io" target="_blank" rel="noopener">공개 블로그 보기</a><small>초안과 백업은 이 Codespace에 보관됩니다</small></div></aside>
-<div class="workspace"><header><div><span class="eyebrow">나의 블로그 작업실</span><h1 id="page-title">게시글</h1></div><div class="actions"><button id="preview">사이트 미리보기</button><button id="publish" class="primary">발행</button></div></header>
-<div id="notice" role="status" aria-live="polite" hidden></div><div id="pending" class="pending"></div><main id="main"></main>
-<footer>저장 → 사이트 미리보기 → 발행 · 글과 첨부파일은 내 GitHub 저장소에 보관됩니다</footer></div>
+<div id="login" class="login" hidden>
+  <h1>Blog Studio</h1>
+  <p>본인만 사용하는 블로그 작업실입니다.<br>Codespaces 터미널에 표시된 관리 화면 주소를 열어주세요.</p>
+  <form id="login-form">
+    <label>관리 키<input id="key" type="password" autocomplete="off" required></label>
+    <button class="primary">관리 화면 열기</button>
+  </form>
+  <p id="login-error" role="alert"></p>
 </div>
+
+<div id="app" hidden>
+  <aside>
+    <a class="brand" href="/studio">Blog Studio<span>GEONHYOUNG KIM</span></a>
+    <nav id="nav">
+      <p class="nav-label">콘텐츠</p>
+      <button data-view="posts">게시글</button>
+      <button data-view="projects">프로젝트</button>
+      <p class="nav-label">사이트 편집</p>
+      <button data-view="home">홈</button>
+      <button data-view="profile">소개 · 이력</button>
+      <button data-view="design">색상 · 레이아웃</button>
+      <button data-view="settings">기본 설정</button>
+      <p class="nav-label">관리</p>
+      <button data-view="files">첨부파일</button>
+      <button data-view="trash">휴지통</button>
+    </nav>
+    <div class="aside-bottom">
+      PRIVATE WORKSPACE<br>
+      <a href="https://geon0407.github.io" target="_blank" rel="noopener">공개 블로그 보기</a><br>
+      <button id="logout" class="link-button" type="button">로그아웃</button>
+      <small>초안·백업·휴지통은 이 Codespace에 보관됩니다</small>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header>
+      <div><span class="eyebrow">나의 블로그 작업실</span><h1 id="page-title">게시글</h1></div>
+      <div class="actions"><button id="preview">사이트 미리보기</button><button id="publish" class="primary">발행</button></div>
+    </header>
+    <div id="notice" role="status" aria-live="polite" hidden></div>
+    <div id="pending" class="pending"></div>
+    <main id="main"></main>
+    <footer>저장 → 사이트 미리보기 → 발행 · 글과 첨부파일은 내 GitHub 저장소에 보관됩니다</footer>
+  </div>
+</div>
+
 <input id="upload" type="file" hidden>
-<dialog id="preview-dialog"><div class="dialog-bar"><strong>빌드한 사이트 미리보기</strong><div><button data-width="390px">모바일</button><button data-width="100%">데스크톱</button><button id="close-preview">닫기</button></div></div><div class="preview-frame"><iframe id="site-preview" title="사이트 미리보기" sandbox="allow-same-origin allow-scripts"></iframe></div></dialog>
-<script src="/studio/editor-bundle.js"></script><script src="/studio/studio.js"></script>
-</body></html>
+
+<dialog id="preview-dialog">
+  <div class="dialog-bar">
+    <strong>빌드한 사이트 미리보기</strong>
+    <div><button data-width="390px">모바일</button><button data-width="100%">데스크톱</button><button id="close-preview">닫기</button></div>
+  </div>
+  <div class="preview-frame"><iframe id="site-preview" title="사이트 미리보기" sandbox="allow-same-origin allow-scripts"></iframe></div>
+</dialog>
+
+<dialog id="publish-dialog" class="small" aria-labelledby="publish-title">
+  <div class="dialog-body">
+    <h2 id="publish-title">발행할 변경</h2>
+    <div id="publish-list"></div>
+    <div class="dialog-actions"><button id="publish-confirm" class="primary">GitHub에 발행</button><button id="publish-cancel">취소</button></div>
+  </div>
+</dialog>
+
+<script src="/studio/editor-bundle.js"></script>
+<script src="/studio/studio.js"></script>
+</body>
+</html>

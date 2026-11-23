@@ -1,5 +1,9 @@
 import importlib.util
 import json
+import threading
+import time
+import urllib.error
+import urllib.request
 import shutil
 import subprocess
 import tempfile
@@ -54,5 +58,92 @@ class StudioTests(unittest.TestCase):
         self.assertEqual(studio.command(['git','rev-parse','HEAD']),studio.command(['git','rev-parse','origin/main']))
         studio.command(['git','add','unrelated.txt'])
         with self.assertRaises(studio.Problem):studio.publish()
+
+    def git_repo(self):
+        remote=Path(self.temp.name)/'remote.git'
+        subprocess.run(['git','init','--bare',str(remote)],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        for args in [['init','-b','main'],['config','user.name','Test'],['config','user.email','test@example.invalid'],['add','.'],['commit','-m','initial'],['remote','add','origin',str(remote)],['push','-u','origin','main']]:studio.command(['git',*args])
+    def test_categories_come_from_site_data(self):
+        slugs=[c['slug'] for c in studio.categories()]
+        self.assertIn('algorithms',slugs)
+        with self.assertRaises(studio.Problem):studio.save_record(self.post(meta={**self.post()['meta'],'categories':['nope']}))
+    def test_trash_restore_and_purge(self):
+        public=studio.save_record(self.post(draft=False));draft=studio.save_record(self.post(slug='second'))
+        studio.archive_record(public);studio.archive_record(draft)
+        self.assertFalse(studio.record_path(public['id']).exists());self.assertIn(public['id'],studio.pending())
+        items=studio.list_trash();self.assertEqual(len(items),2)
+        for item in items:
+            result=studio.restore_trash({'id':item['id']})
+            self.assertEqual(result['public'],not item['draft'])
+        self.assertTrue(studio.record_path(public['id']).exists());self.assertTrue(studio.record_path(draft['id']).exists())
+        self.assertEqual(studio.list_trash(),[])
+        studio.archive_record(studio.record(draft['id']));studio.save_record(self.post(slug='third'))
+        studio.purge_trash({'id':'all'});self.assertEqual(studio.list_trash(),[])
+        with self.assertRaises(studio.Problem):studio.restore_trash({'id':'../../etc'})
+    def test_restore_refuses_to_overwrite(self):
+        public=studio.save_record(self.post(draft=False));studio.archive_record(public)
+        studio.save_record(self.post(draft=False))
+        with self.assertRaises(studio.Problem) as error:studio.restore_trash({'id':studio.list_trash()[0]['id']})
+        self.assertEqual(error.exception.status,409)
+    def test_legacy_trash_is_migrated(self):
+        (studio.STATE/'trash').mkdir(parents=True)
+        (studio.STATE/'trash'/'20261123-053807-project-1.md').write_text('---\ntitle: Old\nlayout: project\n---\n\nbody\n')
+        [item]=studio.list_trash();self.assertEqual((item['title'],item['type']),('Old','project'))
+        self.assertEqual(item['targets'],[{'where':'repo','path':'site/collections/_projects/project-1.md'}])
+        studio.restore_trash({'id':item['id']});self.assertTrue((studio.ROOT/'site/collections/_projects/project-1.md').exists())
+    def test_unused_uploads_can_be_trashed_but_used_cannot(self):
+        used=studio.upload({'name':'a.png','data':'aGVsbG8='});unused=studio.upload({'name':'b.png','data':'aGVsbG8='})
+        studio.save_record(self.post(body=f'![a]({used["url"]})'))
+        files={f['path']:f for f in studio.list_uploads()}
+        used_path,unused_path=used['url'].removeprefix('/uploads/'),unused['url'].removeprefix('/uploads/')
+        self.assertTrue(files[used_path]['used']);self.assertFalse(files[unused_path]['used'])
+        with self.assertRaises(studio.Problem):studio.delete_upload({'path':used_path})
+        studio.delete_upload({'path':unused_path});self.assertNotIn(unused_path,{f['path'] for f in studio.list_uploads()})
+        studio.restore_trash({'id':studio.list_trash()[0]['id']});self.assertIn(unused_path,{f['path'] for f in studio.list_uploads()})
+    def test_changes_and_commit_message(self):
+        self.git_repo()
+        saved=studio.save_record(self.post(draft=False))
+        image=studio.upload({'name':'c.png','data':'aGVsbG8='})
+        studio.save_record({**saved,'body':f'![c]({image["url"]})'})
+        items=studio.changes()
+        self.assertEqual([(i['label'],i['status']) for i in items],[('게시글','added'),('첨부파일','added')])
+        message=studio.commit_message(items)
+        self.assertTrue(message.startswith('content(studio): add post "한글 테스트"; 1 attachment'))
+        with patch.object(studio,'build',return_value={'ok':True}):studio.publish()
+        self.assertIn('add post',studio.command(['git','log','-1','--format=%s']))
+        studio.archive_record(studio.record(saved['id']))
+        self.assertEqual([(i['label'],i['status'],i['title']) for i in studio.changes()],[('게시글','deleted','한글 테스트')])
+
+class HttpTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();studio.ROOT=Path(self.temp.name)/'repo';studio.STATE=Path(self.temp.name)/'private'
+        shutil.copytree(SOURCE/'site/_data',studio.ROOT/'site/_data');(studio.ROOT/'secret.html').write_text('<script>x</script>')
+        self.server=studio.ThreadingHTTPServer(('127.0.0.1',0),studio.Handler);self.base=f'http://127.0.0.1:{self.server.server_port}'
+        self.server.origins={self.base};threading.Thread(target=self.server.serve_forever,daemon=True).start()
+    def tearDown(self):self.server.shutdown();self.server.server_close();studio.SESSIONS.clear();self.temp.cleanup()
+    def call(self,path,data=None,cookie='',csrf=''):
+        headers={'Origin':self.base,'Cookie':cookie,'X-Studio-CSRF':csrf}
+        if data is not None:headers['Content-Type']='application/json'
+        request=urllib.request.Request(self.base+path,data=None if data is None else json.dumps(data).encode(),headers=headers)
+        try:
+            with urllib.request.urlopen(request) as r:return r.status,r.headers,r.read()
+        except urllib.error.HTTPError as e:return e.code,e.headers,e.read()
+    def login(self):
+        status,headers,_=self.call('/api/session',{'key':studio.BOOT_KEY});self.assertEqual(status,200)
+        return headers['Set-Cookie'].split(';')[0]
+    def test_upload_route_cannot_escape_upload_folders(self):
+        cookie=self.login()
+        for path in ['/uploads/%2e%2e/%2e%2e/secret.html','/uploads/../../secret.html','/uploads/2026/11/x.html']:
+            self.assertIn(self.call(path,cookie=cookie)[0],(403,404))
+        file=studio.upload({'name':'ok.png','data':'aGVsbG8='})
+        status,_,body=self.call(file['url'],cookie=cookie);self.assertEqual((status,body),(200,b'hello'))
+    def test_session_idle_expiry_and_logout(self):
+        cookie=self.login();self.assertEqual(self.call('/api/state',cookie=cookie)[0],200)
+        token=cookie.split('=',1)[1];csrf=studio.SESSIONS[token]['csrf']
+        studio.SESSIONS[token]['seen']=time.time()-studio.SESSION_IDLE_SECONDS-1
+        self.assertEqual(self.call('/api/state',cookie=cookie)[0],401)
+        cookie=self.login();token=cookie.split('=',1)[1]
+        self.assertEqual(self.call('/api/logout',{},cookie=cookie,csrf=studio.SESSIONS[token]['csrf'])[0],200)
+        self.assertEqual(self.call('/api/state',cookie=cookie)[0],401)
 
 if __name__=='__main__':unittest.main()
