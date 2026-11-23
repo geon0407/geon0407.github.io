@@ -3,42 +3,44 @@ title: About Me
 title_ko: 소개
 ---
 <main class="container about-page">
-  <div class="about-profile">
-    {% comment %} Name and contact card side by side, centred together (stacked on phones). {% endcomment %}
-    <div class="about-profile__header">
-      <h1 data-ko="{{ site.data.studio.profile.name.ko | escape }}">{{ site.data.studio.profile.name.en | escape }}</h1>
-      {% assign contact = site.data.studio.profile.contact %}
-      {% assign contact_email = contact.email | default: "" | strip %}
-      {% assign affiliation = contact.affiliation.en | default: "" %}
-      {% if contact_email != "" or affiliation != "" %}
-      <section class="about-contact" aria-labelledby="contact-title">
-        <h2 id="contact-title" data-ko="연락처">Contact</h2>
-        {% if contact_email != "" %}
-        <div class="about-contact__email">
-          <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
-          {% include contact-email.html class="about-contact__address" %}
-          <div class="about-contact__actions">
-            <a class="about-contact__btn about-contact__btn--primary" href="#" data-contact-mailto><span data-ko="메일 보내기">Send email</span></a>
-            <button class="about-contact__btn" type="button" data-contact-copy aria-label="Copy email address"><ion-icon name="copy-outline" aria-hidden="true"></ion-icon><span data-ko="복사">Copy</span></button>
-          </div>
-        </div>
-        {% endif %}
-        {% if affiliation != "" %}
-        <p class="about-contact__place"><ion-icon name="location-outline" aria-hidden="true"></ion-icon><span{% if contact.affiliation.ko and contact.affiliation.ko != "" %} data-ko="{{ contact.affiliation.ko | escape }}"{% endif %}>{{ contact.affiliation.en | escape }}</span></p>
-        {% endif %}
-      </section>
-      {% endif %}
-    </div>
+  {% assign portrait = site.data.studio.profile.portrait.path | default: "" %}
+  {% assign feature = site.data.studio.profile.feature_photo.path | default: "" %}
+  <div class="about-profile{% if portrait == "" and feature == "" %} about-profile--no-photos{% endif %}">
     <div class="about-profile__intro">
-      <div class="about-profile__bio">
-        <p data-ko="{{ site.data.studio.profile.bio.ko | escape }}">{{ site.data.studio.profile.bio.en | escape }}</p>
-        <p data-ko="{{ site.data.studio.profile.closing.ko | escape }}">{{ site.data.studio.profile.closing.en | escape }}</p>
-        <figure class="about-verse">
-          <blockquote>
-            <p data-ko="{{ site.data.studio.profile.verse.ko | escape }}">{{ site.data.studio.profile.verse.en | escape }}</p>
-          </blockquote>
-          <figcaption data-ko="{{ site.data.studio.profile.verse_source.ko | escape }}">{{ site.data.studio.profile.verse_source.en | escape }}</figcaption>
-        </figure>
+      <h1 data-ko="{{ site.data.studio.profile.name.ko | escape }}">{{ site.data.studio.profile.name.en | escape }}</h1>
+      {% comment %} Bio on the left, contact card on its right; the card wraps below on narrow screens. {% endcomment %}
+      <div class="about-profile__body">
+        <div class="about-profile__bio">
+          <p data-ko="{{ site.data.studio.profile.bio.ko | escape }}">{{ site.data.studio.profile.bio.en | escape }}</p>
+          <p data-ko="{{ site.data.studio.profile.closing.ko | escape }}">{{ site.data.studio.profile.closing.en | escape }}</p>
+          <figure class="about-verse">
+            <blockquote>
+              <p data-ko="{{ site.data.studio.profile.verse.ko | escape }}">{{ site.data.studio.profile.verse.en | escape }}</p>
+            </blockquote>
+            <figcaption data-ko="{{ site.data.studio.profile.verse_source.ko | escape }}">{{ site.data.studio.profile.verse_source.en | escape }}</figcaption>
+          </figure>
+        </div>
+        {% assign contact = site.data.studio.profile.contact %}
+        {% assign contact_email = contact.email | default: "" | strip %}
+        {% assign affiliation = contact.affiliation.en | default: "" %}
+        {% if contact_email != "" or affiliation != "" %}
+        <section class="about-contact" aria-labelledby="contact-title">
+          <h2 id="contact-title" data-ko="연락처">Contact</h2>
+          {% if contact_email != "" %}
+          <div class="about-contact__email">
+            <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+            {% include contact-email.html class="about-contact__address" %}
+            <div class="about-contact__actions">
+              <a class="about-contact__btn about-contact__btn--primary" href="#" data-contact-mailto><span data-ko="메일 보내기">Send email</span></a>
+              <button class="about-contact__btn" type="button" data-contact-copy aria-label="Copy email address"><ion-icon name="copy-outline" aria-hidden="true"></ion-icon><span data-ko="복사">Copy</span></button>
+            </div>
+          </div>
+          {% endif %}
+          {% if affiliation != "" %}
+          <p class="about-contact__place"><ion-icon name="location-outline" aria-hidden="true"></ion-icon><span{% if contact.affiliation.ko and contact.affiliation.ko != "" %} data-ko="{{ contact.affiliation.ko | escape }}"{% endif %}>{{ contact.affiliation.en | escape }}</span></p>
+          {% endif %}
+        </section>
+        {% endif %}
       </div>
     </div>
     {% if site.data.studio.profile.portrait.path and site.data.studio.profile.portrait.path != "" %}

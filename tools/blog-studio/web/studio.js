@@ -155,7 +155,7 @@ function renderConfig() {
         + field('관련 링크', `profile.timeline.${i}.url`, 'text', true))}
     </div>`).join('');
     out += panel('연락처', grid(field('이메일', 'profile.contact.email', 'email', true) + pair('소속', 'profile.contact.affiliation')),
-      '홈 인사말 아래와 소개 페이지의 이름 옆에 표시됩니다. 이메일은 스팸 수집을 막기 위해 페이지 코드에 뒤집힌 형태로 저장되고, 화면에서는 정상적으로 보입니다. 비우면 표시하지 않습니다.');
+      '홈 인사말 아래와 소개 페이지의 소개글 옆에 표시됩니다. 이메일은 스팸 수집을 막기 위해 페이지 코드에 뒤집힌 형태로 저장되고, 화면에서는 정상적으로 보입니다. 비우면 표시하지 않습니다.');
     out += panel('이력 · 연구 및 수상', cards + '<button id="add-timeline">이력 항목 추가</button>', '화면에 표시할 순서를 직접 정할 수 있습니다. 비어 있는 설명은 표시하지 않습니다.');
   }
   if (view === 'design') {
