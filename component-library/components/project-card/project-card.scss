@@ -1,6 +1,7 @@
 // Project card, shared by the home "Latest Works" section and the Projects page.
 // At rest: period + title on a colour band over the lower part of the thumbnail.
-// On hover / keyboard focus: the band grows upward and the subtitle slides in.
+// On hover / keyboard focus: a tint fades in over the whole card (as in the original
+// Vonge card) and the subtitle slides in under the title.
 .c-project-card { $c: &;
 	--card-tint: color-mix(in srgb, var(--accent, #b92c1e) 82%, #000);
 	margin-bottom: 20px;
@@ -22,6 +23,18 @@
 		background-color: $blue-gray;
 		box-shadow: 0 0 30px rgba($primary-color, 0.1);
 		transform: translate(0);  // keeps rounded corners clipping the image in Safari
+
+		// Whole-card tint shown on hover, so there is no edge halfway up the photo.
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			opacity: 0;
+			background: linear-gradient(to top, var(--card-tint) 0%, color-mix(in srgb, var(--card-tint) 55%, transparent) 100%);
+			transition: opacity .4s ease;
+			pointer-events: none;
+		}
 
 		&::after {
 			content: "";
@@ -67,7 +80,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		z-index: 1;
+		z-index: 2;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
@@ -79,7 +92,6 @@
 			color-mix(in srgb, var(--card-tint) 94%, transparent) 0%,
 			color-mix(in srgb, var(--card-tint) 82%, transparent) 55%,
 			transparent 100%);
-		transition: background-color .4s ease;
 	}
 
 	&__period {
@@ -119,12 +131,12 @@
 		overflow: hidden;
 	}
 
-	// Collapsed until hover/focus; grid-template-rows animates to the text's natural height.
+	// Collapsed until hover/focus; grid-template-rows animates to the text's natural height,
+	// and the text slides down into place like the original card's subtitle.
 	&__details {
 		display: grid;
 		grid-template-rows: 0fr;
-		opacity: 0;
-		transition: grid-template-rows .45s cubic-bezier(.165, .84, .44, 1), opacity .35s ease;
+		transition: grid-template-rows .4s cubic-bezier(.165, .85, .45, 1);
 	}
 
 	&__subtitle {
@@ -136,6 +148,9 @@
 		line-height: 1.55;
 		color: rgba(#fff, .92);
 		overflow-wrap: anywhere;
+		opacity: 0;
+		transform: translate3d(0, -100%, 0);
+		transition: transform .4s cubic-bezier(.165, .85, .45, 1), opacity .4s cubic-bezier(.165, .85, .45, 1);
 	}
 
 	&__content:hover, &__content:focus-visible {
@@ -143,8 +158,8 @@
 			transform: scale(1.05);
 		}
 
-		#{$c}__info {
-			background-color: color-mix(in srgb, var(--card-tint) 35%, transparent);
+		&::before {
+			opacity: 1;
 		}
 
 		#{$c}__title {
@@ -153,12 +168,17 @@
 
 		#{$c}__details {
 			grid-template-rows: 1fr;
+		}
+
+		#{$c}__subtitle {
 			opacity: 1;
+			transform: translateZ(0);
+			transition-delay: .15s;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		&__image img, &__info, &__details {
+		&__content::before, &__image img, &__details, &__subtitle {
 			transition: none;
 		}
 	}

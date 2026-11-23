@@ -1,8 +1,11 @@
 {% assign c = "c-project-card" %}
 {% assign p = include.project %}
-{% comment %} Period from Blog Studio: period_start / period_end as YYYY-MM, ongoing: true {% endcomment %}
+{% comment %} From Blog Studio: card_title / card_subtitle (fall back to title / subtitle),
+   period_start / period_end as YYYY-MM, ongoing: true {% endcomment %}
 {% assign start = p.period_start | default: "" | replace: "-", "." %}
 {% assign end = p.period_end | default: "" | replace: "-", "." %}
+{% assign card_title = p.card_title | default: p.title %}
+{% assign card_subtitle = p.card_subtitle | default: p.subtitle | default: "" %}
 <article class="{{c}} col col-4 col-d-6 col-t-12">
   <a href="{{ p.url }}" class="{{c}}__content{% unless p.image and p.image != "" %} {{c}}__content--no-image{% endunless %}">
     {% if p.image and p.image != "" %}
@@ -20,9 +23,9 @@
         {% endif %}
       </div>
       {% endif %}
-      <h3 class="{{c}}__title">{{ p.title }}</h3>
-      {% if p.subtitle and p.subtitle != "" %}
-      <div class="{{c}}__details"><p class="{{c}}__subtitle">{{ p.subtitle }}</p></div>
+      <h3 class="{{c}}__title">{{ card_title }}</h3>
+      {% if card_subtitle != "" %}
+      <div class="{{c}}__details"><p class="{{c}}__subtitle">{{ card_subtitle }}</p></div>
       {% endif %}
     </div>
   </a>

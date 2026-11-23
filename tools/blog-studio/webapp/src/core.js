@@ -410,6 +410,7 @@ export class Studio {
           original[key] = value;
         }
         original.ongoing = Boolean(meta.ongoing);
+        for (const key of ['card_title', 'card_subtitle']) original[key] = text(String(meta[key] || ''), 1000).trim();
         if (original.ongoing) original.period_end = '';
         if (original.period_start && original.period_end && original.period_end < original.period_start) throw new Problem('종료 연월이 시작 연월보다 빠릅니다');
       }

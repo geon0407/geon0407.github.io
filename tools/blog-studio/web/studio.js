@@ -291,12 +291,17 @@ function openRecord(item) {
     ? `<label>글 주소<input value="${esc((current.source_id || current.id).split('/').pop())}" disabled><span class="hint">주소는 처음 발행할 때 정해지며, 날짜를 바꿔도 바뀌지 않습니다.</span></label>`
     : `<label>글 주소<input id="slug" placeholder="비워두면 번호로 자동 생성" value="${esc(current.slug || '')}"></label>`;
   const project = current.kind === 'project';
-  const info = grid(metaField('제목', 'title', 'text', true, project ? '프로젝트 카드에 항상 표시됩니다.' : '') + metaField('날짜', 'date', 'date')
+  const info = grid(metaField(project ? '게시글 제목' : '제목', 'title', 'text', true, project ? '프로젝트 페이지의 큰 제목과 브라우저 탭 제목에 쓰입니다.' : '')
+    + (project
+      ? metaField('게시글 부제목', 'subtitle', 'text', true, '프로젝트 페이지에서 제목 아래에 표시됩니다.')
+        + metaField('카드 제목', 'card_title', 'text', true, '프로젝트 카드에 항상 표시되는 짧은 제목입니다. 비워두면 게시글 제목을 씁니다.')
+        + metaField('카드 부제목', 'card_subtitle', 'text', true, '카드에 마우스를 올리면 카드 제목 아래에 펼쳐집니다. 비워두면 게시글 부제목을 씁니다.')
+      : '')
+    + metaField('날짜', 'date', 'date')
     + `<label>언어<select data-meta="lang"><option value="ko" ${current.meta.lang !== 'en' ? 'selected' : ''}>한국어</option><option value="en" ${current.meta.lang === 'en' ? 'selected' : ''}>English</option></select></label>`
     + metaField('요약 (목록에 표시)', 'description', 'textarea', true)
     + (project
-      ? metaField('부제', 'subtitle', 'text', true, '프로젝트 카드에 마우스를 올리면 제목 아래에 펼쳐집니다.')
-        + metaField('시작 연월', 'period_start', 'month') + metaField('종료 연월', 'period_end', 'month')
+      ? metaField('시작 연월', 'period_start', 'month') + metaField('종료 연월', 'period_end', 'month')
         + `<label class="inline-check wide"><input type="checkbox" data-meta="ongoing" ${current.meta.ongoing ? 'checked' : ''}> 진행 중 (종료 연월 대신 “진행 중”으로 표시)</label>`
       : categorySelect())
     + metaField('태그 (쉼표로 구분)', 'tags') + metaField('번호 (비워두면 자동)', 'studio_number', 'number') + address

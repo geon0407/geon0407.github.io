@@ -329,6 +329,8 @@ def save_record(data):
                 raise Problem('기간은 YYYY-MM 형식으로 입력하세요')
             original[key] = value
         original['ongoing'] = bool(meta.get('ongoing'))
+        for key in ('card_title', 'card_subtitle'):
+            original[key] = text(str(meta.get(key) or ''), 1000).strip()
         if original['ongoing']:
             original['period_end'] = ''
         if original['period_start'] and original['period_end'] and original['period_end'] < original['period_start']:

@@ -184,6 +184,8 @@ test('project editor: period fields and ongoing checkbox are saved', async t => 
   await idle();
   $('[data-open]').click();
   await idle();
+  $('[data-meta="card_title"]').value = '짧은 카드 제목';
+  $('[data-meta="card_subtitle"]').value = '카드 부제목';
   $('[data-meta="period_start"]').value = '2026-07';
   $('[data-meta="period_end"]').value = '2026-08';
   $('[data-meta="ongoing"]').checked = true;
@@ -197,6 +199,9 @@ test('project editor: period fields and ongoing checkbox are saved', async t => 
   $('[data-open]').click();
   await idle();
   assert.equal($('[data-meta="period_start"]').value, '2026-07');
+  assert.equal($('[data-meta="card_title"]').value, '짧은 카드 제목');
+  assert.equal($('[data-meta="card_subtitle"]').value, '카드 부제목');
+  assert.equal($('[data-meta="subtitle"]').value, 'Test');
   assert.equal($('[data-meta="period_end"]').value, '');
   assert.ok($('[data-meta="ongoing"]').checked);
 });

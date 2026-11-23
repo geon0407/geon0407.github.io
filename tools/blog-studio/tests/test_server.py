@@ -49,8 +49,11 @@ class StudioTests(unittest.TestCase):
         self.assertEqual((saved['meta']['period_end'],saved['meta']['ongoing']),('',True))  # ongoing drops the end month
         for bad in [{'period_start':'2026-13'},{'period_start':'2026/07'},{'period_start':'2026-08','period_end':'2026-07'}]:
             with self.assertRaises(studio.Problem):studio.save_record(project(**bad))
+        saved=studio.save_record({**saved,'meta':{**saved['meta'],'card_title':' 탁구 로봇 ','card_subtitle':'카드 부제목'}})
+        self.assertEqual((saved['meta']['card_title'],saved['meta']['card_subtitle'],saved['meta']['subtitle']),('탁구 로봇','카드 부제목','부제'))
         post=studio.save_record(self.post(draft=False))
-        self.assertNotIn('period_start',post['meta'])  # posts do not get project fields
+        self.assertNotIn('period_start',post['meta'])
+        self.assertNotIn('card_title',post['meta']);self.assertNotIn('card_subtitle',post['meta'])  # posts do not get project fields
     def test_video_uploads(self):
         mp4=studio.upload({'name':'clip.MP4','data':'AAAAGGZ0eXBtcDQy'});self.assertTrue(mp4['url'].endswith('.mp4'))
         big=__import__('base64').b64encode(b'0'*(21*1024*1024)).decode()
