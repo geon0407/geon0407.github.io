@@ -1,7 +1,9 @@
-{% comment %} Email line under the home greeting (social links are already in the header). {% endcomment %}
+{% comment %} Email · CV under the home greeting (social links are already in the header). {% endcomment %}
 {% assign contact_email = site.data.studio.profile.contact.email | default: "" | strip %}
-{% if contact_email != "" %}
+{% assign cv = site.data.studio.profile.contact.cv.path | default: "" %}
+{% if contact_email != "" or cv != "" %}
 <ul class="contact-line list-reset">
-  <li><ion-icon name="mail-outline" aria-hidden="true"></ion-icon>{% include contact-email.html %}</li>
+  {% if contact_email != "" %}<li><ion-icon name="mail-outline" aria-hidden="true"></ion-icon>{% include contact-email.html %}</li>{% endif %}
+  {% if cv != "" %}<li><ion-icon name="document-text-outline" aria-hidden="true"></ion-icon><a href="{{ cv | relative_url }}" target="_blank" rel="noopener">CV</a></li>{% endif %}
 </ul>
 {% endif %}

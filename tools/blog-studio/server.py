@@ -205,6 +205,12 @@ def validate_config(data):
     email = data['profile']['contact']['email'].strip()
     if email and not re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', email):
         raise Problem('이메일 주소 형식을 확인하세요')
+    cv = data['profile']['contact']['cv']
+    url(cv['path'] or '')
+    if cv['path'] and not cv['path'].lower().endswith('.pdf'):
+        raise Problem('CV는 PDF 파일만 연결할 수 있습니다')
+    if cv['updated'] and not re.fullmatch(r'\d{4}-\d{2}-\d{2}', cv['updated']):
+        raise Problem('CV 업데이트 날짜를 확인하세요')
     if data['home']['order'] not in ('projects-first', 'posts-first'):
         raise Problem('섹션 순서를 확인하세요')
     for v in [data['home']['image'], data['profile']['portrait']['path'],

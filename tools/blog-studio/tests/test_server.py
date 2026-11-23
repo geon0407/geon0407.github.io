@@ -72,6 +72,11 @@ class StudioTests(unittest.TestCase):
         bad=studio.yaml.safe_load(studio.safe_path(studio.CONFIG).read_text());bad['profile']['contact']['email']='not an email'
         with self.assertRaises(studio.Problem):studio.validate_config(bad)
         bad['profile']['contact']['email']='';studio.validate_config(bad)  # empty hides the contact
+        bad['profile']['contact']['cv']={'path':'/uploads/2026/11/x.exe','updated':''}
+        with self.assertRaises(studio.Problem):studio.validate_config(bad)
+        bad['profile']['contact']['cv']={'path':'/uploads/2026/11/0123456789abcdef01234567.pdf','updated':'2026-11'}
+        with self.assertRaises(studio.Problem):studio.validate_config(bad)
+        bad['profile']['contact']['cv']['updated']='2026-11-24';studio.validate_config(bad)
         config['design']['colors']['dark']['ink']='red; } body {'
         with self.assertRaises(studio.Problem):studio.validate_config(config)
     def test_publish_only_owned_changes_and_push(self):

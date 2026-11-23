@@ -40,6 +40,16 @@ function openStudio({site, data}) {
   w.Range.prototype.getClientRects = () => [];
   w.Range.prototype.getBoundingClientRect = () => ({left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0});
   w.Element.prototype.scrollIntoView = () => {};
+  if (!w.Blob.prototype.arrayBuffer) {  // jsdom's File/Blob lack arrayBuffer(); browsers have it
+    w.Blob.prototype.arrayBuffer = function () {
+      return new Promise((resolve, reject) => {
+        const reader = new w.FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(this);
+      });
+    };
+  }
   w.eval(readFileSync(join(ROOT, 'site/studio/app.js'), 'utf8'));
   const $ = s => w.document.querySelector(s);
   const idle = async () => {
@@ -204,4 +214,38 @@ test('project editor: period fields and ongoing checkbox are saved', async t => 
   assert.equal($('[data-meta="subtitle"]').value, 'Test');
   assert.equal($('[data-meta="period_end"]').value, '');
   assert.ok($('[data-meta="ongoing"]').checked);
+});
+
+test('CV: upload a PDF from the About settings, then publish it with the settings', async t => {
+  const site = new FakeRepo({files: siteFiles()});
+  const data = new FakeRepo({isPrivate: true});
+  const {w, $, idle, notice, close} = openStudio({site, data});
+  t.after(close);
+  await idle();
+  $('#token').value = 'github_pat_test';
+  $('#site-repo').value = 'me/site';
+  $('#data-repo').value = 'me/data';
+  $('#connect-form').dispatchEvent(new w.Event('submit', {cancelable: true}));
+  for (let i = 0; i < 100 && $('#app').hidden; i++) await sleep(30);
+  await idle();
+  w.document.querySelector('[data-view="profile"]').click();
+  await idle();
+  assert.equal($('[data-config="profile.contact.cv.path"]').value, '');
+  $('[data-pdf-field="profile.contact.cv.path"]').click();
+  const input = $('#upload');
+  assert.match(input.accept, /pdf/);
+  Object.defineProperty(input, 'files', {value: [new w.File(['%PDF-1.4 test'], 'cv.pdf', {type: 'application/pdf'})], configurable: true});
+  input.dispatchEvent(new w.Event('change'));
+  await idle();
+  const path = $('[data-config="profile.contact.cv.path"]').value;
+  assert.match(path, /^\/uploads\/\d{4}\/\d{2}\/[0-9a-f]{24}\.pdf$/, notice());
+  assert.match($('[data-config="profile.contact.cv.updated"]').value, /^\d{4}-\d{2}-\d{2}$/);
+  $('#save-settings').click();
+  await idle();
+  $('#publish').click();
+  await idle();
+  $('#publish-confirm').click();
+  await idle();
+  assert.match(site.text('site/_data/studio.yml'), new RegExp(`path: ${path.replace(/\//g, '\\/')}`));
+  assert.equal(site.text('site' + path), '%PDF-1.4 test');
 });

@@ -141,6 +141,11 @@ function field(label, path, type = 'text', wide = false, options = null) {
   else if (type === 'checkbox') input = `<input type="checkbox" data-config="${path}" ${v ? 'checked' : ''}> 표시`;
   else if (type === 'select') input = `<select data-config="${path}">${options.map(([value, title]) => `<option value="${value}" ${String(value) === String(v) ? 'selected' : ''}>${title}</option>`).join('')}</select>`;
   else input = `<input type="${type === 'image' ? 'text' : type}" data-config="${path}" value="${esc(v)}" ${type === 'number' ? 'step="any"' : ''}>`;
+  if (type === 'pdf') {
+    input = `<div class="row"><input type="text" data-config="${path}" value="${esc(v)}" readonly placeholder="아직 올린 파일이 없습니다">`
+      + `<button type="button" data-pdf-field="${path}">PDF 올리기</button>${v ? `<button type="button" data-clear-pdf="${path}">지우기</button>` : ''}</div>`
+      + (v ? `<span class="hint"><a data-href="${esc(v)}" href="${esc(v)}" target="_blank" rel="noopener">현재 CV 열기</a></span>` : '');
+  }
   if (type === 'image') {
     input = `<div class="row">${input}<button type="button" data-image-field="${path}">사진 선택</button></div>`
       + (v ? `<img class="image-cover" data-src="${esc(v)}" alt="현재 사진">` : '');
@@ -162,6 +167,24 @@ function collectConfig() {
 
 function bindConfig() {
   $$('[data-config]').forEach(el => el.addEventListener('input', () => { dirty = true; collectConfig(); }));
+  // CV: upload a PDF, remember today as its update date; "지우기" hides the CV links.
+  $$('[data-pdf-field]').forEach(btn => btn.onclick = () => chooseFile(async files => {
+    if (!/\.pdf$/i.test(files[0].name)) throw Error('CV는 PDF 파일로 올려주세요');
+    const result = await uploadFile(files[0]);
+    set(config, btn.dataset.pdfField, result.url);
+    set(config, btn.dataset.pdfField.replace(/\.path$/, '.updated'), localDate());
+    dirty = true;
+    renderConfig();
+    notice('CV를 올렸습니다. 변경 저장 후 발행하면 사이트에 CV 링크가 나타납니다.');
+  }, 'application/pdf,.pdf'));
+  $$('[data-clear-pdf]').forEach(btn => btn.onclick = () => {
+    if (!confirm('CV 연결을 지울까요? 저장 후 발행하면 사이트에서 CV 링크가 사라집니다.')) return;
+    collectConfig();
+    set(config, btn.dataset.clearPdf, '');
+    set(config, btn.dataset.clearPdf.replace(/\.path$/, '.updated'), '');
+    dirty = true;
+    renderConfig();
+  });
   $$('[data-image-field]').forEach(btn => btn.onclick = () => chooseFile(async files => {
     const result = await uploadFile(files[0]);
     set(config, btn.dataset.imageField, result.url);
@@ -206,8 +229,9 @@ function renderConfig() {
         + field('설명 · English', `profile.timeline.${i}.detail`, 'textarea') + field('설명 · 한국어', `profile.timeline.${i}.detail_ko`, 'textarea')
         + field('관련 링크', `profile.timeline.${i}.url`, 'text', true))}
     </div>`).join('');
-    out += panel('연락처', grid(field('이메일', 'profile.contact.email', 'email', true) + pair('소속', 'profile.contact.affiliation')),
-      '홈 인사말 아래와 소개 페이지의 소개글 옆에 표시됩니다. 이메일은 스팸 수집을 막기 위해 페이지 코드에 뒤집힌 형태로 저장되고, 화면에서는 정상적으로 보입니다. 비우면 표시하지 않습니다.');
+    out += panel('연락처', grid(field('이메일', 'profile.contact.email', 'email', true) + pair('소속', 'profile.contact.affiliation')
+      + field('CV (영문 PDF)', 'profile.contact.cv.path', 'pdf', true) + field('CV 업데이트 날짜', 'profile.contact.cv.updated', 'date')),
+      '홈 인사말 아래와 소개 페이지의 소개글 옆에 표시됩니다. CV는 PDF를 올리면 소개 페이지 연락처 카드와 홈 이메일 줄에 “CV” 링크로 나타나고, 올린 날짜가 업데이트 날짜로 기록됩니다. 이메일은 스팸 수집을 막기 위해 페이지 코드에 뒤집힌 형태로 저장되고, 화면에서는 정상적으로 보입니다. 비우면 표시하지 않습니다.');
     out += panel('이력 · 연구 및 수상', cards + '<button id="add-timeline">이력 항목 추가</button>', '화면에 표시할 순서를 직접 정할 수 있습니다. 비어 있는 설명은 표시하지 않습니다.');
   }
   if (view === 'design') {

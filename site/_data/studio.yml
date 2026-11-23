@@ -113,6 +113,9 @@ profile:
     affiliation:
       en: School of Electrical Engineering and Computer Science, GIST
       ko: 광주과학기술원 전기전자컴퓨터공학과
+    cv:
+      path: ''
+      updated: ''
 pages:
   projects:
     en: Projects

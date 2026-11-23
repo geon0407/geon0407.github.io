@@ -814,6 +814,10 @@ export function validateConfig(data, current) {
   if (![1, 2, 3].includes(design.columns)) throw new Problem('열 수는 1, 2, 3 중 선택하세요');
   const email = String(data.profile.contact.email || '').trim();
   if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Problem('이메일 주소 형식을 확인하세요');
+  const cv = data.profile.contact.cv;
+  url(cv.path || '');
+  if (cv.path && !/\.pdf$/i.test(cv.path)) throw new Problem('CV는 PDF 파일만 연결할 수 있습니다');
+  if (cv.updated && !/^\d{4}-\d{2}-\d{2}$/.test(cv.updated)) throw new Problem('CV 업데이트 날짜를 확인하세요');
   if (!['projects-first', 'posts-first'].includes(data.home.order)) throw new Problem('섹션 순서를 확인하세요');
   for (const v of [data.home.image, data.profile.portrait.path, data.profile.feature_photo.path, data.site.avatar, data.site.linkedin, data.site.github, data.site.instagram]) url(v || '');
   return data;

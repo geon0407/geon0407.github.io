@@ -23,7 +23,9 @@ title_ko: 소개
         {% assign contact = site.data.studio.profile.contact %}
         {% assign contact_email = contact.email | default: "" | strip %}
         {% assign affiliation = contact.affiliation.en | default: "" %}
-        {% if contact_email != "" or affiliation != "" %}
+        {% assign cv = contact.cv.path | default: "" %}
+        {% assign cv_month = contact.cv.updated | default: "" | slice: 0, 7 | replace: "-", "." %}
+        {% if contact_email != "" or affiliation != "" or cv != "" %}
         <section class="about-contact" aria-labelledby="contact-title">
           <h2 id="contact-title" data-ko="연락처">Contact</h2>
           {% if contact_email != "" %}
@@ -35,6 +37,9 @@ title_ko: 소개
               <button class="about-contact__btn" type="button" data-contact-copy aria-label="Copy email address"><ion-icon name="copy-outline" aria-hidden="true"></ion-icon><span data-ko="복사">Copy</span></button>
             </div>
           </div>
+          {% endif %}
+          {% if cv != "" %}
+          <a class="about-contact__cv" href="{{ cv | relative_url }}" target="_blank" rel="noopener"><ion-icon name="document-text-outline" aria-hidden="true"></ion-icon><span>CV (PDF)</span>{% if cv_month != "" %}<span class="about-contact__cv-date" data-ko="· {{ cv_month }} 업데이트">· Updated {{ cv_month }}</span>{% endif %}</a>
           {% endif %}
           {% if affiliation != "" %}
           <p class="about-contact__place"><ion-icon name="location-outline" aria-hidden="true"></ion-icon><span{% if contact.affiliation.ko and contact.affiliation.ko != "" %} data-ko="{{ contact.affiliation.ko | escape }}"{% endif %}>{{ contact.affiliation.en | escape }}</span></p>

@@ -377,3 +377,9 @@
 .about-contact__btn.is-copied { background: var(--accent); color: var(--surface); }
 .about-contact__place { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: .875rem; line-height: 1.5; }
 .about-contact__place ion-icon { flex: none; }
+
+/* CV link inside the About contact card */
+.about-contact__cv { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 14px; color: var(--ink); font-weight: 600; text-decoration: none; }
+.about-contact__cv ion-icon { font-size: 20px; color: var(--accent); }
+.about-contact__cv:hover, .about-contact__cv:focus-visible { color: var(--accent); }
+.about-contact__cv-date { color: var(--muted); font-size: .875rem; font-weight: 400; }
