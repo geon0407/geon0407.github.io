@@ -40,15 +40,15 @@ profile:
   - period: 2024.03–2025.09
     group: background
     title: Military Service, Republic of Korea Army
-    detail: 3rd Airborne Special Forces Brigade, Special Warfare Command
+    detail: 3rd Airborne Special Forces Brigade, Republic of Korea Army Special Warfare Command, Sergeant (Honorably Discharged)
     title_ko: 대한민국 육군 군 복무
-    detail_ko: 특수전사령부 제3공수특전여단
+    detail_ko: 제3공수특전여단 병장 만기전역
     period_ko: ''
     url: ''
   - period: 2022.02–Present
     period_ko: 2022.02–현재
     group: background
-    title: Undergraduate Studies, GIST EECS
+    title: Undergraduate Studies, Department of Electrical Engineering and Computer Science, GIST
     url: https://www.gist.ac.kr/en/
     title_ko: 광주과학기술원 전기전자컴퓨터공학과 학부과정
     detail: ''
