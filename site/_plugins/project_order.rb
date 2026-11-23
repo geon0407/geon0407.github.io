@@ -2,9 +2,9 @@
 #   finished projects: latest end month first (end month falls back to start month, then date)
 #   ongoing projects:  latest start month first — the longest-running comes last
 #
-# Projects page and "Next project" link (site.projects): finished first, then ongoing.
-# Home "Latest Works" (site.data.home_projects): ongoing first, then finished; at most
-# HOME_LIMIT cards — every ongoing project, remaining slots to the most recently finished.
+# Everywhere (Projects page, "Next project" link, home): ongoing first, then finished.
+# Home "Latest Works" (site.data.home_projects) shows at most HOME_LIMIT cards: every
+# ongoing project, with the remaining slots going to the most recently finished.
 module StudioProjectOrder
   HOME_LIMIT = 8
 
@@ -19,7 +19,7 @@ module StudioProjectOrder
       ongoing, finished = projects.docs.partition { |doc| ongoing?(doc) }
       ongoing = newest_first(ongoing) { |doc| start_month(doc) }
       finished = newest_first(finished) { |doc| end_month(doc) }
-      projects.docs.replace(finished + ongoing)
+      projects.docs.replace(ongoing + finished)
 
       home_ongoing = ongoing.first(HOME_LIMIT)
       site.data["home_projects"] = home_ongoing + finished.first(HOME_LIMIT - home_ongoing.size)
