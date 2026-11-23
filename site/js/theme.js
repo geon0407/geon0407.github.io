@@ -1,32 +1,35 @@
 (() => {
   const key = 'site-theme';
   const media = window.matchMedia('(prefers-color-scheme: dark)');
-  const valid = value => ['system', 'light', 'dark'].includes(value);
-  let preference = 'system';
+  const valid = value => ['light', 'dark'].includes(value);
+  let preference = null;
   try { const saved = localStorage.getItem(key); if (valid(saved)) preference = saved; } catch {}
   function render() {
-    document.documentElement.dataset.theme = preference === 'system'
-      ? (media.matches ? 'dark' : 'light') : preference;
-    const control = document.querySelector('.theme-select');
-    if (control) control.value = preference;
+    const theme = preference || (media.matches ? 'dark' : 'light');
+    document.documentElement.dataset.theme = theme;
+    document.querySelectorAll('[data-theme-choice]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme));
+    });
   }
   render();
   media.addEventListener('change', render);
   window.addEventListener('storage', event => {
     if (event.key === key || event.key === null) {
-      preference = valid(event.newValue) ? event.newValue : 'system';
+      preference = valid(event.newValue) ? event.newValue : null;
       render();
     }
   });
   document.addEventListener('DOMContentLoaded', () => {
-    const control = document.querySelector('.theme-select');
+    const control = document.querySelector('.theme-switch');
     if (!control) return;
     control.hidden = false;
-    control.value = preference;
-    control.addEventListener('change', () => {
-      preference = control.value;
-      try { localStorage.setItem(key, preference); } catch {}
-      render();
+    control.querySelectorAll('[data-theme-choice]').forEach(button => {
+      button.addEventListener('click', () => {
+        preference = button.dataset.themeChoice;
+        try { localStorage.setItem(key, preference); } catch {}
+        render();
+      });
     });
+    render();
   });
 })();

@@ -76,15 +76,19 @@
         </nav>
 
         <div class="site-tools">
-          <select class="theme-select" aria-label="Color theme" hidden>
-            <option value="system" data-ko="자동">Auto</option>
-            <option value="light" data-ko="라이트">Light</option>
-            <option value="dark" data-ko="다크">Dark</option>
-          </select>
+
           {% bookshop_include social-link %}
           <div class="language-switch" data-language-switch role="group" aria-label="Language" hidden>
             <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="true">EN</button>
             <button type="button" data-language="ko" lang="ko" aria-pressed="false">한국어</button>
+          </div>
+          <div class="theme-switch" role="group" aria-label="Color theme" hidden>
+            <button type="button" data-theme-choice="light" aria-label="Light mode" title="Light mode" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+            </button>
+            <button type="button" data-theme-choice="dark" aria-label="Dark mode" title="Dark mode" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14A9 9 0 0 1 10 3.5 9 9 0 1 0 20.5 14Z"/></svg>
+            </button>
           </div>
         </div>
 
