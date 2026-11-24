@@ -16,7 +16,7 @@
           {% if include.show_posts and site.posts.size == 0 and include.empty_message %}
           <p{% if include.empty_message_ko %} data-ko="{{ include.empty_message_ko | escape }}"{% endif %}>{{ include.empty_message | escape }}</p>
           {% elsif include.show_posts %}
-          {% comment %} Newest 4 posts, styled like the News box: date · category · title. {% endcomment %}
+          {% comment %} Newest 4 posts, styled like the News box: category · title · date. {% endcomment %}
           <div class="home-posts-box">
             <ul class="home-posts list-reset">
               {% for post in site.posts limit:4 %}
@@ -28,9 +28,9 @@
                 {% endfor %}
               {% endfor %}
               <li class="home-posts__item">
-                <time class="home-posts__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
                 <span class="home-posts__category">{% if category %}<a class="home-posts__badge" href="{{ '/blog/category/' | append: category.slug | append: '/' | relative_url }}" data-ko="{{ category.title_ko | escape }}">{{ category.title | escape }}</a>{% endif %}</span>
                 <a class="home-posts__title" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+                <time class="home-posts__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
               </li>
               {% endfor %}
             </ul>

@@ -419,11 +419,12 @@ html { scroll-padding-top: 110px; }
 }
 
 /* Home Recent Posts: newest four, styled like the News box — same box, row spacing, font
-   sizes and dividers: date · category · title. Long titles are cut with an ellipsis
+   sizes and dividers: category · title · date. Long titles are cut with an ellipsis
    (two lines on phones). */
 .home-posts-box { padding: 6px 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 /* Fixed category column so every badge has the same width. */
-.home-posts__item { display: grid; grid-template-columns: 6.4em 7.25rem minmax(0, 1fr); gap: 0 14px; }
+.home-posts__item { display: grid; grid-template-columns: 7.25rem minmax(0, 1fr) 6.4em; gap: 0 16px; }
+.home-posts__item .home-posts__date { text-align: right; }
 .home-posts__item:last-child { border-bottom: 0; }
 .home-posts__date { color: var(--muted); font-size: .875rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .home-posts__category { display: flex; min-width: 0; }
@@ -433,7 +434,10 @@ html { scroll-padding-top: 110px; }
 .home-posts__title:hover, .home-posts__title:focus-visible { color: var(--accent); }
 @media (max-width: 600px) {
   .home-posts-box { padding: 4px 16px; }
-  .home-posts__item { grid-template-columns: auto 6.5rem minmax(0, 1fr); gap: 4px 10px; font-size: .875rem; }
+  .home-posts__item { grid-template-columns: 6.5rem minmax(0, 1fr); grid-template-areas: 'category date' 'title title'; gap: 4px 10px; font-size: .875rem; }
+  .home-posts__category { grid-area: category; }
+  .home-posts__item .home-posts__date { grid-area: date; }
+  .home-posts__title { grid-area: title; }
   .home-news__item, .home-posts__item { min-height: 0; }
   .home-posts__title { grid-column: 1 / -1; display: -webkit-box; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 }
