@@ -192,7 +192,7 @@ def validate_config(data):
                     rich_text(v)
                 if not entry.get('title') or not entry.get('title_ko'):
                     raise Problem('연혁 제목은 한국어와 영어를 입력하세요')
-                if entry.get('group', 'research') not in ('education', 'research', 'teaching', 'military'):
+                if entry.get('group', 'research') not in ('education', 'research', 'award', 'teaching', 'military'):
                     raise Problem('연혁 구분이 잘못됐습니다')
                 url(entry.get('url', ''))
             return

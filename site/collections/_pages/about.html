@@ -57,11 +57,11 @@ title_ko: 소개
   </div>
 
   {% comment %}
-    History in one box with tabs (js/history-tabs.js). Research & Award opens first; tabs with no
+    History in one box with tabs (js/history-tabs.js). Education opens first; tabs with no
     entries are left out. Without JavaScript every group shows, each under its own heading.
   {% endcomment %}
   {% assign timeline = site.data.studio.profile.timeline %}
-  {% assign history_groups = 'education,research,teaching,military' | split: ',' %}
+  {% assign history_groups = 'education,research,award,teaching,military' | split: ',' %}
   <section class="about-history" aria-label="History" data-history>
     <div class="about-history__tabs" role="tablist" aria-label="History">
       {% for group in history_groups %}
@@ -69,14 +69,14 @@ title_ko: 소개
         {% if count == 0 %}{% continue %}{% endif %}
         {% include history-label.html group=group %}
         <button class="about-history__tab" type="button" role="tab" id="history-tab-{{ group }}" aria-controls="history-{{ group }}"
-                aria-selected="{% if group == 'research' %}true{% else %}false{% endif %}" data-ko="{{ history_ko }}">{{ history_en | escape }}</button>
+                aria-selected="{% if group == 'education' %}true{% else %}false{% endif %}" data-ko="{{ history_ko }}">{{ history_en | escape }}</button>
       {% endfor %}
     </div>
     {% for group in history_groups %}
     {% assign count = timeline | where: 'group', group | size %}
     {% if count == 0 %}{% continue %}{% endif %}
     {% include history-label.html group=group %}
-    <div class="about-history__panel" role="tabpanel" id="history-{{ group }}" aria-labelledby="history-tab-{{ group }}" tabindex="0"{% if group == 'research' %} data-default{% endif %}>
+    <div class="about-history__panel" role="tabpanel" id="history-{{ group }}" aria-labelledby="history-tab-{{ group }}" tabindex="0"{% if group == 'education' %} data-default{% endif %}>
       <h2 class="about-history__heading" data-ko="{{ history_ko }}">{{ history_en | escape }}</h2>
       <ol class="about-timeline__list">
         {% for entry in timeline %}

@@ -180,7 +180,7 @@ function renderConfig() {
       <div class="timeline-bar"><strong>${esc(e.title_ko || '새 항목')}</strong><div>
         <button data-move="${i}" data-dir="-1">위로</button><button data-move="${i}" data-dir="1">아래로</button><button data-remove="${i}">삭제</button>
       </div></div>
-      ${grid(field('구분', `profile.timeline.${i}.group`, 'select', true, [['education', '학력 (Education)'], ['research', '연구 및 수상 (Research & Award)'], ['teaching', '교육 경력 (Teaching Experience)'], ['military', '병역 (Military Service)']])
+      ${grid(field('구분', `profile.timeline.${i}.group`, 'select', true, [['education', '학력 (Education)'], ['research', '연구 (Research)'], ['award', '수상 (Awards)'], ['teaching', '교육 경력 (Teaching Experience)'], ['military', '병역 (Military Service)']])
         + field('기간 · English', `profile.timeline.${i}.period`) + field('기간 · 한국어', `profile.timeline.${i}.period_ko`)
         + field('제목 · English', `profile.timeline.${i}.title`) + field('제목 · 한국어', `profile.timeline.${i}.title_ko`)
         + field('설명 · English', `profile.timeline.${i}.detail`, 'textarea') + field('설명 · 한국어', `profile.timeline.${i}.detail_ko`, 'textarea')
@@ -189,7 +189,7 @@ function renderConfig() {
     out += panel('연락처', grid(field('이메일', 'profile.contact.email', 'email', true) + pair('소속', 'profile.contact.affiliation')
       + field('CV (영문 PDF)', 'profile.contact.cv.path', 'pdf', true) + field('CV 업데이트 날짜', 'profile.contact.cv.updated', 'date')),
       '홈 인사말 아래와 소개 페이지의 소개글 옆에 표시됩니다. CV는 PDF를 올리면 소개 페이지 연락처 카드와 홈 이메일 줄에 “CV” 링크로 나타나고, 올린 날짜가 업데이트 날짜로 기록됩니다. 이메일은 스팸 수집을 막기 위해 페이지 코드에 뒤집힌 형태로 저장되고, 화면에서는 정상적으로 보입니다. 비우면 표시하지 않습니다.');
-    out += panel('연혁', cards + '<button id="add-timeline">이력 항목 추가</button>', '소개 페이지에서 구분별 탭(학력 · 연구 및 수상 · 교육 경력 · 병역)으로 나뉘어 표시되고, 처음에는 연구 및 수상 탭이 열립니다. 항목이 없는 탭은 숨겨집니다. 각 탭 안에서는 여기 순서대로 표시됩니다. 비어 있는 설명은 표시하지 않습니다. 설명에는 [보이는 글자](https://주소) 형식으로 원하는 부분에 링크를 넣을 수 있고, 링크는 새 탭에서 열립니다.');
+    out += panel('연혁', cards + '<button id="add-timeline">이력 항목 추가</button>', '소개 페이지에서 구분별 탭(학력 · 연구 · 수상 · 교육 경력 · 병역)으로 나뉘어 표시되고, 처음에는 학력 탭이 열립니다. 항목이 없는 탭은 숨겨집니다. 각 탭 안에서는 여기 순서대로 표시됩니다. 비어 있는 설명은 표시하지 않습니다. 설명에는 [보이는 글자](https://주소) 형식으로 원하는 부분에 링크를 넣을 수 있고, 링크는 새 탭에서 열립니다.');
   }
   if (view === 'design') {
     const colorLabels = {page_bg: '페이지 배경', surface: '카드·메뉴 배경', ink: '주요 글자', muted: '보조 글자', line: '구분선', accent: '포인트', selected: '선택 배경'};
