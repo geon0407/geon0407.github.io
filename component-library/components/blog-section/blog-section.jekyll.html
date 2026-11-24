@@ -17,6 +17,7 @@
           <p{% if include.empty_message_ko %} data-ko="{{ include.empty_message_ko | escape }}"{% endif %}>{{ include.empty_message | escape }}</p>
           {% elsif include.show_posts %}
           {% comment %} Newest 4 posts as a list: Category | Title | Date (site.posts is newest first). {% endcomment %}
+          <div class="home-posts-box">
           <table class="home-posts">
             <thead>
               <tr>
@@ -44,6 +45,7 @@
               {% endfor %}
             </tbody>
           </table>
+          </div>
           {% endif %}
 
         </div>

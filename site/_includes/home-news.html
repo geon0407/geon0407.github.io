@@ -8,7 +8,9 @@
   <h2 class="home-news__title" id="home-news-title" data-ko="소식">News</h2>
   <ul class="home-news__list list-reset" tabindex="0" aria-label="News">
     {% for item in news %}
-    {% capture news_en %}{% include inline-markdown.html text=item.text %}{% endcapture %}
+    {% comment %} Each language falls back to the other when only one is filled in. {% endcomment %}
+    {% assign news_en_source = item.text | default: item.text_ko %}
+    {% capture news_en %}{% include inline-markdown.html text=news_en_source %}{% endcapture %}
     {% assign news_ko_source = item.text_ko | default: item.text %}
     {% capture news_ko %}{% include inline-markdown.html text=news_ko_source %}{% endcapture %}
     <li class="home-news__item">

@@ -9,7 +9,7 @@ layout: null
 {% endfor %}
 body { font-size: {{ site.data.studio.design.body_size }}px; line-height: {{ site.data.studio.design.line_height }}; }
 @media (min-width: 1025px) { .container { max-width: {{ site.data.studio.design.width }}px; } }
-.c-blog-card__inner, .c-blog-card__content, .c-project-card__content, .blog-category { border-radius: {{ site.data.studio.design.radius }}px; }
+.c-blog-card__inner, .c-blog-card__content, .c-project-card__content, .blog-category, .home-news, .home-posts-box, .about-contact { border-radius: {{ site.data.studio.design.radius }}px; }
 .c-projects-section, .c-blog-section { margin-bottom: {{ site.data.studio.design.section_gap }}px; }
 @media (min-width: 1025px) {
  .c-blog-card.col, .c-project-card.col { flex: 0 0 calc(100% / {{ site.data.studio.design.columns }}); max-width: calc(100% / {{ site.data.studio.design.columns }}); }
