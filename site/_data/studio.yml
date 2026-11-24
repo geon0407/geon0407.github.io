@@ -1,7 +1,7 @@
 home:
   greeting:
     en: Hi, I’m GeonHyoung Kim.
-    ko: 안녕하세요, 김건형입니다
+    ko: 안녕하세요, 김건형입니다.
   image: /uploads/2026/11/3366e77fcaac17dcd6dbf805.jpg
   image_alt: 안녕하세요. 김건형입니다.
   show_projects: true
@@ -11,14 +11,34 @@ home:
     en: Latest Works
     ko: 최근 프로젝트
   news:
-  - date: '2026.11'
-    emoji: 🚀
-    text: Opened this blog and portfolio site.
-    text_ko: 블로그 겸 포트폴리오 사이트를 열었습니다.
+  - date: '2026.09'
+    emoji: 👨‍🏫
+    text: Served as a Teaching Assistant for Multivariable Calculus (MM2001, Fall '26) recitation sessions, Department of Mathematical Sciences, GIST.
+    text_ko: ''
+  - date: '2026.08'
+    emoji: 🧑‍💻
+    text: '- 2026.XX 🔬 Joined [SYMPLE Lab](https://symplelab.com/) at GIST as an undergraduate research intern'
+    text_ko: ''
   - date: '2026.08'
     emoji: 🏆
-    text: Received an award in the Robotics AX track of the GIST AX Challenge with a [table tennis robot](/project/26-summer-tabletennisrobot/).
-    text_ko: GIST 창의융합 AX-챌린지 로봇 AX 경진 부문에서 [탁구로봇](/project/26-summer-tabletennisrobot/)으로 수상했습니다.
+    text: '- 2026.08 🏆 Won the Grand Prize in Track 1 (Robotics AX) of the 2026 [GIST AX Challenge](https://www.gist.ac.kr/kr/html/sub07/070103.html?mode=V&no=222864)'
+    text_ko: ''
+  - date: '2026.03'
+    emoji: 👨‍🏫
+    text: Served as a Teaching Assistant for Calculus (GS1001, Spring '26) recitation sessions, Department of Mathematical Sciences, GIST.
+    text_ko: ''
+  - date: '2025.09'
+    emoji: 🫡
+    text: Completed mandatory military service as a Sergeant in the 3rd Special Forces Brigade (Airborne), ROK Army Special Warfare Command
+    text_ko: ''
+  - date: '2024.03'
+    emoji: 🪖
+    text: Enlisted in the Republic of Korea Army
+    text_ko: ''
+  - date: '2022.03'
+    emoji: 🏫
+    text: Entered GIST as an undergraduate student.
+    text_ko: ''
   posts_title:
     en: Recent Posts
     ko: 최근 글
