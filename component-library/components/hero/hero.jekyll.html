@@ -11,14 +11,16 @@
             {% if include.description_html and include.description_html != "" %}
             <div class="{{c}}__description">{{ include.description_html }}</div>
             {% endif %}
+            {% if include.cta_button and include.cta_button != "" %}
             <div class="{{c}}__btn">
               <a href="{{ include.cta_button_link }}" class="cta-button c-button c-button--primary c-button--small"{% if include.cta_button_ko %} data-ko="{{ include.cta_button_ko | escape }}"{% endif %}>{{ include.cta_button }}</a>
               <a class="works-button c-button c-button--secondary c-button--small" href="{{ include.works_button_link }}">
                 <span class="circle-bg"><ion-icon class="button-arrow" name="arrow-forward-outline"></ion-icon></span> <span{% if include.works_button_ko %} data-ko="{{ include.works_button_ko | escape }}"{% endif %}>{{ include.works_button }}</span>
               </a>
             </div>
-            {% if include.contact_html and include.contact_html != "" %}
-            <div class="{{c}}__contact">{{ include.contact_html }}</div>
+            {% endif %}
+            {% if include.news_html and include.news_html != "" %}
+            <div class="{{c}}__news">{{ include.news_html }}</div>
             {% endif %}
           </div>
 

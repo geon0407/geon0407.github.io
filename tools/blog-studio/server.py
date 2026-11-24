@@ -155,11 +155,32 @@ def categories():
     return result
 
 
+def rich_text(value, maxlen=5000):
+    """Text that may contain Markdown links [label](url); refuse script links."""
+    text(value, maxlen)
+    if re.search(r'\]\(\s*(javascript|data|vbscript):', value, re.I):
+        raise Problem('링크 주소는 https:// 또는 /로 시작해야 합니다')
+    return value
+
+
 def validate_config(data):
     current = yaml.safe_load(safe_path(CONFIG).read_text())
 
     # Exact schema for settings except repeatable timeline entries.
     def shape(value, sample, key=''):
+        if key == 'news':
+            if not isinstance(value, list) or len(value) > 200:
+                raise Problem('뉴스는 200개 이하로 입력하세요')
+            for entry in value:
+                if not isinstance(entry, dict) or set(entry) - {'date', 'emoji', 'text', 'text_ko'}:
+                    raise Problem('뉴스 형식이 잘못됐습니다')
+                for v in entry.values():
+                    rich_text(v, 2000)
+                if len(entry.get('emoji', '')) > 16:
+                    raise Problem('뉴스 이모지는 한두 글자로 입력하세요')
+                if not (entry.get('text') or entry.get('text_ko')):
+                    raise Problem('뉴스 내용을 입력하세요')
+            return
         if key == 'timeline':
             if not isinstance(value, list) or len(value) > 100:
                 raise Problem('연혁은 100개 이하로 입력하세요')
@@ -168,7 +189,7 @@ def validate_config(data):
                 if not isinstance(entry, dict) or set(entry) - allowed:
                     raise Problem('연혁 형식이 잘못됐습니다')
                 for v in entry.values():
-                    text(v)
+                    rich_text(v)
                 if not entry.get('title') or not entry.get('title_ko'):
                     raise Problem('연혁 제목은 한국어와 영어를 입력하세요')
                 if entry.get('group', 'research') not in ('background', 'research'):

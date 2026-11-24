@@ -75,7 +75,12 @@ title_ko: 소개
               {% if entry.url and entry.url != "" %}<a href="{{ entry.url | escape }}" target="_blank" rel="noopener" data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</a>
               {% else %}<span data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</span>{% endif %}
             </h3>
-            {% if entry.detail %}<p data-ko="{{ entry.detail_ko | escape }}">{{ entry.detail | escape }}</p>{% endif %}
+            {% if entry.detail and entry.detail != "" %}
+            {% capture detail_en %}{% include inline-markdown.html text=entry.detail %}{% endcapture %}
+            {% assign detail_ko_source = entry.detail_ko | default: entry.detail %}
+            {% capture detail_ko %}{% include inline-markdown.html text=detail_ko_source %}{% endcapture %}
+            <p data-ko-html="{{ detail_ko | strip | escape }}">{{ detail_en | strip }}</p>
+            {% endif %}
           </div>
         </li>
       {% endfor %}

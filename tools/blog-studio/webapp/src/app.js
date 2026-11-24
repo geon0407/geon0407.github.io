@@ -213,6 +213,15 @@ function renderConfig() {
       + panel('홈 섹션', grid(field('최근 프로젝트', 'home.show_projects', 'checkbox') + field('최근 글', 'home.show_posts', 'checkbox')
         + field('섹션 순서', 'home.order', 'select', true, [['projects-first', '프로젝트 다음 게시글'], ['posts-first', '게시글 다음 프로젝트']])
         + pair('프로젝트 영역 제목', 'home.projects_title') + pair('게시글 영역 제목', 'home.posts_title')));
+    const newsCards = config.home.news.map((e, i) => `<div class="timeline-card">
+      <div class="timeline-bar"><strong>${esc([e.date, e.emoji, e.text_ko || e.text].filter(Boolean).join(' ') || '새 소식')}</strong><div>
+        <button data-news-move="${i}" data-dir="-1">위로</button><button data-news-move="${i}" data-dir="1">아래로</button><button data-news-remove="${i}">삭제</button>
+      </div></div>
+      ${grid(field('날짜 (예: 2026.11)', `home.news.${i}.date`) + field('이모지 (선택, 예: 🎉)', `home.news.${i}.emoji`)
+        + field('내용 · English', `home.news.${i}.text`, 'textarea') + field('내용 · 한국어', `home.news.${i}.text_ko`, 'textarea'))}
+    </div>`).join('');
+    out += panel('뉴스', newsCards + '<button id="add-news">뉴스 추가</button>',
+      '홈 인사말 아래 뉴스 상자에 위에서부터 순서대로 표시됩니다. 최신 소식을 위에 두세요. 다섯 개 정도가 보이고 나머지는 상자 안에서 스크롤됩니다. 내용에 [보이는 글자](https://주소) 형식으로 링크를 넣을 수 있습니다. 모두 지우면 뉴스 상자가 숨겨집니다.');
   }
   if (view === 'profile') {
     out = panel('소개', grid(pair('이름', 'profile.name') + pair('소개글', 'profile.bio', 'textarea') + pair('마무리 인사', 'profile.closing', 'textarea')
@@ -232,7 +241,7 @@ function renderConfig() {
     out += panel('연락처', grid(field('이메일', 'profile.contact.email', 'email', true) + pair('소속', 'profile.contact.affiliation')
       + field('CV (영문 PDF)', 'profile.contact.cv.path', 'pdf', true) + field('CV 업데이트 날짜', 'profile.contact.cv.updated', 'date')),
       '홈 인사말 아래와 소개 페이지의 소개글 옆에 표시됩니다. CV는 PDF를 올리면 소개 페이지 연락처 카드와 홈 이메일 줄에 “CV” 링크로 나타나고, 올린 날짜가 업데이트 날짜로 기록됩니다. 이메일은 스팸 수집을 막기 위해 페이지 코드에 뒤집힌 형태로 저장되고, 화면에서는 정상적으로 보입니다. 비우면 표시하지 않습니다.');
-    out += panel('이력 · 연구 및 수상', cards + '<button id="add-timeline">이력 항목 추가</button>', '화면에 표시할 순서를 직접 정할 수 있습니다. 비어 있는 설명은 표시하지 않습니다.');
+    out += panel('이력 · 연구 및 수상', cards + '<button id="add-timeline">이력 항목 추가</button>', '화면에 표시할 순서를 직접 정할 수 있습니다. 비어 있는 설명은 표시하지 않습니다. 설명에는 [보이는 글자](https://주소) 형식으로 원하는 부분에 링크를 넣을 수 있고, 링크는 새 탭에서 열립니다.');
   }
   if (view === 'design') {
     const colorLabels = {page_bg: '페이지 배경', surface: '카드·메뉴 배경', ink: '주요 글자', muted: '보조 글자', line: '구분선', accent: '포인트', selected: '선택 배경'};
@@ -252,6 +261,19 @@ function renderConfig() {
   $('#main').innerHTML = out + saveBar();
   hydrate($('#main'));
   bindConfig();
+  if (view === 'home') {
+    const news = config.home.news;
+    const month = localDate().slice(0, 7).replace('-', '.');
+    $('#add-news').onclick = () => { collectConfig(); news.unshift({date: month, emoji: '', text: '', text_ko: ''}); dirty = true; renderConfig(); };
+    $$('[data-news-move]').forEach(b => b.onclick = () => {
+      collectConfig();
+      const i = +b.dataset.newsMove, j = i + (+b.dataset.dir);
+      if (j >= 0 && j < news.length) { [news[i], news[j]] = [news[j], news[i]]; dirty = true; renderConfig(); }
+    });
+    $$('[data-news-remove]').forEach(b => b.onclick = () => {
+      if (confirm('이 뉴스를 삭제할까요? 저장 전에는 되돌릴 수 있습니다.')) { collectConfig(); news.splice(+b.dataset.newsRemove, 1); dirty = true; renderConfig(); }
+    });
+  }
   if (view === 'profile') {
     const timeline = config.profile.timeline;
     $('#add-timeline').onclick = () => {
@@ -277,6 +299,8 @@ function renderConfig() {
 }
 
 function normaliseConfig() {
+  config.home.news ??= [];
+  config.home.news.forEach(e => { for (const k of ['date', 'emoji', 'text', 'text_ko']) e[k] ??= ''; });
   config.profile.timeline.forEach(e => {
     for (const k of ['period', 'period_ko', 'title', 'title_ko', 'detail', 'detail_ko', 'url']) e[k] ??= '';
     e.group ??= 'research';

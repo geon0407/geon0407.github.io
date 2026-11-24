@@ -10,6 +10,15 @@ home:
   projects_title:
     en: Latest Works
     ko: 최근 프로젝트
+  news:
+  - date: '2026.11'
+    emoji: 🚀
+    text: Opened this blog and portfolio site.
+    text_ko: 블로그 겸 포트폴리오 사이트를 열었습니다.
+  - date: '2026.08'
+    emoji: 🏆
+    text: Received an award in the Robotics AX track of the GIST AX Challenge with a [table tennis robot](/project/26-summer-tabletennisrobot/).
+    text_ko: GIST 창의융합 AX-챌린지 로봇 AX 경진 부문에서 [탁구로봇](/project/26-summer-tabletennisrobot/)으로 수상했습니다.
   posts_title:
     en: Recent Posts
     ko: 최근 글

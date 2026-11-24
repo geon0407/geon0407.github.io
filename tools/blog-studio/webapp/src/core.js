@@ -780,14 +780,31 @@ function url(value) {
   return value;
 }
 
+// Text that may contain Markdown links [label](url); refuse script links.
+function richText(value, maxlen = 5000) {
+  text(value, maxlen);
+  if (/\]\(\s*(javascript|data|vbscript):/i.test(value)) throw new Problem('링크 주소는 https:// 또는 /로 시작해야 합니다');
+  return value;
+}
+
 export function validateConfig(data, current) {
   const shape = (value, sample, key = '') => {
+    if (key === 'news') {
+      if (!Array.isArray(value) || value.length > 200) throw new Problem('뉴스는 200개 이하로 입력하세요');
+      for (const entry of value) {
+        if (!entry || typeof entry !== 'object' || Object.keys(entry).some(k => !['date', 'emoji', 'text', 'text_ko'].includes(k))) throw new Problem('뉴스 형식이 잘못됐습니다');
+        Object.values(entry).forEach(v => richText(v, 2000));
+        if ((entry.emoji || '').length > 16) throw new Problem('뉴스 이모지는 한두 글자로 입력하세요');
+        if (!entry.text && !entry.text_ko) throw new Problem('뉴스 내용을 입력하세요');
+      }
+      return;
+    }
     if (key === 'timeline') {
       if (!Array.isArray(value) || value.length > 100) throw new Problem('연혁은 100개 이하로 입력하세요');
       const allowed = new Set(['period', 'period_ko', 'title', 'title_ko', 'detail', 'detail_ko', 'url', 'group']);
       for (const entry of value) {
         if (!entry || typeof entry !== 'object' || Object.keys(entry).some(k => !allowed.has(k))) throw new Problem('연혁 형식이 잘못됐습니다');
-        Object.values(entry).forEach(v => text(v));
+        Object.values(entry).forEach(v => richText(v));
         if (!entry.title || !entry.title_ko) throw new Problem('연혁 제목은 한국어와 영어를 입력하세요');
         if (!['background', 'research'].includes(entry.group ?? 'research')) throw new Problem('연혁 구분이 잘못됐습니다');
         url(entry.url || '');

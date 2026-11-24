@@ -1,0 +1,22 @@
+{% comment %}
+  News box under the home greeting (Blog Studio → 홈 → 뉴스), in the order set there.
+  About five items show; the rest scroll inside the box. Text may contain [label](url) links.
+{% endcomment %}
+{% assign news = site.data.studio.home.news %}
+{% if news and news.size > 0 %}
+<section class="home-news" aria-labelledby="home-news-title">
+  <h2 class="home-news__title" id="home-news-title" data-ko="소식">News</h2>
+  <ul class="home-news__list list-reset" tabindex="0" aria-label="News">
+    {% for item in news %}
+    {% capture news_en %}{% include inline-markdown.html text=item.text %}{% endcapture %}
+    {% assign news_ko_source = item.text_ko | default: item.text %}
+    {% capture news_ko %}{% include inline-markdown.html text=news_ko_source %}{% endcapture %}
+    <li class="home-news__item">
+      <span class="home-news__date">{{ item.date | escape }}</span>
+      <span class="home-news__emoji" aria-hidden="true">{{ item.emoji | escape }}</span>
+      <span class="home-news__text" data-ko-html="{{ news_ko | strip | escape }}">{{ news_en | strip }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}

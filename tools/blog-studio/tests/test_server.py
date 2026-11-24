@@ -72,6 +72,13 @@ class StudioTests(unittest.TestCase):
         bad=studio.yaml.safe_load(studio.safe_path(studio.CONFIG).read_text());bad['profile']['contact']['email']='not an email'
         with self.assertRaises(studio.Problem):studio.validate_config(bad)
         bad['profile']['contact']['email']='';studio.validate_config(bad)  # empty hides the contact
+        news=studio.yaml.safe_load(studio.safe_path(studio.CONFIG).read_text())
+        news['home']['news']=[{'date':'2026.11','emoji':'🎉','text':'See [paper](https://example.com)','text_ko':''}];studio.validate_config(news)
+        for item in [{'date':'x','text':''},{'text':'x','extra':'y'},{'text':'[x](javascript:alert(1))'}]:
+            news['home']['news']=[item]
+            with self.assertRaises(studio.Problem):studio.validate_config(news)
+        news['home']['news']=[];news['profile']['timeline'][0]['detail']='[bad](javascript:alert(1))'
+        with self.assertRaises(studio.Problem):studio.validate_config(news)
         bad['profile']['contact']['cv']={'path':'/uploads/2026/11/x.exe','updated':''}
         with self.assertRaises(studio.Problem):studio.validate_config(bad)
         bad['profile']['contact']['cv']={'path':'/uploads/2026/11/0123456789abcdef01234567.pdf','updated':'2026-11'}

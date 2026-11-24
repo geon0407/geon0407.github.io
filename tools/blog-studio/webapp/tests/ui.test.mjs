@@ -249,3 +249,36 @@ test('CV: upload a PDF from the About settings, then publish it with the setting
   assert.match(site.text('site/_data/studio.yml'), new RegExp(`path: ${path.replace(/\//g, '\\/')}`));
   assert.equal(site.text('site' + path), '%PDF-1.4 test');
 });
+
+test('home news: add, edit and save from the Home screen', async t => {
+  const site = new FakeRepo({files: siteFiles()});
+  const data = new FakeRepo({isPrivate: true});
+  const {w, $, idle, notice, close} = openStudio({site, data});
+  t.after(close);
+  await idle();
+  $('#token').value = 'github_pat_test';
+  $('#site-repo').value = 'me/site';
+  $('#data-repo').value = 'me/data';
+  $('#connect-form').dispatchEvent(new w.Event('submit', {cancelable: true}));
+  for (let i = 0; i < 100 && $('#app').hidden; i++) await sleep(30);
+  await idle();
+  w.document.querySelector('[data-view="home"]').click();
+  await idle();
+  const before = w.document.querySelectorAll('[data-news-remove]').length;
+  $('#add-news').click();
+  assert.equal(w.document.querySelectorAll('[data-news-remove]').length, before + 1);
+  const set = (path, value) => { const el = $(`[data-config="${path}"]`); el.value = value; el.dispatchEvent(new w.Event('input')); };
+  set('home.news.0.emoji', '🎉');
+  set('home.news.0.text', 'Paper [accepted](https://example.com).');
+  set('home.news.0.text_ko', '논문이 [채택](https://example.com)됐습니다.');
+  $('#save-settings').click();
+  await idle();
+  assert.match(notice(), /설정을 저장/);
+  $('#publish').click();
+  await idle();
+  $('#publish-confirm').click();
+  await idle();
+  const yml = site.text('site/_data/studio.yml');
+  assert.match(yml, /text: Paper \[accepted\]\(https:\/\/example\.com\)\./);
+  assert.match(yml, /emoji: 🎉/);
+});

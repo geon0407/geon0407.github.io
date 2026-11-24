@@ -26,12 +26,22 @@
     en: element.textContent,
     ko: element.dataset.ko
   })).filter(label => label.ko);
+  // Text with links (news, timeline details): swap HTML instead of plain text.
+  const richLabels = Array.from(document.querySelectorAll('[data-ko-html]'), element => ({
+    element,
+    en: element.innerHTML,
+    ko: element.dataset.koHtml
+  })).filter(label => label.ko);
 
   function render() {
     const language = preference || systemLanguage();
     document.documentElement.lang = language;
     for (const { element, en, ko } of labels) {
       element.textContent = language === 'ko' ? ko : en;
+      element.lang = language;
+    }
+    for (const { element, en, ko } of richLabels) {
+      element.innerHTML = language === 'ko' ? ko : en;
       element.lang = language;
     }
     for (const button of buttons) {

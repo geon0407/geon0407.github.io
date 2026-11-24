@@ -1,0 +1,8 @@
+{%- comment -%}
+  Short text that may contain Markdown links: [label](https://…).
+  Rendered inline (no <p>); external links open in a new tab.
+{%- endcomment -%}
+{%- assign inline_text = include.text | default: "" -%}
+{%- if inline_text != "" -%}
+{{- inline_text | markdownify | strip | remove: "<p>" | remove: "</p>" | replace: '<a href="http', '<a target="_blank" rel="noopener" href="http' -}}
+{%- endif -%}
