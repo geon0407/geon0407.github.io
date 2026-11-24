@@ -56,36 +56,50 @@ title_ko: 소개
     {% endif %}
   </div>
 
-  {% assign groups = 'background,research' | split: ',' %}
-  {% for group in groups %}
-  <section class="about-timeline" aria-labelledby="timeline-{{ group }}">
-    {% if group == 'background' %}
-    <h2 id="timeline-{{ group }}" data-ko="이력">Background &amp; Experience</h2>
-    {% else %}
-    <h2 id="timeline-{{ group }}" data-ko="연구 및 수상">Research &amp; Awards</h2>
-    {% endif %}
-    <ol class="about-timeline__list">
-      {% for entry in site.data.studio.profile.timeline %}
-        {% assign entry_group = entry.group | default: 'research' %}
-        {% unless entry_group == group %}{% continue %}{% endunless %}
-        <li class="about-timeline__item">
-          <span class="about-timeline__period"{% if entry.period_ko %} data-ko="{{ entry.period_ko | escape }}"{% endif %}>{{ entry.period | escape }}</span>
-          <div class="about-timeline__body">
-            <h3>
-              {% if entry.url and entry.url != "" %}<a href="{{ entry.url | escape }}" target="_blank" rel="noopener" data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</a>
-              {% else %}<span data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</span>{% endif %}
-            </h3>
-            {% if entry.detail and entry.detail != "" %}
-            {% capture detail_en %}{% include inline-markdown.html text=entry.detail %}{% endcapture %}
-            {% assign detail_ko_source = entry.detail_ko | default: entry.detail %}
-            {% capture detail_ko %}{% include inline-markdown.html text=detail_ko_source %}{% endcapture %}
-            <p data-ko-html="{{ detail_ko | strip | escape }}">{{ detail_en | strip }}</p>
-            {% endif %}
-          </div>
-        </li>
+  {% comment %}
+    History in one box with tabs (js/history-tabs.js). Research & Award opens first; tabs with no
+    entries are left out. Without JavaScript every group shows, each under its own heading.
+  {% endcomment %}
+  {% assign timeline = site.data.studio.profile.timeline %}
+  {% assign history_groups = 'education,research,teaching,military' | split: ',' %}
+  <section class="about-history" aria-label="History" data-history>
+    <div class="about-history__tabs" role="tablist" aria-label="History">
+      {% for group in history_groups %}
+        {% assign count = timeline | where: 'group', group | size %}
+        {% if count == 0 %}{% continue %}{% endif %}
+        {% include history-label.html group=group %}
+        <button class="about-history__tab" type="button" role="tab" id="history-tab-{{ group }}" aria-controls="history-{{ group }}"
+                aria-selected="{% if group == 'research' %}true{% else %}false{% endif %}" data-ko="{{ history_ko }}">{{ history_en | escape }}</button>
       {% endfor %}
-    </ol>
+    </div>
+    {% for group in history_groups %}
+    {% assign count = timeline | where: 'group', group | size %}
+    {% if count == 0 %}{% continue %}{% endif %}
+    {% include history-label.html group=group %}
+    <div class="about-history__panel" role="tabpanel" id="history-{{ group }}" aria-labelledby="history-tab-{{ group }}" tabindex="0"{% if group == 'research' %} data-default{% endif %}>
+      <h2 class="about-history__heading" data-ko="{{ history_ko }}">{{ history_en | escape }}</h2>
+      <ol class="about-timeline__list">
+        {% for entry in timeline %}
+          {% unless entry.group == group %}{% continue %}{% endunless %}
+          <li class="about-timeline__item">
+            <span class="about-timeline__period"{% if entry.period_ko %} data-ko="{{ entry.period_ko | escape }}"{% endif %}>{{ entry.period | escape }}</span>
+            <div class="about-timeline__body">
+              <h3>
+                {% if entry.url and entry.url != "" %}<a href="{{ entry.url | escape }}" target="_blank" rel="noopener" data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</a>
+                {% else %}<span data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</span>{% endif %}
+              </h3>
+              {% if entry.detail and entry.detail != "" %}
+              {% capture detail_en %}{% include inline-markdown.html text=entry.detail %}{% endcapture %}
+              {% assign detail_ko_source = entry.detail_ko | default: entry.detail %}
+              {% capture detail_ko %}{% include inline-markdown.html text=detail_ko_source %}{% endcapture %}
+              <p data-ko-html="{{ detail_ko | strip | escape }}">{{ detail_en | strip }}</p>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+    {% endfor %}
   </section>
-  {% endfor %}
 
 </main>

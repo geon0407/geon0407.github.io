@@ -59,7 +59,7 @@ profile:
     period_ko: ''
     group: research
   - period: 2026.03–Present
-    group: background
+    group: teaching
     title: Teaching Assistant, Department of Mathematical Sciences, GIST
     detail: Lead Recitation Sessions for Calculus (Spring 2026) and Multivariable Calculus (Fall 2026)
     period_ko: 2026.03–현재
@@ -67,16 +67,24 @@ profile:
     detail_ko: 2026학년도 봄학기 미적분학, 2026학년도 가을학기 다변수해석학 Recitation 진행
     url: https://math.gist.ac.kr/math/
   - period: 2024.03–2025.09
-    group: background
+    group: military
     title: Military Service, Republic of Korea Army
     detail: 3rd Airborne Special Forces Brigade, Republic of Korea Army Special Warfare Command, Sergeant (Honorably Discharged)
     title_ko: 대한민국 육군 군 복무
     detail_ko: 제3공수특전여단 병장 만기전역
     period_ko: ''
     url: https://www.army.mil.kr/sites/army/index.do
+  - period: '2024.03'
+    period_ko: ''
+    group: military
+    title: Enlisted in the Republic of Korea Army (Korea Army Training Center)
+    title_ko: 대한민국 육군 육군훈련소 입대
+    detail: ''
+    detail_ko: ''
+    url: ''
   - period: 2022.02–Present
     period_ko: 2022.02–현재
-    group: background
+    group: education
     title: Undergraduate Studies, Department of Electrical Engineering and Computer Science, GIST
     url: https://eecs.gist.ac.kr/
     title_ko: 광주과학기술원 전기전자컴퓨터공학과 학부과정
@@ -114,14 +122,6 @@ profile:
     detail_ko: 충청남도(2015)·충청북도(2018) 대표로 전국대회 입상
     period_ko: ''
     group: research
-  - period: 2003.04.07
-    group: background
-    title: Born in Daejeon, South Korea
-    url: https://ko.wikipedia.org/wiki/대전광역시
-    title_ko: 대한민국 대전광역시 출생
-    period_ko: ''
-    detail: ''
-    detail_ko: ''
   name:
     en: GeonHyoung Kim
     ko: 김건형

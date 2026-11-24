@@ -806,7 +806,7 @@ export function validateConfig(data, current) {
         if (!entry || typeof entry !== 'object' || Object.keys(entry).some(k => !allowed.has(k))) throw new Problem('연혁 형식이 잘못됐습니다');
         Object.values(entry).forEach(v => richText(v));
         if (!entry.title || !entry.title_ko) throw new Problem('연혁 제목은 한국어와 영어를 입력하세요');
-        if (!['background', 'research'].includes(entry.group ?? 'research')) throw new Problem('연혁 구분이 잘못됐습니다');
+        if (!['education', 'research', 'teaching', 'military'].includes(entry.group ?? 'research')) throw new Problem('연혁 구분이 잘못됐습니다');
         url(entry.url || '');
       }
       return;

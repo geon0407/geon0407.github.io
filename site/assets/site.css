@@ -404,8 +404,9 @@ html { scroll-padding-top: 110px; }
 .home-news__title { margin: 0 0 6px; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .home-news__list { max-height: 15.5rem; padding-right: 14px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .home-news__list:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
-/* News and Recent Posts rows share one row box: same minimum height, padding and alignment. */
-.home-news__item, .home-posts__item { min-height: 48px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .9375rem; line-height: 1.55; align-items: center; }
+/* News and Recent Posts rows share one row box: same minimum height, padding and alignment.
+   margin: 0 cancels the theme's default 10px under every list item, which made rows uneven. */
+.home-news__item, .home-posts__item { margin: 0; min-height: 48px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .9375rem; line-height: 1.55; align-items: center; }
 .home-news__item { display: grid; grid-template-columns: 4.4em 1.6em minmax(0, 1fr); gap: 0 10px; }
 .home-news__item:last-child { border-bottom: 0; }
 .home-news__date { color: var(--muted); font-size: .875rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -440,4 +441,27 @@ html { scroll-padding-top: 110px; }
   .home-posts__title { grid-area: title; }
   .home-news__item, .home-posts__item { min-height: 0; }
   .home-posts__title { grid-column: 1 / -1; display: -webkit-box; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+}
+
+/* About history: one box with tabs on top (js/history-tabs.js). Without JS the tab bar is
+   hidden and every group shows under its own heading. */
+.about-history { max-width: 860px; margin: 0 auto 80px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.about-history__tabs { display: none; gap: 2px; padding: 0 12px; overflow-x: auto; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--page-bg) 60%, var(--surface)); scrollbar-width: none; }
+.about-history__tabs::-webkit-scrollbar { display: none; }
+.about-history.is-tabbed .about-history__tabs { display: flex; }
+.about-history__tab { flex: none; margin-bottom: -1px; padding: 15px 16px 13px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: .9375rem; font-weight: 600; white-space: nowrap; cursor: pointer; transition: color .2s ease, border-color .2s ease; }
+.about-history__tab:hover { color: var(--ink); }
+.about-history__tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.about-history__tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 6px; }
+.about-history__panel { padding: 28px 32px 30px; }
+.about-history__panel:focus-visible { outline: 2px solid var(--accent); outline-offset: -6px; }
+.about-history__panel + .about-history__panel { border-top: 1px solid var(--line); }
+.about-history.is-tabbed .about-history__panel + .about-history__panel { border-top: 0; }
+.about-history__heading { margin: 0 0 20px; font-size: 1.25rem; }
+.about-history.is-tabbed .about-history__heading { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 600px) {
+  .about-history { margin-bottom: 56px; }
+  .about-history__tabs { padding: 0 6px; }
+  .about-history__tab { padding: 13px 12px 11px; font-size: .875rem; }
+  .about-history__panel { padding: 22px 18px 24px; }
 }
