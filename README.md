@@ -2,7 +2,7 @@
 
 김건형의 개인 블로그 겸 포트폴리오입니다. → https://geon0407.github.io
 
-CloudCannon의 [Vonge](https://github.com/CloudCannon/vonge-jekyll-bookshop-template) Jekyll 템플릿(MIT)을 바탕으로, 한/영 전환·다크 모드·GIST 색상 테마를 더하고 개인 편집기(Blog Studio)를 붙였습니다.
+CloudCannon의 [Vonge](https://github.com/CloudCannon/vonge-jekyll-bookshop-template) Jekyll 템플릿(MIT)을 바탕으로 제작했습니다.
 
 ## 구조
 
