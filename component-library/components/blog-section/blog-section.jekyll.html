@@ -16,17 +16,9 @@
           {% if include.show_posts and site.posts.size == 0 and include.empty_message %}
           <p{% if include.empty_message_ko %} data-ko="{{ include.empty_message_ko | escape }}"{% endif %}>{{ include.empty_message | escape }}</p>
           {% elsif include.show_posts %}
-          {% comment %} Newest 4 posts as a list: Category | Title | Date (site.posts is newest first). {% endcomment %}
+          {% comment %} Newest 4 posts, styled like the News box: date · category · title. {% endcomment %}
           <div class="home-posts-box">
-          <table class="home-posts">
-            <thead>
-              <tr>
-                <th scope="col" class="home-posts__category" data-ko="카테고리">Category</th>
-                <th scope="col" class="home-posts__title" data-ko="제목">Title</th>
-                <th scope="col" class="home-posts__date" data-ko="작성일">Date</th>
-              </tr>
-            </thead>
-            <tbody>
+            <ul class="home-posts list-reset">
               {% for post in site.posts limit:4 %}
               {% assign category_slug = post.categories | first %}
               {% assign category = nil %}
@@ -35,16 +27,13 @@
                   {% if topic.slug == category_slug %}{% assign category = topic %}{% endif %}
                 {% endfor %}
               {% endfor %}
-              <tr>
-                <td class="home-posts__category">
-                  {% if category %}<a class="home-posts__badge" href="{{ '/blog/category/' | append: category.slug | append: '/' | relative_url }}" data-ko="{{ category.title_ko | escape }}">{{ category.title | escape }}</a>{% endif %}
-                </td>
-                <td class="home-posts__title"><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></td>
-                <td class="home-posts__date"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time></td>
-              </tr>
+              <li class="home-posts__item">
+                <time class="home-posts__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+                <span class="home-posts__category">{% if category %}<a class="home-posts__badge" href="{{ '/blog/category/' | append: category.slug | append: '/' | relative_url }}" data-ko="{{ category.title_ko | escape }}">{{ category.title | escape }}</a>{% endif %}</span>
+                <a class="home-posts__title" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+              </li>
               {% endfor %}
-            </tbody>
-          </table>
+            </ul>
           </div>
           {% endif %}
 
