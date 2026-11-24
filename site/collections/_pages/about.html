@@ -57,33 +57,32 @@ title_ko: 소개
   </div>
 
   {% comment %}
-    History in one box with tabs (js/history-tabs.js). Education opens first; tabs with no
-    entries are left out. Without JavaScript every group shows, each under its own heading.
+    History in one box: every entry newest first (_plugins/history_order.rb) with a category
+    badge; filter buttons on top (js/history-filter.js) show one category at a time. Without
+    JavaScript the buttons stay hidden and the full list shows.
   {% endcomment %}
-  {% assign timeline = site.data.studio.profile.timeline %}
-  {% assign history_groups = 'education,research,award,teaching,military' | split: ',' %}
-  <section class="about-history" aria-label="History" data-history>
-    <div class="about-history__tabs" role="tablist" aria-label="History">
+  {% assign history = site.data.history_sorted | default: site.data.studio.profile.timeline %}
+  {% assign history_groups = 'education,research,award,experience' | split: ',' %}
+  {% if history.size > 0 %}
+  <section class="about-history" aria-labelledby="history-title" data-history>
+    <h2 class="about-history__heading" id="history-title" data-ko="연혁">History</h2>
+    <div class="about-history__tabs" role="group" aria-label="Filter history" hidden>
+      <button class="about-history__tab" type="button" data-filter="all" aria-pressed="true" data-ko="전체">All</button>
       {% for group in history_groups %}
-        {% assign count = timeline | where: 'group', group | size %}
+        {% assign count = history | where: 'group', group | size %}
         {% if count == 0 %}{% continue %}{% endif %}
         {% include history-label.html group=group %}
-        <button class="about-history__tab" type="button" role="tab" id="history-tab-{{ group }}" aria-controls="history-{{ group }}"
-                aria-selected="{% if group == 'education' %}true{% else %}false{% endif %}" data-ko="{{ history_ko }}">{{ history_en | escape }}</button>
+        <button class="about-history__tab" type="button" data-filter="{{ group }}" aria-pressed="false" data-ko="{{ history_ko }}">{{ history_en | escape }}</button>
       {% endfor %}
     </div>
-    {% for group in history_groups %}
-    {% assign count = timeline | where: 'group', group | size %}
-    {% if count == 0 %}{% continue %}{% endif %}
-    {% include history-label.html group=group %}
-    <div class="about-history__panel" role="tabpanel" id="history-{{ group }}" aria-labelledby="history-tab-{{ group }}" tabindex="0"{% if group == 'education' %} data-default{% endif %}>
-      <h2 class="about-history__heading" data-ko="{{ history_ko }}">{{ history_en | escape }}</h2>
+    <div class="about-history__panel">
       <ol class="about-timeline__list">
-        {% for entry in timeline %}
-          {% unless entry.group == group %}{% continue %}{% endunless %}
-          <li class="about-timeline__item">
+        {% for entry in history %}
+          {% include history-label.html group=entry.group %}
+          <li class="about-timeline__item" data-group="{{ entry.group | escape }}">
             <span class="about-timeline__period"{% if entry.period_ko %} data-ko="{{ entry.period_ko | escape }}"{% endif %}>{{ entry.period | escape }}</span>
             <div class="about-timeline__body">
+              {% if history_en %}<span class="history-badge history-badge--{{ entry.group | escape }}" data-ko="{{ history_ko }}">{{ history_en | escape }}</span>{% endif %}
               <h3>
                 {% if entry.url and entry.url != "" %}<a href="{{ entry.url | escape }}" target="_blank" rel="noopener" data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</a>
                 {% else %}<span data-ko="{{ entry.title_ko | escape }}">{{ entry.title | escape }}</span>{% endif %}
@@ -98,8 +97,9 @@ title_ko: 소개
           </li>
         {% endfor %}
       </ol>
+      <p class="about-history__empty" hidden data-ko="이 분류에 해당하는 항목이 없습니다.">Nothing in this category yet.</p>
     </div>
-    {% endfor %}
   </section>
+  {% endif %}
 
 </main>

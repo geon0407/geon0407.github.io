@@ -192,7 +192,7 @@ def validate_config(data):
                     rich_text(v)
                 if not entry.get('title') or not entry.get('title_ko'):
                     raise Problem('연혁 제목은 한국어와 영어를 입력하세요')
-                if entry.get('group', 'research') not in ('education', 'research', 'award', 'teaching', 'military'):
+                if entry.get('group', 'research') not in ('education', 'research', 'award', 'experience'):
                     raise Problem('연혁 구분이 잘못됐습니다')
                 url(entry.get('url', ''))
             return
@@ -861,7 +861,7 @@ class Handler(BaseHTTPRequestHandler):
         page = re.sub(r'</head>', lambda match: style + match[0], page, count=1, flags=re.I)
         page = re.sub(r"""(\bhref=["'])/(?=["'])""", r'\g<1>/preview/', page, flags=re.I)
         script_hashes = []
-        for name in ('theme.js', 'language.js', 'contact.js', 'history-tabs.js'):
+        for name in ('theme.js', 'language.js', 'contact.js', 'history-filter.js'):
             script = (ROOT / 'site' / 'js' / name).read_text(encoding='utf-8')
             script = re.sub(r'</script', lambda match: '<\\/' + match[0][2:], script, flags=re.I)
             script_digest = base64.b64encode(hashlib.sha256(script.encode('utf-8')).digest()).decode('ascii')

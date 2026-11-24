@@ -231,20 +231,28 @@ function renderConfig() {
       + pair('성경 구절', 'profile.verse', 'textarea') + pair('성경 출처', 'profile.verse_source')
       + field('왼쪽 인물 사진', 'profile.portrait.path', 'image', true) + field('인물 사진 설명', 'profile.portrait.alt')
       + field('오른쪽 사진', 'profile.feature_photo.path', 'image', true) + field('오른쪽 사진 설명', 'profile.feature_photo.alt')));
-    const cards = config.profile.timeline.map((e, i) => `<div class="timeline-card">
+    // History: one panel per category so long lists stay easy to find. The data is still one
+    // list (profile.timeline) whose entries carry a group; the site sorts them by date.
+    const HISTORY_GROUPS = [['education', '학력'], ['research', '연구'], ['award', '수상'], ['experience', '경력']];
+    const historyCard = (e, i) => `<div class="timeline-card">
       <div class="timeline-bar"><strong>${esc(e.title_ko || '새 항목')}</strong><div>
         <button data-move="${i}" data-dir="-1">위로</button><button data-move="${i}" data-dir="1">아래로</button><button data-remove="${i}">삭제</button>
       </div></div>
-      ${grid(field('구분', `profile.timeline.${i}.group`, 'select', true, [['education', '학력 (Education)'], ['research', '연구 (Research)'], ['award', '수상 (Awards)'], ['teaching', '교육 경력 (Teaching Experience)'], ['military', '병역 (Military Service)']])
-        + field('기간 · English', `profile.timeline.${i}.period`) + field('기간 · 한국어', `profile.timeline.${i}.period_ko`)
+      ${grid(field('기간 · English', `profile.timeline.${i}.period`) + field('기간 · 한국어', `profile.timeline.${i}.period_ko`)
         + field('제목 · English', `profile.timeline.${i}.title`) + field('제목 · 한국어', `profile.timeline.${i}.title_ko`)
         + field('설명 · English', `profile.timeline.${i}.detail`, 'textarea') + field('설명 · 한국어', `profile.timeline.${i}.detail_ko`, 'textarea')
         + field('관련 링크', `profile.timeline.${i}.url`, 'text', true))}
-    </div>`).join('');
+    </div>`;
+    const historyPanels = HISTORY_GROUPS.map(([group, name], n) => {
+      const entries = config.profile.timeline.map((e, i) => [e, i]).filter(([e]) => e.group === group);
+      return panel(`연혁 · ${name} <span class="badge">${entries.length}</span>`,
+        entries.map(([e, i]) => historyCard(e, i)).join('') + `<button data-add-timeline="${group}">${name} 항목 추가</button>`,
+        n === 0 ? '소개 페이지 연혁에는 네 분류의 항목이 모두 함께, 기간의 시작 연월 기준 최신순으로 표시되고 위쪽 버튼으로 분류별로 걸러 볼 수 있습니다. 기간이 같으면 여기 순서를 따릅니다. 비어 있는 설명은 표시하지 않고, 설명에는 [보이는 글자](https://주소) 형식으로 링크를 넣을 수 있습니다(새 탭에서 열림).' : '');
+    }).join('');
     out += panel('연락처', grid(field('이메일', 'profile.contact.email', 'email', true) + pair('소속', 'profile.contact.affiliation')
       + field('CV (영문 PDF)', 'profile.contact.cv.path', 'pdf', true) + field('CV 업데이트 날짜', 'profile.contact.cv.updated', 'date')),
       '홈 인사말 아래와 소개 페이지의 소개글 옆에 표시됩니다. CV는 PDF를 올리면 소개 페이지 연락처 카드와 홈 이메일 줄에 “CV” 링크로 나타나고, 올린 날짜가 업데이트 날짜로 기록됩니다. 이메일은 스팸 수집을 막기 위해 페이지 코드에 뒤집힌 형태로 저장되고, 화면에서는 정상적으로 보입니다. 비우면 표시하지 않습니다.');
-    out += panel('연혁', cards + '<button id="add-timeline">이력 항목 추가</button>', '소개 페이지에서 구분별 탭(학력 · 연구 · 수상 · 교육 경력 · 병역)으로 나뉘어 표시되고, 처음에는 학력 탭이 열립니다. 항목이 없는 탭은 숨겨집니다. 각 탭 안에서는 여기 순서대로 표시됩니다. 비어 있는 설명은 표시하지 않습니다. 설명에는 [보이는 글자](https://주소) 형식으로 원하는 부분에 링크를 넣을 수 있고, 링크는 새 탭에서 열립니다.');
+    out += historyPanels;
   }
   if (view === 'design') {
     const colorLabels = {page_bg: '페이지 배경', surface: '카드·메뉴 배경', ink: '주요 글자', muted: '보조 글자', line: '구분선', accent: '포인트', selected: '선택 배경'};
@@ -279,15 +287,18 @@ function renderConfig() {
   }
   if (view === 'profile') {
     const timeline = config.profile.timeline;
-    $('#add-timeline').onclick = () => {
+    $$('[data-add-timeline]').forEach(b => b.onclick = () => {
       collectConfig();
-      timeline.unshift({group: 'research', period: '', period_ko: '', title: 'New entry', title_ko: '새 항목', detail: '', detail_ko: '', url: ''});
+      timeline.unshift({group: b.dataset.addTimeline, period: '', period_ko: '', title: 'New entry', title_ko: '새 항목', detail: '', detail_ko: '', url: ''});
       dirty = true;
       renderConfig();
-    };
+    });
+    // Up/down move an entry past its neighbour in the same category.
     $$('[data-move]').forEach(b => b.onclick = () => {
       collectConfig();
-      const i = +b.dataset.move, j = i + (+b.dataset.dir);
+      const i = +b.dataset.move, step = +b.dataset.dir;
+      let j = i + step;
+      while (j >= 0 && j < timeline.length && timeline[j].group !== timeline[i].group) j += step;
       if (j >= 0 && j < timeline.length) { [timeline[i], timeline[j]] = [timeline[j], timeline[i]]; dirty = true; renderConfig(); }
     });
     $$('[data-remove]').forEach(b => b.onclick = () => {
@@ -306,7 +317,9 @@ function normaliseConfig() {
   config.home.news.forEach(e => { for (const k of ['date', 'emoji', 'text', 'text_ko']) e[k] ??= ''; });
   config.profile.timeline.forEach(e => {
     for (const k of ['period', 'period_ko', 'title', 'title_ko', 'detail', 'detail_ko', 'url']) e[k] ??= '';
-    e.group ??= 'research';
+    // Older group names from before the four categories.
+    if (['teaching', 'military', 'background'].includes(e.group)) e.group = 'experience';
+    if (!['education', 'research', 'award', 'experience'].includes(e.group)) e.group = 'research';
   });
 }
 

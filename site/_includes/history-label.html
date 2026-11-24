@@ -1,8 +1,8 @@
-{%- comment -%} Sets history_en / history_ko for a history group (About page tabs). {%- endcomment -%}
+{%- comment -%} Sets history_en / history_ko for a history group (About page filter and badges). {%- endcomment -%}
+{%- assign history_en = nil -%}{%- assign history_ko = nil -%}
 {%- case include.group -%}
   {%- when 'education' -%}{%- assign history_en = 'Education' -%}{%- assign history_ko = '학력' -%}
   {%- when 'research' -%}{%- assign history_en = 'Research' -%}{%- assign history_ko = '연구' -%}
   {%- when 'award' -%}{%- assign history_en = 'Awards' -%}{%- assign history_ko = '수상' -%}
-  {%- when 'teaching' -%}{%- assign history_en = 'Teaching Experience' -%}{%- assign history_ko = '교육 경력' -%}
-  {%- when 'military' -%}{%- assign history_en = 'Military Service' -%}{%- assign history_ko = '병역' -%}
+  {%- when 'experience' -%}{%- assign history_en = 'Experience' -%}{%- assign history_ko = '경력' -%}
 {%- endcase -%}

@@ -39,7 +39,7 @@ profile:
     period_ko: ''
     group: award
   - period: 2026.03–Present
-    group: teaching
+    group: experience
     title: Teaching Assistant, Department of Mathematical Sciences, GIST
     detail: Lead Recitation Sessions for Calculus (Spring 2026) and Multivariable Calculus (Fall 2026)
     period_ko: 2026.03–현재
@@ -47,7 +47,7 @@ profile:
     detail_ko: 2026학년도 봄학기 미적분학, 2026학년도 가을학기 다변수해석학 Recitation 진행
     url: https://math.gist.ac.kr/math/
   - period: 2024.03–2025.09
-    group: military
+    group: experience
     title: Military Service, Republic of Korea Army
     detail: 3rd Airborne Special Forces Brigade, Republic of Korea Army Special Warfare Command, Sergeant (Honorably Discharged)
     title_ko: 대한민국 육군 군 복무
@@ -56,7 +56,7 @@ profile:
     url: https://www.army.mil.kr/sites/army/index.do
   - period: '2024.03'
     period_ko: ''
-    group: military
+    group: experience
     title: Enlisted in the Republic of Korea Army (Korea Army Training Center)
     title_ko: 대한민국 육군 육군훈련소 입대
     detail: ''
