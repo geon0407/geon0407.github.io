@@ -465,3 +465,11 @@ html { scroll-padding-top: 110px; }
   .about-history__tab { padding: 13px 12px 11px; font-size: .875rem; }
   .about-history__panel { padding: 22px 18px 24px; }
 }
+
+/* Mobile menu (≤1024px) is a full-screen layer that is only faded out when closed. Since the
+   header became sticky (its own stacking layer above the page), that invisible layer sat on
+   top of the content and took every click (e.g. "Home"). Closed, it must not be clickable. */
+@media (max-width: 1024px) {
+  .main-nav { visibility: hidden; pointer-events: none; transition: opacity .25s ease, visibility 0s linear .25s; }
+  .main-nav.is-open { visibility: visible; pointer-events: auto; transition: opacity .25s ease, visibility 0s; }
+}
