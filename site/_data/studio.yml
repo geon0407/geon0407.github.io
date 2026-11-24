@@ -11,6 +11,10 @@ home:
     en: Latest Works
     ko: 최근 프로젝트
   news:
+  - date: '2026.09'
+    emoji: 👨‍🏫
+    text: Served as a Teaching Assistant for Multivariable Calculus (MM2001, Fall '26) recitation sessions, Department of Mathematical Sciences, GIST.
+    text_ko: ''
   - date: '2026.08'
     emoji: 🧑‍💻
     text: Joined [SYMPLE Lab](https://symplelab.com/) at GIST as an undergraduate research intern
@@ -18,6 +22,22 @@ home:
   - date: '2026.08'
     emoji: 🏆
     text: Won the Grand Prize in Track 1 (Robotics AX) of the [2026 GIST AX Challenge](https://www.gist.ac.kr/kr/html/sub07/070103.html?mode=V&no=222864) with an [AI table tennis robot, Gwangju-SYB](https://geon0407.github.io/project/26-summer-tabletennisrobot/)
+    text_ko: ''
+  - date: '2026.03'
+    emoji: 👨‍🏫
+    text: Served as a Teaching Assistant for Calculus (GS1001, Spring '26) recitation sessions, Department of Mathematical Sciences, GIST.
+    text_ko: ''
+  - date: '2025.09'
+    emoji: 🫡
+    text: Completed mandatory military service as a Sergeant in the 3rd Special Forces Brigade (Airborne), ROK Army Special Warfare Command
+    text_ko: ''
+  - date: '2024.03'
+    emoji: 🪖
+    text: Enlisted in the Republic of Korea Army
+    text_ko: ''
+  - date: '2022.03'
+    emoji: 🏫
+    text: Entered GIST as an undergraduate student.
     text_ko: ''
   posts_title:
     en: Recent Posts
