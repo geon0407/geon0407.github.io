@@ -378,21 +378,15 @@
 .about-contact__cv:hover, .about-contact__cv:focus-visible { color: var(--accent); }
 .about-contact__cv-date { color: var(--muted); font-size: .875rem; font-weight: 400; }
 
-/* Home (Latest Works, Recent Posts): four smaller cards per row, two rows. The card
+/* Home Latest Works: four smaller cards per row, two rows. The card
    proportions stay the same; text and padding shrink to fit. Tablet/phone keep 2 / 1 columns. */
 @media (min-width: 1025px) {
-  .home-cards .c-project-card.col, .home-cards .c-blog-card.col { flex: 0 0 25%; max-width: 25%; }
+  .home-cards .c-project-card.col { flex: 0 0 25%; max-width: 25%; }
   .home-cards .c-project-card__info { padding: 36px 18px 16px; }
   .home-cards .c-project-card__period { font-size: 12px; margin-bottom: 4px; }
   .home-cards .c-project-card__ongoing { font-size: 11px; padding: 1px 7px; }
   .home-cards .c-project-card__title { font-size: 18px; }
   .home-cards .c-project-card__subtitle { font-size: 13.5px; padding-top: 8px; }
-  .home-cards .c-blog-card__content { padding: 20px; }
-  .home-cards .c-blog-card__title { margin: 10px 0; font-size: 18px; }
-  .home-cards .c-blog-card__excerpt { margin-bottom: 14px; font-size: 13.5px; }
-  .home-cards .c-blog-card__tag { padding: 6px 9px; font-size: 11px; }
-  .home-cards .c-blog-card__author-image { width: 34px; height: 34px; }
-  .home-cards .c-blog-card__author-name { font-size: 14px; }
 }
 
 /* Sticky header: stays on top while scrolling; compact with a shadow once scrolled (js/header.js).
@@ -420,4 +414,27 @@ html { scroll-padding-top: 110px; }
   .c-hero__news { margin-top: 28px; }
   .home-news { padding: 16px 4px 6px 16px; }
   .home-news__item { grid-template-columns: 4.2em 1.4em minmax(0, 1fr); font-size: .875rem; }
+}
+
+/* Home Recent Posts: newest four as a list — Category | Title | Date. On phones each row
+   becomes two lines (category · date, then the title). */
+.home-posts { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.home-posts th { padding: 0 14px 10px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-align: left; text-transform: uppercase; }
+.home-posts td { padding: 16px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.home-posts tbody tr { transition: background-color .2s ease; }
+.home-posts tbody tr:hover { background: color-mix(in srgb, var(--selected) 55%, transparent); }
+.home-posts__category { width: 10.5rem; }
+.home-posts__date { width: 7.5rem; text-align: right !important; }
+.home-posts__badge { display: inline-block; max-width: 100%; padding: 4px 11px; border-radius: 999px; background: var(--selected); color: var(--accent); font-size: .8125rem; font-weight: 600; line-height: 1.4; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+.home-posts__title a { display: block; overflow: hidden; color: var(--ink); font-weight: 600; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+.home-posts__title a:hover, .home-posts__title a:focus-visible { color: var(--accent); }
+.home-posts__date time { color: var(--muted); font-size: .9375rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 600px) {
+  .home-posts thead { display: none; }
+  .home-posts, .home-posts tbody { display: block; }
+  .home-posts tr { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 6px 10px; padding: 14px 4px; border-bottom: 1px solid var(--line); }
+  .home-posts td { display: block; width: auto; padding: 0; border: 0; }
+  .home-posts__date { text-align: left !important; }
+  .home-posts__title { grid-column: 1 / -1; }
+  .home-posts__title a { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 }

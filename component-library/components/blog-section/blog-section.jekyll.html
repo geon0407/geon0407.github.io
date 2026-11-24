@@ -1,5 +1,5 @@
 <!-- begin blog -->
-<section class="section blog home-cards">
+<section class="section blog">
   <div class="container">
     <div class="row">
       <div class="col col-12">
@@ -16,13 +16,34 @@
           {% if include.show_posts and site.posts.size == 0 and include.empty_message %}
           <p{% if include.empty_message_ko %} data-ko="{{ include.empty_message_ko | escape }}"{% endif %}>{{ include.empty_message | escape }}</p>
           {% elsif include.show_posts %}
-          <div class="row">
-            {% if site.posts.size > 0 %}
-              {% for post in site.posts limit:8 %}
-                {% bookshop blog-card post=post %}
+          {% comment %} Newest 4 posts as a list: Category | Title | Date (site.posts is newest first). {% endcomment %}
+          <table class="home-posts">
+            <thead>
+              <tr>
+                <th scope="col" class="home-posts__category" data-ko="카테고리">Category</th>
+                <th scope="col" class="home-posts__title" data-ko="제목">Title</th>
+                <th scope="col" class="home-posts__date" data-ko="작성일">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for post in site.posts limit:4 %}
+              {% assign category_slug = post.categories | first %}
+              {% assign category = nil %}
+              {% for group in site.data.blog_categories %}
+                {% for topic in group.topics %}
+                  {% if topic.slug == category_slug %}{% assign category = topic %}{% endif %}
+                {% endfor %}
               {% endfor %}
-            {% endif %}
-          </div>
+              <tr>
+                <td class="home-posts__category">
+                  {% if category %}<a class="home-posts__badge" href="{{ '/blog/category/' | append: category.slug | append: '/' | relative_url }}" data-ko="{{ category.title_ko | escape }}">{{ category.title | escape }}</a>{% endif %}
+                </td>
+                <td class="home-posts__title"><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></td>
+                <td class="home-posts__date"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
           {% endif %}
 
         </div>
