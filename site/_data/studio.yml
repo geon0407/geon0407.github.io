@@ -10,7 +10,15 @@ home:
   projects_title:
     en: Latest Works
     ko: 최근 프로젝트
-  news: []
+  news:
+  - date: '2026.08'
+    emoji: 🧑‍💻
+    text: Joined [SYMPLE Lab](https://symplelab.com/) at GIST as an undergraduate research intern
+    text_ko: ''
+  - date: '2026.08'
+    emoji: 🏆
+    text: Won the Grand Prize in Track 1 (Robotics AX) of the [2026 GIST AX Challenge](https://www.gist.ac.kr/kr/html/sub07/070103.html?mode=V&no=222864) with an [AI table tennis robot](https://geon0407.github.io/project/26-summer-tabletennisrobot/)
+    text_ko: ''
   posts_title:
     en: Recent Posts
     ko: 최근 글
@@ -31,7 +39,7 @@ profile:
     period_ko: ''
     group: research
   - period: 2026.03–Present
-    group: background
+    group: education
     title: Teaching Assistant, Department of Mathematical Sciences, GIST
     detail: Lead Recitation Sessions for Calculus (Spring 2026) and Multivariable Calculus (Fall 2026)
     period_ko: 2026.03–현재
@@ -39,7 +47,7 @@ profile:
     detail_ko: 2026학년도 봄학기 미적분학, 2026학년도 가을학기 다변수해석학 Recitation 진행
     url: https://math.gist.ac.kr/math/
   - period: 2024.03–2025.09
-    group: background
+    group: education
     title: Military Service, Republic of Korea Army
     detail: 3rd Airborne Special Forces Brigade, Republic of Korea Army Special Warfare Command, Sergeant (Honorably Discharged)
     title_ko: 대한민국 육군 군 복무
@@ -48,7 +56,7 @@ profile:
     url: https://www.army.mil.kr/sites/army/index.do
   - period: 2022.02–Present
     period_ko: 2022.02–현재
-    group: background
+    group: education
     title: Undergraduate Studies, Department of Electrical Engineering and Computer Science, GIST
     url: https://eecs.gist.ac.kr/
     title_ko: 광주과학기술원 전기전자컴퓨터공학과 학부과정
@@ -87,7 +95,7 @@ profile:
     period_ko: ''
     group: research
   - period: 2003.04.07
-    group: background
+    group: education
     title: Born in Daejeon, South Korea
     url: https://ko.wikipedia.org/wiki/대전광역시
     title_ko: 대한민국 대전광역시 출생
