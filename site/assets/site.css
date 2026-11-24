@@ -473,3 +473,7 @@ html { scroll-padding-top: 110px; }
   .main-nav { visibility: hidden; pointer-events: none; transition: opacity .25s ease, visibility 0s linear .25s; }
   .main-nav.is-open { visibility: visible; pointer-events: auto; transition: opacity .25s ease, visibility 0s; }
 }
+
+/* Always reserve the scrollbar's space, so the layout does not shift sideways when a page gets
+   shorter or longer (e.g. filtering the About history down to one entry hides the scrollbar). */
+html { scrollbar-gutter: stable; }
