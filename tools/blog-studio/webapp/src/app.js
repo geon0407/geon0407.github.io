@@ -758,7 +758,7 @@ function renderDeploy(s) {
     unknown: '배포 결과를 확인하지 못했습니다. Actions 기록에서 직접 확인하세요.',
   }[s.state];
   const help = s.state === 'failure'
-    ? `<p>Codespace에서 Claude에게 “웹 Studio 발행(커밋 ${esc(s.sha.slice(0, 7))})의 배포가 실패했다”고 알려주면 원인을 찾아 고칠 수 있습니다. 그 전까지 이 표시는 남아 있습니다.</p>` : '';
+    ? `<p>Codespace에서 “웹 Studio 발행(커밋 ${esc(s.sha.slice(0, 7))})의 배포가 실패했다”는 내용으로 원인을 확인해 고칠 수 있습니다. 그 전까지 이 표시는 남아 있습니다.</p>` : '';
   box.hidden = false;
   box.className = 'deploy deploy-' + s.state;
   box.innerHTML = `<div><strong>${esc(text)}</strong>
