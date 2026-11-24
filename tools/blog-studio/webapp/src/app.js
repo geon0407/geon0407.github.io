@@ -43,7 +43,7 @@ async function api(path, data) {
     switch (path) {
       case 'state': {
         const [{config: cfg, version}, records, categories] = await Promise.all([studio.config(), studio.listRecords(), studio.categories()]);
-        return {config: cfg, version, records, categories, pending: studio.pendingPaths()};
+        return {config: cfg, version, records, categories, pending: studio.pendingPaths(), stale: studio.stalePaths()};
       }
       case 'settings': return await studio.saveConfig(data);
       case 'save': return await studio.saveRecord(data);
@@ -120,9 +120,12 @@ async function dataUrl(src) {
 
 function renderPending() {
   const count = state.pending.length;
-  $('#pending').innerHTML = count
+  const stale = state.stale || [];
+  $('#pending').innerHTML = (stale.length
+    ? `<div class="stale-warning">⚠ 발행 대기 중인 변경 중 ${stale.length}개가 예전 내용을 바탕으로 만들어졌습니다. 그사이 다른 곳에서 같은 파일이 바뀌어서, 이대로 발행하면 덮어쓰게 되므로 발행이 막힙니다. "변경 내역 보기"에서 해당 항목(${stale.map(esc).join(', ')})을 버린 뒤 다시 작성하세요.</div>` : '')
+    + (count
     ? `저장된 변경 ${count}개 · 아직 공개 사이트에 반영되지 않았습니다 <button type="button" class="link-button" id="show-changes">변경 내역 보기</button>`
-    : '저장된 사이트 변경 없음 · 초안은 발행 대상에서 제외됩니다';
+    : '저장된 사이트 변경 없음 · 초안은 발행 대상에서 제외됩니다');
   if (count) $('#show-changes').onclick = () => job(openPublishDialog);
 }
 

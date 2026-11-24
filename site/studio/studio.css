@@ -58,3 +58,4 @@ body.busy nav button,body.busy #back{opacity:.55;cursor:progress}
 .deploy-failure strong{color:#9e291d}
 .deploy-unknown{background:#fff6df;border-color:#ecd9a6}
 @media(max-width:600px){.deploy{flex-direction:column}}
+.stale-warning{margin-bottom:10px;padding:12px 14px;border:1px solid #e4b8af;border-radius:9px;background:#fff0ed;color:#7a2318;line-height:1.6}

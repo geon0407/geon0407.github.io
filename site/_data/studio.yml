@@ -54,6 +54,14 @@ profile:
     detail_ko: 제3공수특전여단 병장 만기전역
     period_ko: ''
     url: https://www.army.mil.kr/sites/army/index.do
+  - period: '2024.03'
+    period_ko: ''
+    group: military
+    title: Enlisted in the Republic of Korea Army (Korea Army Training Center)
+    title_ko: 대한민국 육군 육군훈련소 입대
+    detail: ''
+    detail_ko: ''
+    url: ''
   - period: 2022.02–Present
     period_ko: 2022.02–현재
     group: education

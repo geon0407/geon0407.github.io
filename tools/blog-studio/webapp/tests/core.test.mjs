@@ -173,6 +173,28 @@ test('publish refuses when the same file changed elsewhere, but rebases over unr
   assert.deepEqual(await studio.changes(), []);
 });
 
+test('a stale pending change is caught even after reloading (no silent overwrite)', async () => {
+  const {studio, site} = await setup();
+  const {config, version} = await studio.config();
+  config.site.title = 'Edited in an old tab';
+  await studio.saveConfig({config, version});
+  // Someone changes the same file elsewhere; this tab then reloads (the "새로고침" button).
+  site.push({'site/_data/studio.yml': site.text('site/_data/studio.yml') + '# changed elsewhere\n'});
+  await studio.reload();
+  assert.deepEqual(studio.stalePaths(), ['site/_data/studio.yml']);
+  await assert.rejects(studio.publish(), e => e.status === 409 && e.message.includes('studio.yml'));
+  const again = await studio.config();
+  await assert.rejects(studio.saveConfig(again), e => e.status === 409);
+  assert.match(site.text('site/_data/studio.yml'), /# changed elsewhere/);
+  await studio.discard({path: 'site/_data/studio.yml'});
+  assert.deepEqual(studio.stalePaths(), []);
+  const fresh = await studio.config();
+  fresh.config.site.title = 'Edited on top of the latest';
+  await studio.saveConfig(fresh);
+  await studio.publish();
+  assert.match(site.text('site/_data/studio.yml'), /Edited on top of the latest/);
+});
+
 test('two studio sessions writing the data repo: the stale one gets a 409', async () => {
   const {studio, make} = await setup();
   const other = make();

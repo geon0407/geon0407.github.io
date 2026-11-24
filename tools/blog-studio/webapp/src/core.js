@@ -235,6 +235,15 @@ export class Studio {
     for (const p of Object.keys(this.pending.deletes)) paths.delete(p);
     return [...paths].sort();
   }
+  // Pending changes made against an older version of the file than the blog now has.
+  stalePaths(files = this.siteTree) {
+    return this.pendingPaths().filter(p => (files[p]?.sha || null) !== (this.pending.base[p] ?? files[p]?.sha ?? null));
+  }
+  assertFresh(path) {
+    if (this.stalePaths().includes(path)) {
+      throw new Problem(`${path}은(는) 발행 대기 중인 예전 변경이 있는데, 그사이 다른 곳에서 바뀌었습니다. 발행 창에서 이 항목을 "버리기"한 뒤 다시 작성하세요.`, 409);
+    }
+  }
   pendingPaths() {
     return [...new Set([...Object.keys(this.pending.writes), ...Object.keys(this.pending.deletes)])].sort();
   }
@@ -256,17 +265,20 @@ export class Studio {
     delete this.pending.base[path];
   }
   async setSiteText(path, text) {
+    this.assertFresh(path);
     if (text === await this.originalSiteText(path)) { this.forget(path); return; }
     this.rememberBase(path);
     delete this.pending.deletes[path];
     this.pending.writes[path] = {text};
   }
   setSiteFromData(path, dataPath) {
+    this.assertFresh(path);
     this.rememberBase(path);
     delete this.pending.deletes[path];
     this.pending.writes[path] = {data: dataPath};
   }
   removeSite(path) {
+    this.assertFresh(path);
     if (!this.siteTree[path]) { this.forget(path); return; }
     this.rememberBase(path);
     delete this.pending.writes[path];
@@ -672,17 +684,18 @@ export class Studio {
 
   async publish() {
     return this.mutate(async () => {
-      // Someone (another PC, the Codespaces Studio) may have pushed since we loaded.
+      // Every pending change remembers the version of the file it was made against. If the blog
+      // now holds a different version (pushed from another PC or the Codespaces Studio) we must
+      // not overwrite it — and this has to be checked even when this tab has reloaded since,
+      // because reloading refreshes the tree but keeps the old pending change.
       const head = await this.site.head();
-      if (head !== this.siteHead) {
-        const fresh = await this.site.tree(head);
-        const conflicts = this.pendingPaths().filter(p => (fresh.files[p]?.sha || null) !== (this.pending.base[p] ?? this.siteTree[p]?.sha ?? null));
-        if (conflicts.length) {
-          throw new Problem('발행하지 않은 변경과 같은 파일이 다른 곳에서 먼저 바뀌었습니다. 발행 창에서 해당 항목을 버리고 다시 작성하세요:\n' + conflicts.join('\n'), 409);
-        }
-        this.siteHead = head;
-        this.siteTree = fresh.files;
+      const files = head === this.siteHead ? this.siteTree : (await this.site.tree(head)).files;
+      const conflicts = this.stalePaths(files);
+      if (conflicts.length) {
+        throw new Problem('발행하지 않은 변경과 같은 파일이 다른 곳에서 먼저 바뀌었습니다. 발행 창에서 해당 항목을 버리고 다시 작성하세요:\n' + conflicts.join('\n'), 409);
       }
+      this.siteHead = head;
+      this.siteTree = files;
       const items = await this.changes();
       if (!items.length) return {ok: true, message: '발행할 변경이 없습니다.'};
       const entries = [];
