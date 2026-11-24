@@ -98,16 +98,22 @@ profile:
     ko: 김건형
   bio:
     en: Hello, I’m GeonHyoung Kim. At GIST, I study artificial intelligence and computer engineering in the School of Electrical Engineering and Computer Science.
-    ko: 안녕하십니까. 김건형입니다. 저는 광주과학기술원 전기전자컴퓨터공학과에서 인공지능과 컴퓨터공학을 공부하고 있습니다.
+    ko: 안녕하십니까. 저는 광주과학기술원 전기전자컴퓨터공학과에서 인공지능과 컴퓨터공학을 공부하고 있는 김건형입니다.
   closing:
-    en: Below are some of the moments that have shaped my life so far. Thank you for taking the time to get to know me. I hope you’re happy.
-    ko: 아래는 지금까지의 제 삶을 요약한 내용입니다. 제게 관심 가져주셔서 정말 고맙습니다. 저는 당신이 행복했으면 좋겠습니다.
+    en: |-
+      Below are some of the moments that have shaped my life so far. Thank you for taking the time to get to know me. 
+
+      I hope you’re happy.
+    ko: |-
+      아래는 지금까지의 제 삶을 요약한 내용입니다. 제게 관심 가져주셔서 정말 감사합니다. 
+
+      저는 당신이 행복했으면 좋겠습니다.
   verse:
     en: Beloved, I wish above all things that thou mayest prosper and be in health, even as thy soul prospereth.
     ko: 사랑하는 자여 네 영혼이 잘 됨같이 네가 범사에 잘 되고 강건하기를 내가 간구하노라
   verse_source:
-    en: 3 John 1:2 · KJV
-    ko: 요한삼서 1장 2절 · 개역한글
+    en: 3 John 1:2
+    ko: 요한삼서 1장 2절
   contact:
     email: geon0407@gm.gist.ac.kr
     affiliation:
