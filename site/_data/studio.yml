@@ -30,6 +30,14 @@ profile:
     path: ''
     alt: ''
   timeline:
+  - group: research
+    period: 2026.08–Present
+    period_ko: 2026.08–현재
+    title: Undergraduate Research Intern, SYMPLE Lab, GIST
+    title_ko: 광주과학기술원 SYMPLE Lab 학부연구생
+    detail: ''
+    detail_ko: ''
+    url: https://symplelab.com/
   - group: experience
     period: 2026.09–2026.12
     period_ko: 2026.09–2026.12
@@ -38,14 +46,6 @@ profile:
     detail: Lead Recitation Sessions and Multivariable Calculus (MM2001, Fall 2026)
     detail_ko: 2026학년도 가을학기 다변수해석학(MM2001) Recitation 진행
     url: ''
-  - period: '2026.08'
-    title: GIST AX Challenge 🏆
-    detail: Built a AI table tennis robot and received an award in the Robotics AX track
-    url: https://www.gist.ac.kr/kr/html/sub07/070103.html?mode=V&no=222864
-    title_ko: GIST 창의융합 AX-챌린지 🏆
-    detail_ko: 탁구로봇 제작 · 로봇 AX 경진 부문 수상
-    period_ko: ''
-    group: award
   - period: 2026.03–2026.06
     group: experience
     title: Teaching Assistant, Department of Mathematical Sciences, GIST
@@ -54,6 +54,14 @@ profile:
     title_ko: 광주과학기술원 수리과학과 수업 조교
     detail_ko: 2026학년도 봄학기 미적분학(GS1001) Recitation 진행
     url: https://math.gist.ac.kr/math/
+  - period: '2026.08'
+    title: GIST AX Challenge 🏆
+    detail: Built a AI table tennis robot and received an award in the Robotics AX track
+    url: https://www.gist.ac.kr/kr/html/sub07/070103.html?mode=V&no=222864
+    title_ko: GIST 창의융합 AX-챌린지 🏆
+    detail_ko: 탁구로봇 제작 · 로봇 AX 경진 부문 수상
+    period_ko: ''
+    group: award
   - period: 2024.03–2025.09
     group: experience
     title: Military Service, Republic of Korea Army
@@ -62,6 +70,14 @@ profile:
     detail_ko: 제3공수특전여단 병장 만기전역
     period_ko: ''
     url: https://www.army.mil.kr/sites/army/index.do
+  - group: experience
+    period: 2022.04-2024.02
+    period_ko: 2022.03-2024.02
+    title: Member, Cultural Events Committee, GIST Undergraduate Student Council
+    title_ko: 광주과학기술원 문화행사위원회 위원
+    detail: ''
+    detail_ko: ''
+    url: https://www.instagram.com/mooooo_naeng2/
   - period: 2022.02–Present
     period_ko: 2022.02–현재
     group: education
@@ -71,10 +87,10 @@ profile:
     detail: ''
     detail_ko: ''
   - period: '2021.08'
-    title: 2021 Hanwha Science Challenge [🥉]
+    title: 2021 Hanwha Science Challenge 🥉
     detail: Received an award for research on an electromagnetic air well
     url: https://www.sciencechallenge.or.kr/result/paper.hsc?searchMasterCode=210910180916694NAB4Q
-    title_ko: 2021 한화사이언스챌린지 [🥉]
+    title_ko: 2021 한화사이언스챌린지 🥉
     detail_ko: 전자기력 공기 우물 연구 및 수상
     period_ko: ''
     group: award
